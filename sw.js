@@ -1,9 +1,10 @@
-const CACHE_NAME = 'lords-mobile-hub-cache-v1';
+const CACHE_NAME = 'lords-mobile-hub-cache-v2';
 const urlsToCache = [
   '/lords-mobile-hunting/',
   '/lords-mobile-hunting/index.html',
   '/lords-mobile-hunting/style.css',
   '/lords-mobile-hunting/translations.js',
+  '/lords-mobile-hunting/features.js',
   '/lords-mobile-hunting/calculator.html',
   '/lords-mobile-hunting/hunting.html',
   '/lords-mobile-hunting/training.html',
@@ -17,29 +18,46 @@ const urlsToCache = [
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
 ];
 
+// Install - cache all essential resources
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Opened cache');
+        console.log('Caching all resources for offline support');
         return cache.addAll(urlsToCache);
       })
   );
 });
 
+// Fetch - Network first, fallback to cache (fast loading + offline support)
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then(response => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
+        // Clone the response and cache it
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, responseClone);
+        });
+        return response;
+      })
+      .catch(() => {
+        // Network failed, try cache
+        return caches.match(event.request).then(response => {
+          if (response) {
+            return response;
+          }
+          // If not in cache, return offline page for navigation requests
+          if (event.request.mode === 'navigate') {
+            return caches.match('/lords-mobile-hunting/index.html');
+          }
+        });
       })
   );
 });
 
+// Activate - clean up old caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -51,6 +69,6 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });

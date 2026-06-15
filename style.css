@@ -316,3 +316,227 @@ body.rtl .speedup-input {
         left: auto;
     }
 }
+
+/* ==========================================
+   DARK MODE
+   ========================================== */
+body.dark-mode {
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+}
+
+body.dark-mode header {
+    background: linear-gradient(135deg, #0f0f23 0%, #16213e 100%);
+}
+
+body.dark-mode .hero-section,
+body.dark-mode .tool-card {
+    background: #16213e;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .hero-section h1,
+body.dark-mode .section-title,
+body.dark-mode .tool-card h3 {
+    color: #64b5f6;
+}
+
+body.dark-mode .hero-section p,
+body.dark-mode .tool-card p {
+    color: #aaa;
+}
+
+body.dark-mode .tool-card i {
+    color: #64b5f6;
+}
+
+body.dark-mode .tool-card:hover {
+    background: #1a2744;
+}
+
+body.dark-mode .nav-links a {
+    color: #e0e0e0;
+}
+
+body.dark-mode .language-dropdown {
+    background: #0f0f23;
+}
+
+body.dark-mode .language-dropdown a:hover,
+body.dark-mode .language-dropdown a.selected {
+    background: #16213e;
+}
+
+body.dark-mode input,
+body.dark-mode select {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    border-color: #333;
+}
+
+body.dark-mode footer {
+    color: #666;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ==========================================
+   SEARCH BAR
+   ========================================== */
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 20px 12px 45px;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-sizing: border-box;
+}
+
+.search-input:focus {
+    border-color: var(--light-blue);
+    box-shadow: 0 0 10px rgba(42, 82, 152, 0.2);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 1em;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    margin-top: 5px;
+    display: none;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.search-result-item {
+    display: block;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #333;
+    transition: background 0.2s;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background: #f5f8ff;
+}
+
+.search-result-item.no-result {
+    color: #999;
+    cursor: default;
+}
+
+body.dark-mode .search-input {
+    background: #16213e;
+    border-color: #333;
+    color: #e0e0e0;
+}
+
+body.dark-mode .search-results {
+    background: #16213e;
+}
+
+body.dark-mode .search-result-item {
+    color: #e0e0e0;
+    border-bottom-color: #333;
+}
+
+body.dark-mode .search-result-item:hover {
+    background: #1a2744;
+}
+
+/* ==========================================
+   NOTIFICATIONS
+   ========================================== */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: white;
+    font-size: 0.9em;
+    z-index: 9999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.notification-info {
+    background: var(--light-blue);
+}
+
+.notification-success {
+    background: #4caf50;
+}
+
+.notification-warning {
+    background: #ff9800;
+}
+
+.notification-error {
+    background: #f44336;
+}
+
+/* ==========================================
+   HEADER ACTIONS (theme toggle + search)
+   ========================================== */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+@media (max-width: 600px) {
+    .search-container {
+        max-width: 100%;
+        margin: 15px auto;
+    }
+}

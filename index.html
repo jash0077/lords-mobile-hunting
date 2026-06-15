@@ -41,7 +41,10 @@
         </div>
     </div>
     <div class="logo" data-translate-key="app_title">Lords Mobile Hub</div>
-    <div class="hamburger" onclick="toggleMenu()">☰</div>
+    <div class="header-actions">
+        <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Dark/Light Mode"><i class="fas fa-moon"></i></button>
+        <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </div>
     <nav class="nav-links" id="navLinks">
         <a href="index.html" data-translate-key="home">Home</a>
         <a href="calculator.html" data-translate-key="speedup_calculator">Speedup Calculator</a>
@@ -57,6 +60,13 @@
     <div class="hero-section">
         <h1 data-translate-key="welcome_title">Welcome to Lords Mobile Hub</h1>
         <p data-translate-key="welcome_description">Your one-stop destination for essential tools and guides to dominate the kingdom.</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container" id="searchContainer">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search tools..." autocomplete="off">
+        <div class="search-results" id="searchResults"></div>
     </div>
 
     <div class="section-title" data-translate-key="available_tools">Available Tools</div>
@@ -104,6 +114,7 @@
     }
 </script>
 <script src="translations.js"></script>
+<script src="features.js"></script>
 <script>
   // Register Service Worker
   if ('serviceWorker' in navigator) {
