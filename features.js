@@ -200,46 +200,70 @@ function showPopup(message, icon = '\u2705') {
 
 // 10. SLIDING MENU
 function initSlidingMenu() {
+    const nav = document.getElementById('navLinks');
+    if (!nav) return;
+    
+    // Add close button inside nav
+    if (!nav.querySelector('.nav-close-btn')) {
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'nav-close-btn';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.addEventListener('click', closeMenu);
+        nav.insertBefore(closeBtn, nav.firstChild);
+    }
+    
     // Create overlay for mobile menu
     let overlay = document.querySelector('.menu-overlay');
     if (!overlay) {
         overlay = document.createElement('div');
         overlay.className = 'menu-overlay';
         document.body.appendChild(overlay);
-        overlay.addEventListener('click', () => {
-            document.getElementById('navLinks').classList.remove('active');
-            overlay.classList.remove('active');
-        });
+        overlay.addEventListener('click', closeMenu);
     }
 }
 
+function closeMenu() {
+    const nav = document.getElementById('navLinks');
+    const overlay = document.querySelector('.menu-overlay');
+    if (nav) nav.classList.remove('active');
+    if (overlay) overlay.classList.remove('active');
+}
+
 // Override toggleMenu for sliding behavior
-const originalToggleMenu = window.toggleMenu;
 window.toggleMenu = function() {
     const nav = document.getElementById('navLinks');
     const overlay = document.querySelector('.menu-overlay');
-    nav.classList.toggle('active');
-    if (overlay) overlay.classList.toggle('active');
+    if (nav.classList.contains('active')) {
+        closeMenu();
+    } else {
+        nav.classList.add('active');
+        if (overlay) overlay.classList.add('active');
+    }
 };
 
 // 11. WRAP CALCULATE BUTTONS WITH LOADING + POPUP
 function initCalculateEnhancement() {
     // Find all calculate buttons
-    const calcButtons = document.querySelectorAll('.calc-btn, .btn-calculate, [onclick*="calculate"]');
+    const calcButtons = document.querySelectorAll('.calc-btn, .btn-calculate');
     
     calcButtons.forEach(btn => {
         const originalOnclick = btn.getAttribute('onclick');
-        if (originalOnclick && originalOnclick.includes('calculate')) {
+        if (originalOnclick && (originalOnclick.includes('calculate') || originalOnclick.includes('Calculate'))) {
             btn.removeAttribute('onclick');
+            const funcName = originalOnclick.replace('()', '').trim();
+            
             btn.addEventListener('click', function() {
                 showLoading();
                 
                 setTimeout(() => {
                     try {
-                        // Call the original calculate function
-                        if (typeof calculate === 'function') calculate();
-                        else if (typeof calculateSpeed === 'function') calculateSpeed();
-                        else if (typeof calculateComp === 'function') calculateComp();
+                        // Call the original function by name
+                        if (window[funcName]) {
+                            window[funcName]();
+                        } else {
+                            // Fallback: use eval for locally scoped functions
+                            eval(originalOnclick);
+                        }
                     } catch(e) {
                         console.error(e);
                     }

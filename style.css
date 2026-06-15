@@ -66,20 +66,25 @@ header {
 
 @media (max-width: 600px) {
     .nav-links {
-        display: none;
+        display: flex;
         flex-direction: column;
-        position: absolute;
-        top: 60px;
-        left: 0;
-        right: 0;
-        background: var(--dark-blue);
-        padding: 20px;
+        position: fixed;
+        top: 0;
+        right: -280px;
+        width: 280px;
+        height: 100vh;
+        background: linear-gradient(180deg, var(--dark-blue) 0%, #0f1f3d 100%);
+        padding: 80px 20px 20px;
         gap: 15px;
-        text-align: center;
+        text-align: left;
+        transition: right 0.3s ease;
+        box-shadow: -5px 0 20px rgba(0,0,0,0.3);
+        z-index: 999;
+        overflow-y: auto;
     }
 
     .nav-links.active {
-        display: flex;
+        right: 0;
     }
 
     .hamburger {
@@ -701,43 +706,17 @@ body.dark-mode .search-result-item:hover {
     100% { background-position: 200% 0%; }
 }
 
-/* ==========================================
-   SLIDING MENU (Mobile)
-   ========================================== */
-@media (max-width: 600px) {
-    .nav-links {
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        top: 0;
-        right: -280px;
-        width: 280px;
-        height: 100vh;
-        background: linear-gradient(180deg, var(--dark-blue) 0%, #0f1f3d 100%);
-        padding: 80px 20px 20px;
-        gap: 15px;
-        text-align: left;
-        transition: right 0.3s ease;
-        box-shadow: -5px 0 20px rgba(0,0,0,0.3);
-        z-index: 999;
-        overflow-y: auto;
-    }
-
-    .nav-links.active {
-        right: 0;
-        display: flex;
-    }
-
-    .nav-links a {
-        padding: 12px 15px;
-        border-radius: 8px;
-        transition: background 0.2s;
-        font-size: 1.1em;
-    }
-
-    .nav-links a:hover {
-        background: rgba(255,255,255,0.1);
-    }
+/* SLIDING MENU - close button */
+.nav-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.8em;
+    cursor: pointer;
+    z-index: 1001;
 }
 
 /* Menu overlay */
