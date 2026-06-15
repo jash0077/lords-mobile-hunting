@@ -68,7 +68,16 @@ const translations = {
         "monster_gawrilla": "Gawrilla",
         "monster_gargantua": "Gargantua",
         "monster_cottageroar": "Cottageroar",
-        "monster_arctic_flipper": "Arctic Flipper"
+        "monster_arctic_flipper": "Arctic Flipper",
+        "troop_composition": "Troop Composition",
+        "migration_guide": "Migration Guide",
+        "research_construction": "Research & Construction",
+        "composition_card_description": "Calculate your T5/T4 troop split with custom Infantry, Ranged, and Cavalry ratios.",
+        "speed_calculator": "Speed Calculator",
+        "speed_card_description": "Calculate research and construction time with boosts and guild helps.",
+        "troop_composition_calculator": "Troop Composition Calculator",
+        "troop_composition_label": "Troop Composition:",
+        "research_speed_calculator": "Research & Construction Speed Calculator"
     },
     "es": {
         "app_title": "Lords Mobile Hub",
@@ -139,7 +148,16 @@ const translations = {
         "monster_gawrilla": "Gawrilla",
         "monster_gargantua": "Gargantúa",
         "monster_cottageroar": "Rugido de Cabaña",
-        "monster_arctic_flipper": "Aleta Ártica"
+        "monster_arctic_flipper": "Aleta Ártica",
+        "troop_composition": "Composición de Tropas",
+        "migration_guide": "Guía de Migración",
+        "research_construction": "Investigación y Construcción",
+        "composition_card_description": "Calcula tu división de tropas T5/T4 con proporciones personalizadas de Infantería, Arqueros y Caballería.",
+        "speed_calculator": "Calculadora de Velocidad",
+        "speed_card_description": "Calcula el tiempo de investigación y construcción con bonificaciones y ayudas de gremio.",
+        "troop_composition_calculator": "Calculadora de Composición de Tropas",
+        "troop_composition_label": "Composición de Tropas:",
+        "research_speed_calculator": "Calculadora de Velocidad de Investigación y Construcción"
     },
     "ja": {
         "app_title": "ロードモバイルハブ",
@@ -210,7 +228,16 @@ const translations = {
         "monster_gawrilla": "ガウリラ",
         "monster_gargantua": "ガルガンチュア",
         "monster_cottageroar": "コテージロア",
-        "monster_arctic_flipper": "アークティックフリッパー"
+        "monster_arctic_flipper": "アークティックフリッパー",
+        "troop_composition": "部隊編成",
+        "migration_guide": "移民ガイド",
+        "research_construction": "研究 & 建設",
+        "composition_card_description": "歩兵、弓兵、騎兵のカスタム比率でT5/T4部隊の分割を計算します。",
+        "speed_calculator": "速度計算機",
+        "speed_card_description": "ブーストとギルドヘルプによる研究・建設時間を計算します。",
+        "troop_composition_calculator": "部隊編成計算機",
+        "troop_composition_label": "部隊編成:",
+        "research_speed_calculator": "研究 & 建設速度計算機"
     },
     "ar": {
         "app_title": "لوردس موبايل هاب",
@@ -565,7 +592,16 @@ const translations = {
         "monster_gawrilla": "Gawrilla",
         "monster_gargantua": "Gargantua",
         "monster_cottageroar": "Rugissement de Chalet",
-        "monster_arctic_flipper": "Nageoire Arctique"
+        "monster_arctic_flipper": "Nageoire Arctique",
+        "troop_composition": "Composition des Troupes",
+        "migration_guide": "Guide de Migration",
+        "research_construction": "Recherche & Construction",
+        "composition_card_description": "Calculez votre répartition de troupes T5/T4 avec des ratios personnalisés d'Infanterie, d'Archers et de Cavalerie.",
+        "speed_calculator": "Calculateur de Vitesse",
+        "speed_card_description": "Calculez le temps de recherche et de construction avec les bonus et l'aide de guilde.",
+        "troop_composition_calculator": "Calculateur de Composition des Troupes",
+        "troop_composition_label": "Composition des Troupes :",
+        "research_speed_calculator": "Calculateur de Vitesse de Recherche & Construction"
     },
     "pt": {
         "app_title": "Lords Mobile Hub",
