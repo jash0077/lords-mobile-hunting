@@ -142,6 +142,16 @@ function initOfflineIndicator() {
     window.addEventListener('offline', () => showNotification('You are offline. Cached content is available.', 'warning'));
 }
 
+// 7. REFRESH BUTTON
+function initRefreshButton() {
+    const refreshBtn = document.getElementById('refreshBtn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            location.reload();
+        });
+    }
+}
+
 // Initialize all features on DOM load
 document.addEventListener('DOMContentLoaded', function() {
     initSearch();
@@ -149,4 +159,5 @@ document.addEventListener('DOMContentLoaded', function() {
     initAutoBackup();
     initErrorReporting();
     initOfflineIndicator();
+    initRefreshButton();
 });

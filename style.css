@@ -534,6 +534,26 @@ body.dark-mode .search-result-item:hover {
     gap: 8px;
 }
 
+/* Refresh Button */
+#refreshBtn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s, transform 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#refreshBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(180deg);
+}
+
 @media (max-width: 600px) {
     .search-container {
         max-width: 100%;
