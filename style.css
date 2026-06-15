@@ -64,6 +64,12 @@ header {
     font-size: 1.8em;
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 @media (max-width: 600px) {
     .nav-links {
         display: flex;
@@ -89,6 +95,12 @@ header {
 
     .hamburger {
         display: block;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 }
 
@@ -533,11 +545,6 @@ body.dark-mode .search-result-item:hover {
 /* ==========================================
    HEADER ACTIONS (theme toggle + search)
    ========================================== */
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
 
 /* Refresh Button */
 #refreshBtn {
