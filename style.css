@@ -81,18 +81,32 @@ header {
 
 @media (max-width: 1024px) {
     header {
-        padding: 15px 20px;
-        flex-wrap: wrap;
+        padding: 10px 15px;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-template-rows: auto auto;
+        align-items: center;
     }
 
     .language-switcher {
         margin-left: 0;
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .logo {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: center;
+        font-size: 1.3em;
     }
 
     .header-actions {
         display: flex;
         align-items: center;
         gap: 8px;
+        grid-column: 3;
+        grid-row: 1;
     }
 
     .hamburger {
@@ -102,12 +116,13 @@ header {
     .nav-links {
         display: none;
         flex-direction: column;
+        grid-column: 1 / -1;
+        grid-row: 2;
         width: 100%;
         background: var(--dark-blue);
         padding: 20px;
         gap: 15px;
         text-align: center;
-        order: 99;
     }
 
     .nav-links a {
