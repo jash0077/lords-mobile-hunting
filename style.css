@@ -42,7 +42,7 @@ header {
 }
 
 .nav-links {
-    display: flex;
+    display: none;
     gap: 20px;
 }
 
@@ -70,7 +70,16 @@ header {
     gap: 8px;
 }
 
-@media (max-width: 600px) {
+@media (min-width: 769px) {
+    .nav-links {
+        display: flex;
+    }
+    .hamburger {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
     .nav-links {
         display: flex;
         flex-direction: column;
