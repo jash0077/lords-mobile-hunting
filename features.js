@@ -152,6 +152,106 @@ function initRefreshButton() {
     }
 }
 
+// 8. LOADING ANIMATION & PROGRESS BAR
+function showLoading() {
+    let overlay = document.querySelector('.loading-overlay');
+    let progressBar = document.querySelector('.progress-bar-container');
+    
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'loading-overlay';
+        overlay.innerHTML = '<div class="loading-spinner"></div>';
+        document.body.appendChild(overlay);
+    }
+    
+    if (!progressBar) {
+        progressBar = document.createElement('div');
+        progressBar.className = 'progress-bar-container';
+        progressBar.innerHTML = '<div class="progress-bar"></div>';
+        document.body.appendChild(progressBar);
+    }
+    
+    overlay.classList.add('active');
+    progressBar.classList.add('active');
+}
+
+function hideLoading() {
+    const overlay = document.querySelector('.loading-overlay');
+    const progressBar = document.querySelector('.progress-bar-container');
+    if (overlay) overlay.classList.remove('active');
+    if (progressBar) progressBar.classList.remove('active');
+}
+
+// 9. POP-UP NOTIFICATION
+function showPopup(message, icon = '\u2705') {
+    let popup = document.querySelector('.popup-notification');
+    if (!popup) {
+        popup = document.createElement('div');
+        popup.className = 'popup-notification';
+        document.body.appendChild(popup);
+    }
+    popup.innerHTML = `<div class="popup-icon">${icon}</div><div class="popup-text">${message}</div>`;
+    popup.classList.add('show');
+    
+    setTimeout(() => {
+        popup.classList.remove('show');
+    }, 2000);
+}
+
+// 10. SLIDING MENU
+function initSlidingMenu() {
+    // Create overlay for mobile menu
+    let overlay = document.querySelector('.menu-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'menu-overlay';
+        document.body.appendChild(overlay);
+        overlay.addEventListener('click', () => {
+            document.getElementById('navLinks').classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    }
+}
+
+// Override toggleMenu for sliding behavior
+const originalToggleMenu = window.toggleMenu;
+window.toggleMenu = function() {
+    const nav = document.getElementById('navLinks');
+    const overlay = document.querySelector('.menu-overlay');
+    nav.classList.toggle('active');
+    if (overlay) overlay.classList.toggle('active');
+};
+
+// 11. WRAP CALCULATE BUTTONS WITH LOADING + POPUP
+function initCalculateEnhancement() {
+    // Find all calculate buttons
+    const calcButtons = document.querySelectorAll('.calc-btn, .btn-calculate, [onclick*="calculate"]');
+    
+    calcButtons.forEach(btn => {
+        const originalOnclick = btn.getAttribute('onclick');
+        if (originalOnclick && originalOnclick.includes('calculate')) {
+            btn.removeAttribute('onclick');
+            btn.addEventListener('click', function() {
+                showLoading();
+                
+                setTimeout(() => {
+                    try {
+                        // Call the original calculate function
+                        if (typeof calculate === 'function') calculate();
+                        else if (typeof calculateSpeed === 'function') calculateSpeed();
+                        else if (typeof calculateComp === 'function') calculateComp();
+                    } catch(e) {
+                        console.error(e);
+                    }
+                    
+                    hideLoading();
+                    showPopup('Calculation Complete!', '\u2705');
+                }, 600);
+            });
+        }
+    });
+}
+
 // Initialize all features on DOM load
 document.addEventListener('DOMContentLoaded', function() {
     initSearch();
@@ -160,4 +260,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initErrorReporting();
     initOfflineIndicator();
     initRefreshButton();
+    initSlidingMenu();
+    initCalculateEnhancement();
 });
