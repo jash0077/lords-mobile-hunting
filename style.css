@@ -80,6 +80,40 @@ header {
 }
 
 @media (max-width: 1024px) {
+    header {
+        flex-wrap: wrap;
+        padding: 10px 15px;
+    }
+
+    .logo {
+        font-size: 1.2em;
+    }
+
+    .language-switcher {
+        margin-left: 0;
+    }
+
+    .lang-switcher-btn {
+        padding: 5px 8px;
+        font-size: 0.85em;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    #refreshBtn {
+        font-size: 1em;
+        padding: 5px;
+    }
+
+    .hamburger {
+        display: block;
+        font-size: 1.5em;
+    }
+
     .nav-links {
         display: none;
         flex-direction: column;
@@ -99,16 +133,6 @@ header {
 
     .nav-links.active {
         display: flex;
-    }
-
-    .hamburger {
-        display: block;
-    }
-
-    .header-actions {
-        display: flex;
-        align-items: center;
-        gap: 8px;
     }
 }
 
