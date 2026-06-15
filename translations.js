@@ -308,7 +308,16 @@ const translations = {
         "monster_gawrilla": "غاوريلا",
         "monster_gargantua": "غارغانتوا",
         "monster_cottageroar": "زئير الكوخ",
-        "monster_arctic_flipper": "زعنفة القطب الشمالي"
+        "monster_arctic_flipper": "زعنفة القطب الشمالي",
+        "troop_composition": "تشكيل القوات",
+        "migration_guide": "دليل الهجرة",
+        "research_construction": "البحث والبناء",
+        "composition_card_description": "احسب تقسيم قواتك T5/T4 بنسب مخصصة من المشاة والرماة والفرسان.",
+        "speed_calculator": "حاسبة السرعة",
+        "speed_card_description": "احسب وقت البحث والبناء مع التعزيزات ومساعدات النقابة.",
+        "troop_composition_calculator": "حاسبة تشكيل القوات",
+        "troop_composition_label": "تشكيل القوات:",
+        "research_speed_calculator": "حاسبة سرعة البحث والبناء"
     },
     "vi": {
         "app_title": "Lords Mobile Hub",
@@ -379,7 +388,16 @@ const translations = {
         "monster_gawrilla": "Gawrilla",
         "monster_gargantua": "Gargantua",
         "monster_cottageroar": "Tiếng gầm nhà tranh",
-        "monster_arctic_flipper": "Vây Bắc Cực"
+        "monster_arctic_flipper": "Vây Bắc Cực",
+        "troop_composition": "Bố Trí Quân",
+        "migration_guide": "Hướng Dẫn Di Cư",
+        "research_construction": "Nghiên Cứu & Xây Dựng",
+        "composition_card_description": "Tính toán phân chia quân T5/T4 với tỷ lệ tùy chỉnh Bộ Binh, Cung Thủ và Kỵ Binh.",
+        "speed_calculator": "Máy Tính Tốc Độ",
+        "speed_card_description": "Tính thời gian nghiên cứu và xây dựng với buff và trợ giúp bang hội.",
+        "troop_composition_calculator": "Máy Tính Bố Trí Quân",
+        "troop_composition_label": "Bố Trí Quân:",
+        "research_speed_calculator": "Máy Tính Tốc Độ Nghiên Cứu & Xây Dựng"
     },
     "zh": {
         "app_title": "王国纪元中心",
@@ -814,7 +832,16 @@ const translations = {
         "monster_gawrilla": "Gawrilla",
         "monster_gargantua": "Gargantua",
         "monster_cottageroar": "Auman Pondok",
-        "monster_arctic_flipper": "Sirip Arktik"
+        "monster_arctic_flipper": "Sirip Arktik",
+        "troop_composition": "Komposisi Pasukan",
+        "migration_guide": "Panduan Migrasi",
+        "research_construction": "Riset & Konstruksi",
+        "composition_card_description": "Hitung pembagian pasukan T5/T4 dengan rasio kustom Infanteri, Pemanah, dan Kavaleri.",
+        "speed_calculator": "Kalkulator Kecepatan",
+        "speed_card_description": "Hitung waktu riset dan konstruksi dengan boost dan bantuan guild.",
+        "troop_composition_calculator": "Kalkulator Komposisi Pasukan",
+        "troop_composition_label": "Komposisi Pasukan:",
+        "research_speed_calculator": "Kalkulator Kecepatan Riset & Konstruksi"
     }
 };
 
