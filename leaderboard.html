@@ -64,7 +64,7 @@ td{
 tr:hover{
     background:#334155;
 }
-</style></head><body><h1>🏆 Guild Kill Leaderboard</h1><input
+</style></head><body><h1>🏆 Guild Leaderboard</h1><input
 type="text"
 id="searchInput"
 class="search-box"
@@ -75,6 +75,9 @@ placeholder="Search Player...">
 <th>Rank</th>
 <th>Player</th>
 <th>Kills</th>
+<th>Might Loss</th>
+<th>Might Gain</th>
+<th>Guild Fest</th>
 </tr>
 </thead><tbody>
 </tbody></table><script>
@@ -108,8 +111,11 @@ fetch(url)
         tbody.innerHTML += `
         <tr>
             <td>${rank}</td>
-            <td>${player.NAME}</td>
-            <td>${player.KILL}</td>
+            <td>${player.NAME || "-"}</td>
+            <td>${player.KILL || "-"}</td>
+            <td>${player["MIGHT LOSS"] || "-"}</td>
+            <td>${player["MIGHT GAIN"] || "-"}</td>
+            <td>${player["GUILD FEST"] || "-"}</td>
         </tr>
         `;
     });
@@ -119,8 +125,7 @@ fetch(url)
 document.getElementById("searchInput")
 .addEventListener("keyup", function(){
 
-    let filter =
-    this.value.toUpperCase();
+    let filter = this.value.toUpperCase();
 
     let rows =
     document.querySelectorAll(
