@@ -1,58 +1,95 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html lang="en">
 <head>
-<title>Gaming Leaderboard</title>
-<style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guild Kill Leaderboard</title><style>
 body{
-font-family:Arial,sans-serif;
-background:#111;
-color:white;
-text-align:center;
+    background:#0f172a;
+    color:white;
+    font-family:Arial,sans-serif;
+    margin:0;
+    padding:20px;
 }
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.search-box{
+    width:100%;
+    max-width:400px;
+    margin:0 auto 20px;
+    display:block;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+}
+
 table{
-margin:auto;
-border-collapse:collapse;
-width:80%;
+    width:100%;
+    border-collapse:collapse;
+    background:#1e293b;
+    border-radius:10px;
+    overflow:hidden;
 }
-th,td{
-border:1px solid #444;
-padding:10px;
-}
+
 th{
-background:#333;
+    background:#2563eb;
+    padding:12px;
 }
-</style>
-</head>
-<body>
 
-<h1>🏆 Gaming Leaderboard</h1>
+td{
+    padding:12px;
+    text-align:center;
+    border-bottom:1px solid #334155;
+}
 
-<table>
+.gold{color:gold;font-weight:bold;}
+.silver{color:silver;font-weight:bold;}
+.bronze{color:#cd7f32;font-weight:bold;}
+
+tr:hover{
+    background:#334155;
+}
+</style></head><body><h1>🏆 Guild Kill Leaderboard</h1><input type="text" id="searchInput" class="search-box" placeholder="Search Player..."><table id="leaderboardTable">
+<thead>
 <tr>
 <th>Rank</th>
 <th>Player</th>
 <th>Kills</th>
-<th>Deaths</th>
-<th>Wins</th>
 </tr>
-
-<tr>
-<td>1</td>
+</thead><tbody><tr>
+<td class="gold">🥇 1</td>
 <td>JASH</td>
-<td>150</td>
-<td>30</td>
-<td>25</td>
-</tr>
-
-<tr>
-<td>2</td>
+<td>1.8B</td>
+</tr><tr>
+<td class="silver">🥈 2</td>
 <td>Shadow</td>
-<td>120</td>
-<td>40</td>
-<td>18</td>
-</tr>
+<td>900M</td>
+</tr><tr>
+<td class="bronze">🥉 3</td>
+<td>Dragon</td>
+<td>700M</td>
+</tr><tr>
+<td>4</td>
+<td>Knight</td>
+<td>500M</td>
+</tr><tr>
+<td>5</td>
+<td>Warrior</td>
+<td>300M</td>
+</tr></tbody>
+</table><script>
+document.getElementById("searchInput").addEventListener("keyup", function() {
+let filter = this.value.toUpperCase();
+let rows = document.querySelectorAll("#leaderboardTable tbody tr");
 
-</table>
-
-</body>
+rows.forEach(row => {
+let player = row.cells[1].textContent.toUpperCase();
+row.style.display = player.includes(filter) ? "" : "none";
+});
+});
+</script></body>
 </html>
