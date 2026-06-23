@@ -1,233 +1,442 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Leaderboard Admin</title><style>
-body{
-    font-family:Arial,sans-serif;
-    background:#111;
-    color:white;
-    margin:0;
-    padding:20px;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Lords Mobile Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.login-box,
-.admin-panel{
-    max-width:800px;
-    margin:auto;
-    background:#222;
-    padding:20px;
-    border-radius:10px;
-}
+        /* Login Screen */
+        .login-container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
 
-input{
-    width:100%;
-    padding:10px;
-    margin:5px 0;
-    border:none;
-    border-radius:5px;
-}
+        .login-container h2 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
 
-button{
-    padding:10px 15px;
-    margin:5px;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
-}
+        .login-container p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+        }
 
-.add-btn{
-    background:green;
-    color:white;
-}
+        .login-container .lock-icon {
+            font-size: 3em;
+            color: #1e3c72;
+            margin-bottom: 15px;
+        }
 
-.delete-btn{
-    background:red;
-    color:white;
-}
+        .login-input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            transition: border-color 0.2s;
+        }
 
-.logout-btn{
-    background:orange;
-    color:white;
-}
+        .login-input:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
 
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:20px;
-}
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-th,td{
-    border:1px solid #444;
-    padding:10px;
-    text-align:center;
-}
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.4);
+        }
 
-th{
-    background:#333;
-}
-</style></head>
-<body><div class="login-box" id="loginBox">
-<h2>Admin Login</h2><input type="password"
-id="password"
-placeholder="Password">
+        .error-msg {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: none;
+        }
 
-<button onclick="login()">Login</button>
+        /* Admin Dashboard */
+        .admin-panel {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-<p id="error"></p>
-</div><div class="admin-panel"
-id="adminPanel"
-style="display:none;"><h2>🏆 Leaderboard Admin</h2><button class="logout-btn"
-onclick="logout()">
-Logout
-</button>
+        .admin-header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
 
-<input
-type="text"
-id="search"
-placeholder="Search Player"
-onkeyup="searchPlayer()">
+        .admin-header h1 {
+            color: #1e3c72;
+            font-size: 1.4em;
+        }
 
-<input
-type="text"
-id="playerName"
-placeholder="Player Name">
+        .logout-btn {
+            padding: 10px 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
 
-<input
-type="text"
-id="playerKills"
-placeholder="Kills">
+        .logout-btn:hover {
+            background: #c0392b;
+        }
 
-<button
-class="add-btn"
-onclick="addPlayer()">
-Add Player
-</button>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
 
-<table>
-<thead>
-<tr>
-<th>Rank</th>
-<th>Player</th>
-<th>Kills</th>
-<th>Delete</th>
-</tr>
-</thead><tbody id="playerTable">
-</tbody></table>
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-card i {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .stat-card.pages i { color: #2196f3; }
+        .stat-card.monsters i { color: #4caf50; }
+        .stat-card.tools i { color: #ff9800; }
+        .stat-card.status i { color: #9c27b0; }
+
+        .stat-card h3 {
+            color: #333;
+            font-size: 1.8em;
+            margin: 5px 0;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        .admin-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .admin-section h2 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .page-list {
+            list-style: none;
+        }
+
+        .page-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .page-list li:last-child {
+            border-bottom: none;
+        }
+
+        .page-list li .page-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .page-list li .page-name i {
+            color: #2a5298;
+        }
+
+        .page-list li a {
+            color: #2a5298;
+            text-decoration: none;
+            font-size: 0.85em;
+            padding: 6px 12px;
+            border: 1px solid #2a5298;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .page-list li a:hover {
+            background: #2a5298;
+            color: white;
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .quick-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.2s;
+            border: 1px solid #eee;
+        }
+
+        .quick-link:hover {
+            background: #e8f4fd;
+            border-color: #2a5298;
+        }
+
+        .quick-link i {
+            color: #2a5298;
+            font-size: 1.2em;
+        }
+
+        .site-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .site-info-item {
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .site-info-item label {
+            font-size: 0.8em;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .site-info-item p {
+            color: #333;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 600px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            .site-info {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div class="login-container" id="loginScreen">
+    <div class="lock-icon"><i class="fas fa-lock"></i></div>
+    <h2>Admin Panel</h2>
+    <p>Enter your password to access the admin dashboard</p>
+    <input type="password" class="login-input" id="passwordInput" placeholder="Enter password" onkeypress="if(event.key==='Enter')login()">
+    <button class="login-btn" onclick="login()"><i class="fas fa-sign-in-alt"></i> Login</button>
+    <div class="error-msg" id="errorMsg">Incorrect password. Try again.</div>
 </div>
+
+<!-- Admin Dashboard -->
+<div class="admin-panel" id="adminPanel">
+    <div class="admin-header">
+        <h1><i class="fas fa-crown"></i> Lords Mobile Hub - Admin</h1>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card pages">
+            <i class="fas fa-file-alt"></i>
+            <h3>6</h3>
+            <p>Total Pages</p>
+        </div>
+        <div class="stat-card monsters">
+            <i class="fas fa-dragon"></i>
+            <h3>24</h3>
+            <p>Monsters Listed</p>
+        </div>
+        <div class="stat-card tools">
+            <i class="fas fa-tools"></i>
+            <h3>4</h3>
+            <p>Tools Available</p>
+        </div>
+        <div class="stat-card status">
+            <i class="fas fa-check-circle"></i>
+            <h3>Live</h3>
+            <p>Site Status</p>
+        </div>
+    </div>
+
+    <!-- Site Pages -->
+    <div class="admin-section">
+        <h2><i class="fas fa-sitemap"></i> Site Pages</h2>
+        <ul class="page-list">
+            <li>
+                <span class="page-name"><i class="fas fa-home"></i> Home Page</span>
+                <a href="index.html" target="_blank">View <i class="fas fa-external-link-alt"></i></a>
+            </li>
+            <li>
+                <span class="page-name"><i class="fas fa-calculator"></i> Speedup Calculator</span>
+                <a href="calculator.html" target="_blank">View <i class="fas fa-external-link-alt"></i></a>
+            </li>
+            <li>
+                <span class="page-name"><i class="fas fa-dragon"></i> Monster Hunting</span>
+                <a href="hunting.html" target="_blank">View <i class="fas fa-external-link-alt"></i></a>
+            </li>
+            <li>
+                <span class="page-name"><i class="fas fa-users"></i> Training Calculator</span>
+                <a href="training.html" target="_blank">View <i class="fas fa-external-link-alt"></i></a>
+            </li>
+            <li>
+                <span class="page-name"><i class="fas fa-chess-knight"></i> Troop Composition</span>
+                <a href="composition.html" target="_blank">View <i class="fas fa-external-link-alt"></i></a>
+            </li>
+            <li>
+                <span class="page-name"><i class="fas fa-scroll"></i> Migration Guide</span>
+                <a href="migration.html" target="_blank">View <i class="fas fa-external-link-alt"></i></a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="admin-section">
+        <h2><i class="fas fa-bolt"></i> Quick Links</h2>
+        <div class="quick-links">
+            <a href="https://github.com/jash0077/lords-mobile-hunting" target="_blank" class="quick-link">
+                <i class="fab fa-github"></i> GitHub Repo
+            </a>
+            <a href="https://analytics.google.com" target="_blank" class="quick-link">
+                <i class="fas fa-chart-line"></i> Google Analytics
+            </a>
+            <a href="https://github.com/jash0077/lords-mobile-hunting/settings/pages" target="_blank" class="quick-link">
+                <i class="fas fa-cog"></i> GitHub Pages Settings
+            </a>
+            <a href="https://github.com/jash0077/lords-mobile-hunting/actions" target="_blank" class="quick-link">
+                <i class="fas fa-play-circle"></i> Deployments
+            </a>
+        </div>
+    </div>
+
+    <!-- Site Info -->
+    <div class="admin-section">
+        <h2><i class="fas fa-info-circle"></i> Site Information</h2>
+        <div class="site-info">
+            <div class="site-info-item">
+                <label>Website URL</label>
+                <p>jash0077.github.io/lords-mobile-hunting</p>
+            </div>
+            <div class="site-info-item">
+                <label>Hosting</label>
+                <p>GitHub Pages</p>
+            </div>
+            <div class="site-info-item">
+                <label>Analytics ID</label>
+                <p>G-C6GVRLX79L</p>
+            </div>
+            <div class="site-info-item">
+                <label>Owner</label>
+                <p>jash0077</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-const ADMIN_PASS = "52389012@Om";
+    const ADMIN_PASS = '52389012@Om';
 
-let players = JSON.parse(localStorage.getItem("players")) || [];
-
-function login() {
-    const pass = document.getElementById("password").value;
-
-    if(pass === ADMIN_PASS){
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("adminPanel").style.display = "block";
-        loadPlayers();
-    } else {
-        document.getElementById("error").innerText = "Wrong Password";
-    }
-}
-
-function logout() {
-    document.getElementById("loginBox").style.display = "block";
-    document.getElementById("adminPanel").style.display = "none";
-}
-
-function addPlayer() {
-
-    const name = document.getElementById("playerName").value;
-    const kills = document.getElementById("playerKills").value;
-
-    if(name === "" || kills === ""){
-        alert("Enter player name and kills");
-        return;
+    function login() {
+        const input = document.getElementById('passwordInput').value;
+        if (input === ADMIN_PASS) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.body.style.alignItems = 'flex-start';
+            sessionStorage.setItem('adminLoggedIn', 'true');
+        } else {
+            document.getElementById('errorMsg').style.display = 'block';
+            document.getElementById('passwordInput').value = '';
+        }
     }
 
-    players.push({
-        name:name,
-        kills:kills
-    });
+    function logout() {
+        sessionStorage.removeItem('adminLoggedIn');
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'block';
+        document.body.style.alignItems = 'center';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('errorMsg').style.display = 'none';
+    }
 
-    localStorage.setItem(
-        "players",
-        JSON.stringify(players)
-    );
+    // Check if already logged in this session
+    if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        document.body.style.alignItems = 'flex-start';
+    }
+</script>
 
-    document.getElementById("playerName").value = "";
-    document.getElementById("playerKills").value = "";
-
-    loadPlayers();
-}
-
-function deletePlayer(index){
-
-    players.splice(index,1);
-
-    localStorage.setItem(
-        "players",
-        JSON.stringify(players)
-    );
-
-    loadPlayers();
-}
-
-function loadPlayers(){
-
-    let table = document.getElementById("playerTable");
-
-    table.innerHTML = "";
-
-    players.sort((a,b)=>{
-
-        return parseFloat(b.kills) -
-               parseFloat(a.kills);
-
-    });
-
-    players.forEach((player,index)=>{
-
-        table.innerHTML += `
-        <tr>
-            <td>${index+1}</td>
-            <td>${player.name}</td>
-            <td>${player.kills}</td>
-            <td>
-                <button
-                class="delete-btn"
-                onclick="deletePlayer(${index})">
-                Delete
-                </button>
-            </td>
-        </tr>
-        `;
-
-    });
-}
-
-function searchPlayer(){
-
-    let filter =
-    document.getElementById("search")
-    .value.toLowerCase();
-
-    let rows =
-    document.querySelectorAll("#playerTable tr");
-
-    rows.forEach(row=>{
-
-        let text =
-        row.innerText.toLowerCase();
-
-        row.style.display =
-        text.includes(filter)
-        ? ""
-        : "none";
-
-    });
-}
-</script></body>
-</html>
+</body>
+                                                                           </html>
