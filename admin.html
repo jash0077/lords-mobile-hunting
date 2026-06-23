@@ -414,17 +414,61 @@
 <script> </div>
 </div>
 
-<!-- PASTE HTML HERE -->
+<!-- PASTE HTML HERE --> <div class="admin-section">
+    <h2>🏆 Leaderboard Manager</h2><input type="text" id="playerName" placeholder="Player Name">
+<input type="text" id="playerKills" placeholder="Kills">
 
-<div class="admin-section">
-    <h2>🏆 Leaderboard Manager</h2>
+<button onclick="addPlayer()">Add Player</button>
 
-    <input type="text" id="playerName" placeholder="Player Name">
-    <input type="text" id="playerKills" placeholder="Kills">
+<div id="playerList"></div>
 
-    <button onclick="addPlayer()">Add Player</button>
+</div><script>
+const ADMIN_PASS = '52389012@Om';
 
-    <div id="playerList"></div>
+function login() {
+    const input = document.getElementById('passwordInput').value;
+
+    if (input === ADMIN_PASS) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        document.body.style.alignItems = 'flex-start';
+        sessionStorage.setItem('adminLoggedIn', 'true');
+    } else {
+        document.getElementById('errorMsg').style.display = 'block';
+        document.getElementById('passwordInput').value = '';
+    }
+}
+
+function logout() {
+    sessionStorage.removeItem('adminLoggedIn');
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'block';
+    document.body.style.alignItems = 'center';
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('errorMsg').style.display = 'none';
+}
+
+function addPlayer() {
+    let name = document.getElementById("playerName").value;
+    let kills = document.getElementById("playerKills").value;
+
+    if(name === "" || kills === "") return;
+
+    document.getElementById("playerList").innerHTML +=
+        "<p>" + name + " - " + kills + "</p>";
+
+    document.getElementById("playerName").value = "";
+    document.getElementById("playerKills").value = "";
+}
+
+if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    document.body.style.alignItems = 'flex-start';
+}
+</script>
+
+
 </div>
 
 <script>
