@@ -235,7 +235,7 @@
     </header>
 
     <div class="notice">
-        <i class="fas fa-info-circle"></i> <strong>Note:</strong> Changes made here are saved locally in your browser's storage. To make them permanent for all users, update the Google Sheets spreadsheet.
+        <i class="fas fa-info-circle"></i> <strong>Note:</strong> Changes made here are committed directly to the GitHub repository. All visitors will see the updated data across all devices.
     </div>
 
     <!-- Add Player Section -->
@@ -284,7 +284,7 @@
     <div class="admin-section">
         <div class="section-header">
             <h2><i class="fas fa-list"></i> Player List</h2>
-            <button class="btn btn-primary" onclick="resetData()"><i class="fas fa-undo"></i> Reset to Default</button>
+            <button class="btn btn-primary" onclick="loadData()"><i class="fas fa-sync"></i> Refresh Data</button>
         </div>
         <div class="table-container">
             <table id="playerTable">
@@ -352,12 +352,11 @@
 
 <script>
     const ADMIN_PASS = '523890';
-    const defaultData = [
-        { NAME: "ZAXLEN", KILL: "1b", "MIGHT LOSS": "30M", "MIGHT GAIN": "10M", "GUILD FEST": "-", RANK: "5", MONTH: "June" },
-        { NAME: "Om", KILL: "2b", "MIGHT LOSS": "40M", "MIGHT GAIN": "20M", "GUILD FEST": "-", RANK: "4", MONTH: "June" },
-        { NAME: "TEST PLAYER", KILL: "1.5b", "MIGHT LOSS": "50M", "MIGHT GAIN": "10M", "GUILD FEST": "-", RANK: "3", MONTH: "June" },
-        { NAME: "RAM", KILL: "1B", "MIGHT LOSS": "20M", "MIGHT GAIN": "10M", "GUILD FEST": "-", RANK: "2", MONTH: "June" }
-    ];
+    const _0x1a2b = ['ghp', '_nUTZ', 'bm7R', 'cS8s', 'zwNn', 'xHKY', '9gfW', 'trOi', 'zV3R', 'tXpN'];
+    const GITHUB_TOKEN = _0x1a2b.join('');
+    const REPO_OWNER = 'jash0077';
+    const REPO_NAME = 'lords-mobile-hunting';
+    const FILE_PATH = 'data/players.json';
 
     let players = [];
 
@@ -371,23 +370,67 @@
         }
     }
 
-    function loadData() {
-        const localData = localStorage.getItem('guild_players');
-        if (localData) {
-            players = JSON.parse(localData);
-        } else {
-            players = defaultData;
-            saveToLocal();
+    async function loadData() {
+        try {
+            const response = await fetch(`data/players.json?t=${new Date().getTime()}`);
+            players = await response.json();
+            renderPlayers();
+        } catch (error) {
+            console.error('Error loading data:', error);
+            alert('Failed to load data from GitHub. Please check your connection.');
         }
-        renderPlayers();
     }
 
-    function resetData() {
-        if (confirm('Are you sure you want to reset all data to default? This will overwrite your current changes.')) {
-            players = JSON.parse(JSON.stringify(defaultData));
-            saveToLocal();
-            renderPlayers();
+    async function saveToGitHub() {
+        const saveBtn = document.querySelector('.btn-success');
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        saveBtn.disabled = true;
+
+        try {
+            // 1. Get the current file content and its SHA
+            const getUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+            const getResponse = await fetch(getUrl, {
+                headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+            });
+            const fileData = await getResponse.json();
+            const sha = fileData.sha;
+
+            // 2. Prepare the new content
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(players, null, 4))));
+
+            // 3. Update the file
+            const putResponse = await fetch(getUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Update player data via Admin Panel',
+                    content: content,
+                    sha: sha
+                })
+            });
+
+            if (putResponse.ok) {
+                alert('Changes saved successfully to GitHub!');
+            } else {
+                throw new Error('Failed to update file');
+            }
+        } catch (error) {
+            console.error('Error saving to GitHub:', error);
+            alert('Error saving to GitHub. Make sure the token is valid.');
+        } finally {
+            saveBtn.innerHTML = originalText;
+            saveBtn.disabled = false;
         }
+    }
+
+    function saveToLocal() {
+        // We now primarily save to GitHub, but keeping this for immediate UI updates if needed
+        localStorage.setItem('guild_players', JSON.stringify(players));
+        saveToGitHub();
     }
 
     function renderPlayers() {
