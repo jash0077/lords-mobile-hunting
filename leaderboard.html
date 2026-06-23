@@ -606,52 +606,31 @@
     </div>
 
     <script>
+        const defaultData = [
+            { NAME: "ZAXLEN", KILL: "1b", "MIGHT LOSS": "30M", "MIGHT GAIN": "10M", "GUILD FEST": "-", RANK: "5", MONTH: "June" },
+            { NAME: "Om", KILL: "2b", "MIGHT LOSS": "40M", "MIGHT GAIN": "20M", "GUILD FEST": "-", RANK: "4", MONTH: "June" },
+            { NAME: "TEST PLAYER", KILL: "1.5b", "MIGHT LOSS": "50M", "MIGHT GAIN": "10M", "GUILD FEST": "-", RANK: "3", MONTH: "June" },
+            { NAME: "RAM", KILL: "1B", "MIGHT LOSS": "20M", "MIGHT GAIN": "10M", "GUILD FEST": "-", RANK: "2", MONTH: "June" }
+        ];
+
         let allData = [];
         let filteredData = [];
-        const SHEET_ID = "1jqCbcbNDCgFLc82GTvoAj8JFr3l5af5grqMCAOt-ixI";
-        const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
-        // Fetch data from Google Sheets or Local Storage
-        async function fetchLeaderboardData() {
-            try {
-                const localData = localStorage.getItem('guild_players');
-                if (localData) {
-                    allData = JSON.parse(localData);
-                } else {
-                    const response = await fetch(CSV_URL);
-                    const csv = await response.text();
-                    allData = parseCSV(csv);
-                }
-                filteredData = [...allData];
-                populateMonthDropdown();
-                renderPodium();
-                renderGuildStats();
-                renderLeaderboard();
-                renderGuildFest();
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                document.querySelector('body').innerHTML += '<p style="color:red;text-align:center;">Error loading data. Please refresh the page.</p>';
+        // Load data from Local Storage
+        function fetchLeaderboardData() {
+            const localData = localStorage.getItem('guild_players');
+            if (localData) {
+                allData = JSON.parse(localData);
+            } else {
+                allData = defaultData;
+                localStorage.setItem('guild_players', JSON.stringify(defaultData));
             }
-        }
-
-        // Parse CSV data
-        function parseCSV(csv) {
-            const lines = csv.trim().split('\n');
-            if (lines.length < 2) return [];
-
-            const headers = lines[0].split(',').map(h => h.trim().toUpperCase());
-            const data = [];
-
-            for (let i = 1; i < lines.length; i++) {
-                const values = lines[i].split(',').map(v => v.trim());
-                const obj = {};
-                headers.forEach((header, index) => {
-                    obj[header] = values[index] || '';
-                });
-                if (obj.NAME) data.push(obj);
-            }
-
-            return data;
+            filteredData = [...allData];
+            populateMonthDropdown();
+            renderPodium();
+            renderGuildStats();
+            renderLeaderboard();
+            renderGuildFest();
         }
 
         // Populate month dropdown

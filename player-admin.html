@@ -284,7 +284,7 @@
     <div class="admin-section">
         <div class="section-header">
             <h2><i class="fas fa-list"></i> Player List</h2>
-            <button class="btn btn-primary" onclick="syncWithSheet()"><i class="fas fa-sync"></i> Reload from Sheet</button>
+            <button class="btn btn-primary" onclick="resetData()"><i class="fas fa-undo"></i> Reset to Default</button>
         </div>
         <div class="table-container">
             <table id="playerTable">
@@ -352,9 +352,14 @@
 
 <script>
     const ADMIN_PASS = '523890';
+    const defaultData = [
+        { NAME: "ZAXLEN", KILL: "1b", "MIGHT LOSS": "30M", "MIGHT GAIN": "10M", "GUILD FEST": "-", RANK: "5", MONTH: "June" },
+        { NAME: "Om", KILL: "2b", "MIGHT LOSS": "40M", "MIGHT GAIN": "20M", "GUILD FEST": "-", RANK: "4", MONTH: "June" },
+        { NAME: "TEST PLAYER", KILL: "1.5b", "MIGHT LOSS": "50M", "MIGHT GAIN": "10M", "GUILD FEST": "-", RANK: "3", MONTH: "June" },
+        { NAME: "RAM", KILL: "1B", "MIGHT LOSS": "20M", "MIGHT GAIN": "10M", "GUILD FEST": "-", RANK: "2", MONTH: "June" }
+    ];
+
     let players = [];
-    const SHEET_ID = "1jqCbcbNDCgFLc82GTvoAj8JFr3l5af5grqMCAOt-ixI";
-    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
     function checkLogin() {
         const pass = document.getElementById('adminPassword').value;
@@ -366,41 +371,23 @@
         }
     }
 
-    async function loadData() {
+    function loadData() {
         const localData = localStorage.getItem('guild_players');
         if (localData) {
             players = JSON.parse(localData);
-            renderPlayers();
         } else {
-            await syncWithSheet();
+            players = defaultData;
+            saveToLocal();
         }
+        renderPlayers();
     }
 
-    async function syncWithSheet() {
-        try {
-            const response = await fetch(CSV_URL);
-            const csv = await response.text();
-            players = parseCSV(csv);
+    function resetData() {
+        if (confirm('Are you sure you want to reset all data to default? This will overwrite your current changes.')) {
+            players = JSON.parse(JSON.stringify(defaultData));
             saveToLocal();
             renderPlayers();
-        } catch (error) {
-            alert('Error syncing with sheet');
         }
-    }
-
-    function parseCSV(csv) {
-        const lines = csv.trim().split('\n');
-        const headers = lines[0].split(',').map(h => h.trim().toUpperCase());
-        const data = [];
-        for (let i = 1; i < lines.length; i++) {
-            const values = lines[i].split(',').map(v => v.trim());
-            const obj = {};
-            headers.forEach((header, index) => {
-                obj[header] = values[index] || '';
-            });
-            if (obj.NAME) data.push(obj);
-        }
-        return data;
     }
 
     function renderPlayers() {
