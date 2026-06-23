@@ -611,12 +611,17 @@
         const SHEET_ID = "1jqCbcbNDCgFLc82GTvoAj8JFr3l5af5grqMCAOt-ixI";
         const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
-        // Fetch data from Google Sheets
+        // Fetch data from Google Sheets or Local Storage
         async function fetchLeaderboardData() {
             try {
-                const response = await fetch(CSV_URL);
-                const csv = await response.text();
-                allData = parseCSV(csv);
+                const localData = localStorage.getItem('guild_players');
+                if (localData) {
+                    allData = JSON.parse(localData);
+                } else {
+                    const response = await fetch(CSV_URL);
+                    const csv = await response.text();
+                    allData = parseCSV(csv);
+                }
                 filteredData = [...allData];
                 populateMonthDropdown();
                 renderPodium();
@@ -929,5 +934,9 @@
         // Load data on page load
         window.addEventListener('load', fetchLeaderboardData);
     </script>
+    <div style="position: fixed; bottom: 20px; left: 20px; display: flex; gap: 10px;">
+        <a href="admin.html" style="background: rgba(30, 41, 59, 0.8); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; border: 1px solid #334155; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"><i class="fas fa-cog"></i></a>
+        <a href="player-admin.html" style="background: rgba(37, 99, 235, 0.8); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; border: 1px solid #334155; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"><i class="fas fa-user-shield"></i></a>
+    </div>
 </body>
 </html>
