@@ -46,50 +46,101 @@ td{
     border-bottom:1px solid #334155;
 }
 
-.gold{color:gold;font-weight:bold;}
-.silver{color:silver;font-weight:bold;}
-.bronze{color:#cd7f32;font-weight:bold;}
+.gold{
+    color:gold;
+    font-weight:bold;
+}
+
+.silver{
+    color:silver;
+    font-weight:bold;
+}
+
+.bronze{
+    color:#cd7f32;
+    font-weight:bold;
+}
 
 tr:hover{
     background:#334155;
 }
-</style></head><body><h1>🏆 Guild Kill Leaderboard</h1><input type="text" id="searchInput" class="search-box" placeholder="Search Player..."><table id="leaderboardTable">
-<thead>
+</style></head><body><h1>🏆 Guild Kill Leaderboard</h1><input
+type="text"
+id="searchInput"
+class="search-box"
+placeholder="Search Player...">
+
+<table id="leaderboardTable"><thead>
 <tr>
 <th>Rank</th>
 <th>Player</th>
 <th>Kills</th>
 </tr>
-</thead><tbody><tr>
-<td class="gold">🥇 1</td>
-<td>JASH</td>
-<td>1.8B</td>
-</tr><tr>
-<td class="silver">🥈 2</td>
-<td>Shadow</td>
-<td>900M</td>
-</tr><tr>
-<td class="bronze">🥉 3</td>
-<td>Dragon</td>
-<td>700M</td>
-</tr><tr>
-<td>4</td>
-<td>Knight</td>
-<td>500M</td>
-</tr><tr>
-<td>5</td>
-<td>Warrior</td>
-<td>300M</td>
-</tr></tbody>
-</table><script>
-document.getElementById("searchInput").addEventListener("keyup", function() {
-let filter = this.value.toUpperCase();
-let rows = document.querySelectorAll("#leaderboardTable tbody tr");
+</thead><tbody>
+</tbody></table><script>
 
-rows.forEach(row => {
-let player = row.cells[1].textContent.toUpperCase();
-row.style.display = player.includes(filter) ? "" : "none";
+const sheetID = "1jqCbcbNDCgFLc82GTvoAj8JFr3l5af5grqMCAOt-ixI";
+const url = `https://opensheet.elk.sh/${sheetID}/Sheet1`;
+
+fetch(url)
+.then(response => response.json())
+.then(data => {
+
+    const tbody =
+    document.querySelector("#leaderboardTable tbody");
+
+    tbody.innerHTML = "";
+
+    data.forEach((player,index) => {
+
+        let rank = index + 1;
+
+        if(rank === 1){
+            rank = '<span class="gold">🥇 1</span>';
+        }
+        else if(rank === 2){
+            rank = '<span class="silver">🥈 2</span>';
+        }
+        else if(rank === 3){
+            rank = '<span class="bronze">🥉 3</span>';
+        }
+
+        tbody.innerHTML += `
+        <tr>
+            <td>${rank}</td>
+            <td>${player.NAME}</td>
+            <td>${player.KILL}</td>
+        </tr>
+        `;
+    });
+
 });
+
+document.getElementById("searchInput")
+.addEventListener("keyup", function(){
+
+    let filter =
+    this.value.toUpperCase();
+
+    let rows =
+    document.querySelectorAll(
+    "#leaderboardTable tbody tr"
+    );
+
+    rows.forEach(row => {
+
+        let player =
+        row.cells[1].textContent
+        .toUpperCase();
+
+        row.style.display =
+        player.includes(filter)
+        ? ""
+        : "none";
+
+    });
+
 });
+
 </script></body>
 </html>
