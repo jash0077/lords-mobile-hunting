@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Member - Guild Leaderboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css"> <!-- Link to existing style.css for theme -->
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+        .back-btn {
+            padding: 10px 20px;
+            background: #334155;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .back-btn:hover { background: #475569; }
+
+        .member-list-section {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #334155;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 15px;
+        }
+        .section-header h2 {
+            color: #e2e8f0;
+            font-size: 1.5em;
+        }
+        .section-header p {
+            color: #94a3b8;
+            font-size: 0.9em;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .search-bar input {
+            width: 250px;
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+        }
+        .sort-dropdown select {
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+        }
+        .player-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .player-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .player-card:hover { transform: translateY(-5px); }
+        .player-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .player-card-header h3 {
+            font-size: 1.4em;
+            color: #2563eb;
+        }
+        .rank-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: #0f172a;
+        }
+        .rank-badge.r5 { background: #fbbf24; }
+        .rank-badge.r4 { background: #f97316; }
+        .rank-badge.r3 { background: #ef4444; }
+        .rank-badge.r2 { background: #8b5cf6; }
+        .rank-badge.r1 { background: #06b6d4; }
+
+        .player-card-body p {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+            border-bottom: 1px dashed #334155;
+        }
+        .player-card-body p:last-child { border-bottom: none; }
+        .player-card-body span:first-child { color: #94a3b8; }
+        .player-card-body span:last-child { font-weight: 600; }
+
+        .view-profile-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #2563eb;
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+        .view-profile-btn:hover { background: #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-users"></i> Check Member</h1>
+            <a href="leaderboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Leaderboard</a>
+        </header>
+
+        <div class="member-list-section">
+            <div class="section-header">
+                <div>
+                    <h2>Active Members (<span id="activeMembersCount">0</span> Players)</h2>
+                    <p>Current power, kills, and rank for all guild members. Click View Profile to see all charts.</p>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="search-bar">
+                    <input type="text" id="members-search" placeholder="Search name or @telegram...">
+                </div>
+                <div class="sort-dropdown">
+                    <select id="members-sort">
+                        <option value="rank">Sort by Rank</option>
+                        <option value="kills">Sort by Kills</option>
+                        <option value="might">Sort by Might</option>
+                        <option value="name">Sort by Name</option>
+                    </select>
+                </div>
+            </div>
+            <div class="player-cards-grid" id="playerCardsGrid">
+                <!-- Player cards will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allPlayers = [];
+
+        async function loadPlayers() {
+            try {
+                const response = await fetch("data/players.json?t=" + new Date().getTime());
+                allPlayers = await response.json();
+                renderPlayerCards(allPlayers);
+                document.getElementById("activeMembersCount").textContent = allPlayers.length;
+            } catch (error) {
+                console.error("Error loading players:", error);
+                document.getElementById("playerCardsGrid").innerHTML = "<p style=\"color:red;text-align:center;\">Error loading player data.</p>";
+            }
+        }
+
+        function renderPlayerCards(playersToRender) {
+            const grid = document.getElementById("playerCardsGrid");
+            grid.innerHTML = "";
+
+            playersToRender.forEach(player => {
+                const card = document.createElement("div");
+                card.className = "player-card";
+                card.innerHTML = `
+                    <div class="player-card-header">
+                        <h3>${player.NAME}</h3>
+                        <span class="rank-badge r${player.RANK}">R${player.RANK}</span>
+                    </div>
+                    <div class="player-card-body">
+                        <p><span>Telegram:</span> <span>${player.TELEGRAM || '-'}</span></p>
+                        <p><span>Might:</span> <span>${player.MIGHT || '-'}</span></p>
+                        <p><span>Kills:</span> <span>${player.KILL || '-'}</span></p>
+                    </div>
+                    <a href="player.html?name=${encodeURIComponent(player.NAME)}" class="view-profile-btn">View Profile</a>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        document.getElementById("members-search").addEventListener("input", (event) => {
+            const searchTerm = event.target.value.toLowerCase();
+            const filteredPlayers = allPlayers.filter(player => 
+                player.NAME.toLowerCase().includes(searchTerm) || 
+                (player.TELEGRAM && player.TELEGRAM.toLowerCase().includes(searchTerm))
+            );
+            renderPlayerCards(filteredPlayers);
+        });
+
+        document.getElementById("members-sort").addEventListener("change", (event) => {
+            const sortBy = event.target.value;
+            let sortedPlayers = [...allPlayers];
+
+            if (sortBy === "rank") {
+                sortedPlayers.sort((a, b) => parseInt(b.RANK) - parseInt(a.RANK));
+            } else if (sortBy === "kills") {
+                sortedPlayers.sort((a, b) => parseValue(b.KILL) - parseValue(a.KILL));
+            } else if (sortBy === "might") {
+                sortedPlayers.sort((a, b) => parseValue(b.MIGHT) - parseValue(a.MIGHT));
+            } else if (sortBy === "name") {
+                sortedPlayers.sort((a, b) => a.NAME.localeCompare(b.NAME));
+            }
+            renderPlayerCards(sortedPlayers);
+        });
+
+        function parseValue(value) {
+            if (!value) return 0;
+            value = value.toUpperCase().replace(/,/g, '');
+            if (value.endsWith('B')) return parseFloat(value) * 1000000000;
+            if (value.endsWith('M')) return parseFloat(value) * 1000000;
+            if (value.endsWith('K')) return parseFloat(value) * 1000;
+            return parseFloat(value);
+        }
+
+        loadPlayers();
+    </script>
+</body>
+</html>
