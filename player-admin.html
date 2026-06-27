@@ -428,14 +428,17 @@
     }
 
     function saveToLocal() {
-        // We now primarily save to GitHub, but keeping this for immediate UI updates if needed
-        localStorage.setItem('guild_players', JSON.stringify(players));
+        // We now primarily save to GitHub
         saveToGitHub();
     }
 
     function renderPlayers() {
         const tbody = document.querySelector('#playerTable tbody');
         tbody.innerHTML = '';
+        if (!players || players.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No players found.</td></tr>';
+            return;
+        }
         players.forEach((p, index) => {
             const row = document.createElement('tr');
             const rankClass = `r${p.RANK || '1'}`;
@@ -447,8 +450,8 @@
                 <td>${p['MIGHT GAIN'] || '-'}</td>
                 <td>${p['GUILD FEST'] || '-'}</td>
                 <td class="actions-cell">
-                    <button class="btn btn-primary" onclick="openEdit(${index})"><i class="fas fa-edit"></i></button>
-                    <button class="btn btn-danger" onclick="deletePlayer(${index})"><i class="fas fa-trash"></i></button>
+                    <button class="btn btn-primary" title="Edit" onclick="openEdit(${index})"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-danger" title="Delete" onclick="deletePlayer(${index})"><i class="fas fa-trash"></i></button>
                 </td>
             `;
             tbody.appendChild(row);
