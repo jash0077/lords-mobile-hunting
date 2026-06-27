@@ -77,7 +77,9 @@ const translations = {
         "speed_card_description": "Calculate research and construction time with boosts and guild helps.",
         "troop_composition_calculator": "Troop Composition Calculator",
         "troop_composition_label": "Troop Composition:",
-        "research_speed_calculator": "Research & Construction Speed Calculator"
+        "research_speed_calculator": "Research & Construction Speed Calculator",
+        "war": "War",
+        "war_card_description": "Track guild kills, might loss, and war rankings."
     },
     "es": {
         "app_title": "Lords Mobile Hub",
@@ -157,7 +159,9 @@ const translations = {
         "speed_card_description": "Calcula el tiempo de investigación y construcción con bonificaciones y ayudas de gremio.",
         "troop_composition_calculator": "Calculadora de Composición de Tropas",
         "troop_composition_label": "Composición de Tropas:",
-        "research_speed_calculator": "Calculadora de Velocidad de Investigación y Construcción"
+        "research_speed_calculator": "Calculadora de Velocidad de Investigación y Construcción",
+        "war": "Guerra",
+        "war_card_description": "Rastrea las bajas del gremio, la pérdida de poder y las clasificaciones de guerra."
     },
     "ja": {
         "app_title": "ロードモバイルハブ",
@@ -237,7 +241,9 @@ const translations = {
         "speed_card_description": "ブーストとギルドヘルプによる研究・建設時間を計算します。",
         "troop_composition_calculator": "部隊編成計算機",
         "troop_composition_label": "部隊編成:",
-        "research_speed_calculator": "研究 & 建設速度計算機"
+        "research_speed_calculator": "研究 & 建設速度計算機",
+        "war": "戦争",
+        "war_card_description": "ギルドの討伐数、パワー損失、戦争ランキングを追跡します。"
     },
     "ar": {
         "app_title": "لوردس موبايل هاب",
