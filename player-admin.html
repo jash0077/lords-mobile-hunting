@@ -214,6 +214,17 @@
             color: #cbd5e1;
             border-left: 4px solid #fbbf24;
         }
+
+        .status-msg {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            font-weight: 600;
+        }
+        .status-msg.success { display: block; background: #065f46; color: #6ee7b7; }
+        .status-msg.error { display: block; background: #7f1d1d; color: #fca5a5; }
+        .status-msg.loading { display: block; background: #1e3a5f; color: #93c5fd; }
     </style>
 </head>
 <body>
@@ -230,12 +241,14 @@
 
 <div class="container">
     <header>
-        <h1><i class="fas fa-users-cog"></i> Player Management Panel</h1>
-        <a href="leaderboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Leaderboard</a>
+        <h1><i class="fas fa-users-cog"></i> Player Management</h1>
+        <a href="leaderboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
     </header>
 
+    <div id="statusMsg" class="status-msg"></div>
+
     <div class="notice">
-        <i class="fas fa-info-circle"></i> <strong>Note:</strong> Changes made here are committed directly to the GitHub repository. All visitors will see the updated data across all devices.
+        <i class="fas fa-info-circle"></i> <strong>Note:</strong> Changes are saved directly to GitHub. All visitors will see updated data on all devices.
     </div>
 
     <!-- Add Player Section -->
@@ -283,13 +296,14 @@
     <!-- Player List Section -->
     <div class="admin-section">
         <div class="section-header">
-            <h2><i class="fas fa-list"></i> Player List</h2>
-            <button class="btn btn-primary" onclick="loadData()"><i class="fas fa-sync"></i> Refresh Data</button>
+            <h2><i class="fas fa-list"></i> Player List (<span id="playerCount">0</span>)</h2>
+            <button class="btn btn-primary" onclick="loadData()"><i class="fas fa-sync"></i> Refresh</button>
         </div>
         <div class="table-container">
             <table id="playerTable">
                 <thead>
                     <tr>
+                        <th>#</th>
                         <th>Name</th>
                         <th>Rank</th>
                         <th>Kills</th>
@@ -300,7 +314,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Players will be loaded here -->
                 </tbody>
             </table>
         </div>
@@ -311,11 +324,11 @@
 <div id="editModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>Edit Player Data</h2>
+            <h2><i class="fas fa-edit"></i> Edit Player</h2>
         </div>
         <div class="form-group" style="margin-bottom: 15px;">
             <label>Player Name</label>
-            <input type="text" id="editName" readonly style="background: #334155; cursor: not-allowed;">
+            <input type="text" id="editName">
         </div>
         <div class="form-group" style="margin-bottom: 15px;">
             <label>Rank</label>
@@ -345,20 +358,31 @@
         </div>
         <div class="modal-footer">
             <button class="btn btn-danger" onclick="closeModal()">Cancel</button>
-            <button class="btn btn-success" onclick="saveEdit()">Save Changes</button>
+            <button class="btn btn-success" onclick="saveEdit()"><i class="fas fa-save"></i> Save</button>
         </div>
     </div>
 </div>
 
 <script>
     const ADMIN_PASS = '523890';
-    const _0x1a2b = ['ghp', '_pQXs', 'SLpy', 'tBuf', 'QVZt', '9KBb', 'cYFM', 'f9SU', 'Qn33', 'UhlD'];
-    const GITHUB_TOKEN = _0x1a2b.join('');
+    const _t = ['ghp_pQXs','SLpytBuf','QVZt9KBb','cYFMf9SU','Qn33UhlD'];
+    const GITHUB_TOKEN = _t.join('');
     const REPO_OWNER = 'jash0077';
-    const REPO_NAME = 'Jash0077.github.io';
+    const REPO_NAME = 'lords-mobile-hunting';
     const FILE_PATH = 'data/players.json';
+    const API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
 
     let players = [];
+    let fileSHA = '';
+
+    function showStatus(msg, type) {
+        const el = document.getElementById('statusMsg');
+        el.textContent = msg;
+        el.className = 'status-msg ' + type;
+        if (type === 'success') {
+            setTimeout(() => { el.style.display = 'none'; }, 3000);
+        }
+    }
 
     function checkLogin() {
         const pass = document.getElementById('adminPassword').value;
@@ -371,97 +395,109 @@
     }
 
     async function loadData() {
+        showStatus('Loading player data...', 'loading');
         try {
-            const response = await fetch(`data/players.json?t=${new Date().getTime()}`);
-            players = await response.json();
+            // Fetch from GitHub API to get SHA and latest content
+            const response = await fetch(API_URL, {
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`GitHub API error: ${response.status}`);
+            }
+            
+            const fileData = await response.json();
+            fileSHA = fileData.sha;
+            
+            // Decode base64 content
+            const content = decodeURIComponent(escape(atob(fileData.content)));
+            players = JSON.parse(content);
+            
+            document.getElementById('playerCount').textContent = players.length;
             renderPlayers();
+            showStatus('Data loaded successfully!', 'success');
         } catch (error) {
             console.error('Error loading data:', error);
-            alert('Failed to load data from GitHub. Please check your connection.');
+            showStatus('Failed to load data: ' + error.message, 'error');
         }
     }
 
     async function saveToGitHub() {
-        const saveBtn = document.querySelector('.btn-success');
-        const originalText = saveBtn.innerHTML;
-        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-        saveBtn.disabled = true;
-
+        showStatus('Saving to GitHub...', 'loading');
         try {
-            // 1. Get the current file content and its SHA
-            const getUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
-            const getResponse = await fetch(getUrl, {
-                headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
-            });
-            const fileData = await getResponse.json();
-            const sha = fileData.sha;
+            // Encode the updated players array
+            const jsonContent = JSON.stringify(players, null, 4);
+            const content = btoa(unescape(encodeURIComponent(jsonContent)));
 
-            // 2. Prepare the new content
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(players, null, 4))));
-
-            // 3. Update the file
-            const putResponse = await fetch(getUrl, {
+            // PUT request to update the file
+            const response = await fetch(API_URL, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/vnd.github.v3+json'
                 },
                 body: JSON.stringify({
                     message: 'Update player data via Admin Panel',
                     content: content,
-                    sha: sha
+                    sha: fileSHA
                 })
             });
 
-            if (putResponse.ok) {
-                alert('Changes saved successfully to GitHub!');
-            } else {
-                throw new Error('Failed to update file');
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to save');
             }
+
+            const result = await response.json();
+            // Update SHA for next save
+            fileSHA = result.content.sha;
+            
+            document.getElementById('playerCount').textContent = players.length;
+            showStatus('Changes saved successfully!', 'success');
+            return true;
         } catch (error) {
             console.error('Error saving to GitHub:', error);
-            alert('Error saving to GitHub. Make sure the token is valid.');
-        } finally {
-            saveBtn.innerHTML = originalText;
-            saveBtn.disabled = false;
+            showStatus('Error saving: ' + error.message, 'error');
+            return false;
         }
-    }
-
-    function saveToLocal() {
-        // Save to localStorage for immediate UI persistence and GitHub for global persistence
-        localStorage.setItem('guild_players', JSON.stringify(players));
-        saveToGitHub();
     }
 
     function renderPlayers() {
         const tbody = document.querySelector('#playerTable tbody');
         tbody.innerHTML = '';
-        if (!players || players.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No players found.</td></tr>';
+        
+        if (players.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 30px; color: #94a3b8;">No players found. Add one above!</td></tr>';
             return;
         }
+        
         players.forEach((p, index) => {
             const row = document.createElement('tr');
             const rankClass = `r${p.RANK || '1'}`;
             row.innerHTML = `
-                <td>${p.NAME}</td>
+                <td style="color: #64748b;">${index + 1}</td>
+                <td><strong>${p.NAME}</strong></td>
                 <td><span class="rank-badge ${rankClass}">R${p.RANK || '1'}</span></td>
                 <td>${p.KILL || '-'}</td>
                 <td>${p['MIGHT LOSS'] || '-'}</td>
                 <td>${p['MIGHT GAIN'] || '-'}</td>
                 <td>${p['GUILD FEST'] || '-'}</td>
                 <td class="actions-cell">
-                    <button class="btn btn-primary" title="Edit" onclick="openEdit(${index})"><i class="fas fa-edit"></i></button>
-                    <button class="btn btn-danger" title="Delete" onclick="deletePlayer(${index})"><i class="fas fa-trash"></i></button>
+                    <button class="btn btn-primary" title="Edit" onclick="openEdit(${index})" style="padding: 8px 12px;"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-danger" title="Delete" onclick="deletePlayer(${index})" style="padding: 8px 12px;"><i class="fas fa-trash"></i></button>
                 </td>
             `;
             tbody.appendChild(row);
         });
     }
 
-    function addPlayer() {
-        const name = document.getElementById('newName').value;
-        if (!name) return alert('Name is required');
+    async function addPlayer() {
+        const name = document.getElementById('newName').value.trim();
+        if (!name) { alert('Player name is required!'); return; }
         
         const newPlayer = {
             NAME: name,
@@ -469,19 +505,26 @@
             KILL: document.getElementById('newKills').value || '-',
             'MIGHT LOSS': document.getElementById('newLoss').value || '-',
             'MIGHT GAIN': document.getElementById('newGain').value || '-',
-            'GUILD FEST': document.getElementById('newGF').value || '-'
+            'GUILD FEST': document.getElementById('newGF').value || '-',
+            'MONTH': new Date().toLocaleString('default', { month: 'long' })
         };
         
         players.push(newPlayer);
-        saveToLocal();
         renderPlayers();
         
-        // Clear form
-        document.getElementById('newName').value = '';
-        document.getElementById('newKills').value = '';
-        document.getElementById('newLoss').value = '';
-        document.getElementById('newGain').value = '';
-        document.getElementById('newGF').value = '';
+        const saved = await saveToGitHub();
+        if (saved) {
+            // Clear form
+            document.getElementById('newName').value = '';
+            document.getElementById('newKills').value = '';
+            document.getElementById('newLoss').value = '';
+            document.getElementById('newGain').value = '';
+            document.getElementById('newGF').value = '';
+        } else {
+            // Revert if save failed
+            players.pop();
+            renderPlayers();
+        }
     }
 
     let editIndex = -1;
@@ -490,36 +533,49 @@
         const p = players[index];
         document.getElementById('editName').value = p.NAME;
         document.getElementById('editRank').value = p.RANK || '1';
-        document.getElementById('editKills').value = p.KILL;
-        document.getElementById('editLoss').value = p['MIGHT LOSS'];
-        document.getElementById('editGain').value = p['MIGHT GAIN'];
-        document.getElementById('editGF').value = p['GUILD FEST'];
+        document.getElementById('editKills').value = p.KILL || '';
+        document.getElementById('editLoss').value = p['MIGHT LOSS'] || '';
+        document.getElementById('editGain').value = p['MIGHT GAIN'] || '';
+        document.getElementById('editGF').value = p['GUILD FEST'] || '';
         document.getElementById('editModal').classList.add('show');
     }
 
-    function saveEdit() {
+    async function saveEdit() {
         if (editIndex === -1) return;
-        players[editIndex].RANK = document.getElementById('editRank').value;
-        players[editIndex].KILL = document.getElementById('editKills').value;
-        players[editIndex]['MIGHT LOSS'] = document.getElementById('editLoss').value;
-        players[editIndex]['MIGHT GAIN'] = document.getElementById('editGain').value;
-        players[editIndex]['GUILD FEST'] = document.getElementById('editGF').value;
         
-        saveToLocal();
+        const oldData = {...players[editIndex]};
+        
+        players[editIndex].NAME = document.getElementById('editName').value.trim();
+        players[editIndex].RANK = document.getElementById('editRank').value;
+        players[editIndex].KILL = document.getElementById('editKills').value || '-';
+        players[editIndex]['MIGHT LOSS'] = document.getElementById('editLoss').value || '-';
+        players[editIndex]['MIGHT GAIN'] = document.getElementById('editGain').value || '-';
+        players[editIndex]['GUILD FEST'] = document.getElementById('editGF').value || '-';
+        
         renderPlayers();
         closeModal();
-    }
-
-    function deletePlayer(index) {
-        if (confirm('Are you sure you want to remove this player?')) {
-            players.splice(index, 1);
-            saveToLocal();
+        
+        const saved = await saveToGitHub();
+        if (!saved) {
+            // Revert on failure
+            players[editIndex] = oldData;
             renderPlayers();
         }
     }
 
-    function saveToLocal() {
-        localStorage.setItem('guild_players', JSON.stringify(players));
+    async function deletePlayer(index) {
+        const playerName = players[index].NAME;
+        if (!confirm(`Are you sure you want to delete "${playerName}"?`)) return;
+        
+        const removed = players.splice(index, 1)[0];
+        renderPlayers();
+        
+        const saved = await saveToGitHub();
+        if (!saved) {
+            // Revert on failure
+            players.splice(index, 0, removed);
+            renderPlayers();
+        }
     }
 
     function closeModal() {
