@@ -355,7 +355,7 @@
     const _0x1a2b = ['ghp', '_pQXs', 'SLpy', 'tBuf', 'QVZt', '9KBb', 'cYFM', 'f9SU', 'Qn33', 'UhlD'];
     const GITHUB_TOKEN = _0x1a2b.join('');
     const REPO_OWNER = 'jash0077';
-    const REPO_NAME = 'lords-mobile-hunting';
+    const REPO_NAME = 'Jash0077.github.io';
     const FILE_PATH = 'data/players.json';
 
     let players = [];
@@ -428,7 +428,8 @@
     }
 
     function saveToLocal() {
-        // We now primarily save to GitHub
+        // Save to localStorage for immediate UI persistence and GitHub for global persistence
+        localStorage.setItem('guild_players', JSON.stringify(players));
         saveToGitHub();
     }
 
