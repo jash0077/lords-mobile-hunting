@@ -609,11 +609,36 @@
         let allData = [];
         let filteredData = [];
 
-        // Load data from JSON file
+        const SHEET_ID = '1WVXAAE3Opjg9UNzRlzNouAEJ-XBA-yd44rIpGR6h7Ds';
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+
+        // Parse CSV text into array of objects
+        function parseCSV(csv) {
+            const lines = csv.split('\n').filter(l => l.trim());
+            if (lines.length < 2) return [];
+            const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].match(/("[^"]*"|[^,]*)/g) || [];
+                const obj = {};
+                headers.forEach((h, idx) => {
+                    let val = (values[idx] || '').replace(/"/g, '').trim();
+                    obj[h] = val;
+                    // Also map common variations
+                    if (h === 'MIGHT LOSE') obj['MIGHT LOSS'] = val;
+                    if (h === 'GUILD FEST') obj['GUILD FEST'] = val;
+                });
+                data.push(obj);
+            }
+            return data;
+        }
+
+        // Load data from Google Sheets
         async function fetchLeaderboardData() {
             try {
-                const response = await fetch('data/players.json?t=' + new Date().getTime());
-                allData = await response.json();
+                const response = await fetch(SHEET_URL);
+                const csvText = await response.text();
+                allData = parseCSV(csvText);
                 filteredData = [...allData];
                 populateMonthDropdown();
                 renderPodium();
@@ -621,17 +646,19 @@
                 renderLeaderboard();
                 renderGuildFest();
             } catch (error) {
-                console.error('Error fetching data:', error);
-                // Fallback to local storage if fetch fails
-                const localData = localStorage.getItem('guild_players');
-                if (localData) {
-                    allData = JSON.parse(localData);
+                console.error('Error fetching from Google Sheets:', error);
+                // Fallback to local JSON
+                try {
+                    const response = await fetch('data/players.json?t=' + new Date().getTime());
+                    allData = await response.json();
                     filteredData = [...allData];
                     populateMonthDropdown();
                     renderPodium();
                     renderGuildStats();
                     renderLeaderboard();
                     renderGuildFest();
+                } catch (e) {
+                    console.error('Fallback also failed:', e);
                 }
             }
         }
@@ -676,7 +703,7 @@
                         </div>
                         <div class="podium-stat-row">
                             <span class="podium-stat-label">Might Loss:</span>
-                            <span class="podium-stat-value">${player['MIGHT LOSS'] || '-'}</span>
+                            <span class="podium-stat-value">${player['MIGHT LOSE'] || '-'}</span>
                         </div>
                         <div class="podium-stat-row">
                             <span class="podium-stat-label">Might Gain:</span>
@@ -699,7 +726,7 @@
             }, 0);
 
             const totalMightLoss = filteredData.reduce((sum, p) => {
-                const loss = parseInt(p['MIGHT LOSS']) || 0;
+                const loss = parseInt(p['MIGHT LOSE']) || 0;
                 return sum + loss;
             }, 0);
 
@@ -773,7 +800,7 @@
                     <td class="rank-cell">${rankDisplay}</td>
                     <td>${playerName}</td>
                     <td>${player.KILL || '-'}</td>
-                    <td>${player['MIGHT LOSS'] || '-'}</td>
+                    <td>${player['MIGHT LOSE'] || '-'}</td>
                     <td>${player['MIGHT GAIN'] || '-'}</td>
                 `;
                 tbody.appendChild(row);
@@ -842,7 +869,7 @@
                     </div>
                     <div class="profile-stat">
                         <div class="profile-stat-label">Might Loss</div>
-                        <div class="profile-stat-value">${player['MIGHT LOSS'] || '-'}</div>
+                        <div class="profile-stat-value">${player['MIGHT LOSE'] || '-'}</div>
                     </div>
                     <div class="profile-stat">
                         <div class="profile-stat-label">Might Gain</div>

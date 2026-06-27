@@ -394,34 +394,70 @@
         }
     }
 
-    async function loadData() {
-        showStatus('Loading player data...', 'loading');
-        try {
-            // Fetch from GitHub API to get SHA and latest content
-            const response = await fetch(API_URL, {
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
+    const SHEET_ID = '1WVXAAE3Opjg9UNzRlzNouAEJ-XBA-yd44rIpGR6h7Ds';
+    const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+
+    function parseCSV(csv) {
+        const lines = csv.split('\n').filter(l => l.trim());
+        if (lines.length < 2) return [];
+        const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+        const data = [];
+        for (let i = 1; i < lines.length; i++) {
+            const values = lines[i].match(/("[^"]*"|[^,]*)/g) || [];
+            const obj = {};
+            headers.forEach((h, idx) => {
+                obj[h] = (values[idx] || '').replace(/"/g, '').trim();
             });
+            data.push(obj);
+        }
+        return data;
+    }
+
+    async function loadData() {
+        showStatus('Loading player data from Google Sheets...', 'loading');
+        try {
+            // Load from Google Sheets
+            const sheetResponse = await fetch(SHEET_CSV_URL);
+            const csvText = await sheetResponse.text();
+            players = parseCSV(csvText);
             
-            if (!response.ok) {
-                throw new Error(`GitHub API error: ${response.status}`);
-            }
-            
-            const fileData = await response.json();
-            fileSHA = fileData.sha;
-            
-            // Decode base64 content
-            const content = decodeURIComponent(escape(atob(fileData.content)));
-            players = JSON.parse(content);
+            // Also get SHA from GitHub for saving
+            try {
+                const ghResponse = await fetch(API_URL, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                if (ghResponse.ok) {
+                    const fileData = await ghResponse.json();
+                    fileSHA = fileData.sha;
+                }
+            } catch(e) { console.log('GitHub SHA fetch skipped'); }
             
             document.getElementById('playerCount').textContent = players.length;
             renderPlayers();
-            showStatus('Data loaded successfully!', 'success');
+            showStatus('Data loaded from Google Sheets!', 'success');
         } catch (error) {
-            console.error('Error loading data:', error);
-            showStatus('Failed to load data: ' + error.message, 'error');
+            console.error('Error loading from Sheets:', error);
+            // Fallback to GitHub API
+            try {
+                const response = await fetch(API_URL, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                const fileData = await response.json();
+                fileSHA = fileData.sha;
+                const content = decodeURIComponent(escape(atob(fileData.content)));
+                players = JSON.parse(content);
+                document.getElementById('playerCount').textContent = players.length;
+                renderPlayers();
+                showStatus('Data loaded from GitHub backup!', 'success');
+            } catch (e) {
+                showStatus('Failed to load data: ' + error.message, 'error');
+            }
         }
     }
 

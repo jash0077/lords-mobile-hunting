@@ -207,11 +207,30 @@
         const urlParams = new URLSearchParams(window.location.search);
         const playerName = urlParams.get("name");
         let allPlayers = [];
+        const SHEET_ID = '1WVXAAE3Opjg9UNzRlzNouAEJ-XBA-yd44rIpGR6h7Ds';
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+
+        function parseCSV(csv) {
+            const lines = csv.split('\n').filter(l => l.trim());
+            if (lines.length < 2) return [];
+            const headers = lines[0].split(',').map(h => h.replace(/\"/g, '').trim());
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].match(/(\"[^\"]*\"|[^,]*)/g) || [];
+                const obj = {};
+                headers.forEach((h, idx) => {
+                    obj[h] = (values[idx] || '').replace(/\"/g, '').trim();
+                });
+                data.push(obj);
+            }
+            return data;
+        }
 
         async function loadPlayerData() {
             try {
-                const response = await fetch("data/players.json?t=" + new Date().getTime());
-                allPlayers = await response.json();
+                const response = await fetch(SHEET_URL);
+                const csvText = await response.text();
+                allPlayers = parseCSV(csvText);
                 const player = allPlayers.find(p => p.NAME === playerName);
 
                 if (player) {
