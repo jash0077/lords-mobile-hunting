@@ -1,1 +1,25 @@
-[]
+[
+    {
+        "NAME": "JASH07",
+        "KILL": "",
+        "MIGHT GAIN": "100m",
+        "MIGHT LOSE": "",
+        "GUILD FEST": "10m"
+    },
+    {
+        "NAME": "RAM",
+        "KILL": "",
+        "MIGHT GAIN": "60M",
+        "MIGHT LOSE": "",
+        "GUILD FEST": "30M"
+    },
+    {
+        "NAME": "TEST",
+        "RANK": "1",
+        "KILL": "100m",
+        "MIGHT LOSS": "20m",
+        "MIGHT GAIN": "10m",
+        "GUILD FEST": "1700",
+        "MONTH": "June"
+    }
+]
