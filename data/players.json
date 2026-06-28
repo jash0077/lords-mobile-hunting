@@ -1,25 +1,20 @@
 [
     {
-        "NAME": "JASH07",
-        "KILL": "",
-        "MIGHT GAIN": "100m",
-        "MIGHT LOSE": "",
-        "GUILD FEST": "10m"
+        "RANK": "3",
+        "PLAYER": "",
+        "KILL": "100M",
+        "MIGHT LOSS": "30M",
+        "MIGHT GAIN": "20M",
+        "": "",
+        "NAME": "JASH",
+        "GUILD FEST": "1600"
     },
     {
-        "NAME": "RAM",
-        "KILL": "",
-        "MIGHT GAIN": "60M",
-        "MIGHT LOSE": "",
-        "GUILD FEST": "30M"
-    },
-    {
-        "NAME": "TEST",
-        "RANK": "1",
-        "KILL": "100m",
-        "MIGHT LOSS": "20m",
-        "MIGHT GAIN": "10m",
-        "GUILD FEST": "1700",
-        "MONTH": "June"
+        "RANK": "R4",
+        "PLAYER": "",
+        "KILL": "Om",
+        "MIGHT LOSS": "",
+        "MIGHT GAIN": "100M",
+        "": ""
     }
 ]
