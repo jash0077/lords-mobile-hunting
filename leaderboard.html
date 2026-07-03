@@ -615,14 +615,34 @@
         function parseCSV(csv) {
             const lines = csv.split('\n').filter(l => l.trim());
             if (lines.length < 2) return [];
-            const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+            
+            // Proper CSV parsing that handles commas inside quotes
+            function parseLine(line) {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+                for (let i = 0; i < line.length; i++) {
+                    const ch = line[i];
+                    if (ch === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (ch === ',' && !inQuotes) {
+                        result.push(current.trim());
+                        current = '';
+                    } else {
+                        current += ch;
+                    }
+                }
+                result.push(current.trim());
+                return result;
+            }
+            
+            const headers = parseLine(lines[0]);
             const data = [];
             for (let i = 1; i < lines.length; i++) {
-                const values = lines[i].match(/("[^"]*"|[^,]*)/g) || [];
+                const values = parseLine(lines[i]);
                 const obj = {};
                 headers.forEach((h, idx) => {
-                    let val = (values[idx] || '').replace(/"/g, '').trim();
-                    obj[h] = val;
+                    obj[h] = values[idx] || '';
                 });
                 // Map Google Sheet columns to expected keys
                 const mapped = {
