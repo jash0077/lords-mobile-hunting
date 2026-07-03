@@ -609,8 +609,8 @@
         let allData = [];
         let filteredData = [];
 
-    const sheet_id 1czIGViaXJe62-mtt_rOaCo1ZFQ-sgBIvEaLwQSfHXqc';
-const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+    const SHEET_ID = '1PHgCQ1LUNONpa-Jz86H6Q3mtSZ0O7p2gfax0M7lGzMs';
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
         // Parse CSV text into array of objects
         function parseCSV(csv) {
             const lines = csv.split('\n').filter(l => l.trim());
@@ -623,11 +623,21 @@ const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq
                 headers.forEach((h, idx) => {
                     let val = (values[idx] || '').replace(/"/g, '').trim();
                     obj[h] = val;
-                    // Also map common variations
-                    if (h === 'MIGHT LOSE') obj['MIGHT LOSS'] = val;
-                    if (h === 'GUILD FEST') obj['GUILD FEST'] = val;
                 });
-                data.push(obj);
+                // Map Google Sheet columns to expected keys
+                const mapped = {
+                    NAME: obj['Player Name'] || obj['NAME'] || '',
+                    KILL: obj['Kills (Total)'] || obj['KILL'] || '',
+                    'KILLS_GAINED': obj['Kills Gained (30D)'] || '',
+                    'MIGHT GAIN': obj['Might Gained (30D)'] || obj['MIGHT GAIN'] || '',
+                    'MIGHT LOSE': obj['Might Lost (30D)'] || obj['MIGHT LOSE'] || '',
+                    'NET_MIGHT': obj['Net Might'] || '',
+                    'MIGHT LOSS': obj['Might Lost (30D)'] || obj['MIGHT LOSE'] || '',
+                    RANK: obj['RANK'] || '',
+                    MONTH: obj['MONTH'] || '',
+                    'GUILD FEST': obj['GUILD FEST'] || ''
+                };
+                if (mapped.NAME) data.push(mapped);
             }
             return data;
         }
