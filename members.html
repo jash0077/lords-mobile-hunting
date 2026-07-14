@@ -195,7 +195,7 @@
 
     <script>
         let allPlayers = [];
-        const SHEET_ID = '1WVXAAE3Opjg9UNzRlzNouAEJ-XBA-yd44rIpGR6h7Ds';
+        const SHEET_ID = '1PGJ-Ad74mpx-v3RbqHku2310jiCCyYcb85eC1G3d8wM';
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
         function parseCSV(csv) {
@@ -209,7 +209,19 @@
                 headers.forEach((h, idx) => {
                     obj[h] = (values[idx] || '').replace(/\"/g, '').trim();
                 });
-                data.push(obj);
+                // Map Google Sheet columns to expected keys
+                const mapped = {
+                    NAME: obj['Player'] || obj['NAME'] || '',
+                    MIGHT: obj['Might'] || obj['MIGHT'] || '',
+                    PLAYER_KILL: obj['Player Kill'] || obj['PLAYER_KILL'] || '',
+                    KILL: obj['Kills INCREASE '] || obj['KILL'] || '',
+                    'MIGHT GAIN': obj['MightGain'] || obj['MIGHT GAIN'] || '',
+                    'MIGHT LOSS': obj['MightLoss'] || obj['MIGHT LOSS'] || '',
+                    RANK: obj['RANK'] || '',
+                    MONTH: obj['Date'] || obj['MONTH'] || '',
+                    'GUILD FEST': obj['GUILD FEST'] || ''
+                };
+                if (mapped.NAME) data.push(mapped);
             }
             return data;
         }
@@ -248,9 +260,9 @@
                         <span class="rank-badge r${player.RANK}">R${player.RANK}</span>
                     </div>
                     <div class="player-card-body">
-                        <p><span>Telegram:</span> <span>${player.TELEGRAM || '-'}</span></p>
                         <p><span>Might:</span> <span>${player.MIGHT || '-'}</span></p>
-                        <p><span>Kills:</span> <span>${player.KILL || '-'}</span></p>
+                        <p><span>Player Kill:</span> <span>${player.PLAYER_KILL || '-'}</span></p>
+                        <p><span>Kills Increase:</span> <span>${player.KILL || '-'}</span></p>
                     </div>
                     <a href="player.html?name=${encodeURIComponent(player.NAME)}" class="view-profile-btn">View Profile</a>
                 `;

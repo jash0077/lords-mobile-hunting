@@ -207,7 +207,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const playerName = urlParams.get("name");
         let allPlayers = [];
-        const SHEET_ID = '1WVXAAE3Opjg9UNzRlzNouAEJ-XBA-yd44rIpGR6h7Ds';
+        const SHEET_ID = '1PGJ-Ad74mpx-v3RbqHku2310jiCCyYcb85eC1G3d8wM';
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
         function parseCSV(csv) {
@@ -221,7 +221,19 @@
                 headers.forEach((h, idx) => {
                     obj[h] = (values[idx] || '').replace(/\"/g, '').trim();
                 });
-                data.push(obj);
+                // Map Google Sheet columns to expected keys
+                const mapped = {
+                    NAME: obj['Player'] || obj['NAME'] || '',
+                    MIGHT: obj['Might'] || obj['MIGHT'] || '',
+                    PLAYER_KILL: obj['Player Kill'] || obj['PLAYER_KILL'] || '',
+                    KILL: obj['Kills INCREASE '] || obj['KILL'] || '',
+                    'MIGHT GAIN': obj['MightGain'] || obj['MIGHT GAIN'] || '',
+                    'MIGHT LOSS': obj['MightLoss'] || obj['MIGHT LOSS'] || '',
+                    RANK: obj['RANK'] || '',
+                    MONTH: obj['Date'] || obj['MONTH'] || '',
+                    'GUILD FEST': obj['GUILD FEST'] || ''
+                };
+                if (mapped.NAME) data.push(mapped);
             }
             return data;
         }
@@ -235,10 +247,10 @@
 
                 if (player) {
                     document.getElementById("playerName").textContent = player.NAME;
-                    document.getElementById("playerRankBadge").textContent = `R${player.RANK}`;
-                    document.getElementById("playerRankBadge").className = `rank-badge r${player.RANK}`;
+                    document.getElementById("playerRankBadge").textContent = `R${player.RANK || '1'}`;
+                    document.getElementById("playerRankBadge").className = `rank-badge r${player.RANK || '1'}`;
                     document.getElementById("currentMight").textContent = player.MIGHT || "N/A";
-                    document.getElementById("currentKills").textContent = player.KILL || "N/A";
+                    document.getElementById("currentKills").textContent = player.PLAYER_KILL || "N/A";
 
                     // Placeholder for change data (needs historical data)
                     document.getElementById("mightChange").textContent = "+0 • Last 30 Days";
