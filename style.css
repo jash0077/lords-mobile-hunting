@@ -21,18 +21,12 @@
     --dark-accent: #22B8CF;
     
     /* Category Accent Colors */
-    --accent-green: #16A34A;
-    --accent-blue: #2563EB;
-    --accent-purple: #7C3AED;
-    --accent-gold: #C99A2E;
-    --accent-cyan: #0891B2;
-    
-    /* Dark Mode Category Colors */
-    --dark-accent-cyan: #22B8CF;
-    --dark-accent-green: #22C55E;
-    --dark-accent-purple: #A855F7;
-    --dark-accent-gold: #D4A72C;
-    --dark-accent-blue: #38BDF8;
+    --accent-green: #22C55E;
+    --accent-blue: #3B82F6;
+    --accent-purple: #A855F7;
+    --accent-gold: #D4A72C;
+    --accent-cyan: #22B8CF;
+    --accent-orange: #F97316;
     
     /* Gradients */
     --green-speedup: linear-gradient(180deg, #4caf50 0%, #2e7d32 100%);
@@ -219,21 +213,44 @@ header {
     color: inherit;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    border-left: 4px solid var(--accent-gold);
+    border-left: 5px solid transparent;
     cursor: pointer;
 }
 
 .tool-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    border-left-color: var(--light-accent);
 }
+
+/* Category Accent Colors */
+.tool-card.category-speedup { border-left-color: var(--accent-cyan); }
+.tool-card.category-speedup i { color: var(--accent-cyan); }
+
+.tool-card.category-hunting { border-left-color: var(--accent-green); }
+.tool-card.category-hunting i { color: var(--accent-green); }
+
+.tool-card.category-training { border-left-color: var(--accent-purple); }
+.tool-card.category-training i { color: var(--accent-purple); }
+
+.tool-card.category-composition { border-left-color: var(--accent-blue); }
+.tool-card.category-composition i { color: var(--accent-blue); }
+
+.tool-card.category-research { border-left-color: var(--accent-gold); }
+.tool-card.category-research i { color: var(--accent-gold); }
+
+.tool-card.category-war { border-left-color: var(--accent-orange); }
+.tool-card.category-war i { color: var(--accent-orange); }
 
 .tool-card i {
     font-size: 2.5em;
-    color: var(--accent-gold);
     margin-bottom: 15px;
-    transition: color 0.3s;
+    transition: color 0.3s, transform 0.3s;
+    display: block;
+    text-align: center;
+}
+
+.tool-card:hover i {
+    transform: scale(1.1);
 }
 
 .tool-card h3 {
@@ -241,6 +258,7 @@ header {
     font-size: 1.3em;
     margin: 15px 0 10px 0;
     font-weight: 600;
+    text-align: center;
 }
 
 .tool-card p {
@@ -248,6 +266,7 @@ header {
     font-size: 0.95em;
     line-height: 1.5;
     margin: 0;
+    text-align: center;
 }
 
 /* Footer */
@@ -338,34 +357,43 @@ footer a:hover {
 /* Search Bar */
 .search-container {
     position: relative;
-    margin-bottom: 30px;
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto 30px;
 }
 
 .search-icon {
     position: absolute;
-    left: 15px;
+    left: 22px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--light-muted-text);
-    pointer-events: none;
+    font-size: 1.1em;
+    z-index: 1;
+    transition: color 0.3s;
+}
+
+.search-container:focus-within .search-icon {
+    color: var(--light-accent);
 }
 
 .search-input {
     width: 100%;
-    padding: 12px 15px 12px 45px;
-    border: 1px solid var(--light-border);
-    border-radius: 8px;
+    padding: 14px 25px 14px 55px;
+    border: 2px solid var(--light-border);
+    border-radius: 30px;
     font-size: 1em;
     background: var(--light-surface);
     color: var(--light-primary-text);
-    transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-sizing: border-box;
+    outline: none;
 }
 
 .search-input:focus {
-    outline: none;
     border-color: var(--light-accent);
-    box-shadow: 0 0 0 3px rgba(201, 154, 46, 0.1);
+    box-shadow: 0 4px 12px rgba(201, 154, 46, 0.15);
 }
 
 .search-results {
@@ -376,9 +404,9 @@ footer a:hover {
     right: 0;
     background: var(--light-surface);
     border: 1px solid var(--light-border);
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    margin-top: 10px;
     z-index: 100;
     max-height: 300px;
     overflow-y: auto;
@@ -386,7 +414,7 @@ footer a:hover {
 
 .search-result-item {
     display: block;
-    padding: 12px 15px;
+    padding: 12px 20px;
     color: var(--light-primary-text);
     text-decoration: none;
     transition: all 0.2s;
@@ -400,7 +428,7 @@ footer a:hover {
 .search-result-item:hover {
     background: var(--light-accent-highlight);
     color: var(--light-primary-text);
-    padding-left: 20px;
+    padding-left: 25px;
 }
 
 .search-result-item.no-result {
@@ -410,7 +438,7 @@ footer a:hover {
 
 .search-result-item.no-result:hover {
     background: transparent;
-    padding-left: 15px;
+    padding-left: 20px;
 }
 
 /* Theme Toggle Button */
@@ -467,18 +495,17 @@ body.dark-mode .tool-card p {
     color: var(--dark-secondary-text);
 }
 
-body.dark-mode .tool-card {
-    border-left-color: var(--dark-accent-gold);
-}
+/* Category Colors in Dark Mode */
+body.dark-mode .tool-card.category-speedup i { color: var(--dark-accent-cyan); }
+body.dark-mode .tool-card.category-hunting i { color: var(--dark-accent-green); }
+body.dark-mode .tool-card.category-training i { color: var(--dark-accent-purple); }
+body.dark-mode .tool-card.category-composition i { color: var(--dark-accent-blue); }
+body.dark-mode .tool-card.category-research i { color: var(--dark-accent-gold); }
+body.dark-mode .tool-card.category-war i { color: #F97316; }
 
 body.dark-mode .tool-card:hover {
     background: var(--dark-elevated);
-    border-left-color: var(--dark-accent);
-    box-shadow: 0 8px 16px rgba(34, 184, 207, 0.1);
-}
-
-body.dark-mode .tool-card i {
-    color: var(--dark-accent-gold);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
 body.dark-mode .nav-links a {
@@ -513,7 +540,7 @@ body.dark-mode .search-input {
 
 body.dark-mode .search-input:focus {
     border-color: var(--dark-accent);
-    box-shadow: 0 0 0 3px rgba(34, 184, 207, 0.1);
+    box-shadow: 0 4px 12px rgba(34, 184, 207, 0.15);
 }
 
 body.dark-mode .search-icon {
