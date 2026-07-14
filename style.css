@@ -28,6 +28,14 @@
     --accent-cyan: #06b6d4;
     --accent-orange: #ffa657;
     
+    /* Dark Mode Accent Colors */
+    --dark-accent-cyan: #06b6d4;
+    --dark-accent-green: #3fb950;
+    --dark-accent-purple: #bc8cff;
+    --dark-accent-blue: #4d94ff;
+    --dark-accent-gold: #f5a623;
+    --dark-accent-orange: #ffa657;
+    
     /* Gradients (Updated for zaxlen33 theme) */
     --green-speedup: linear-gradient(180deg, var(--accent-green) 0%, #2d8a3e 100%);
     --blue-speedup: linear-gradient(180deg, var(--accent-blue) 0%, #2563eb 100%);
@@ -732,12 +740,26 @@ body.dark-mode .tool-card p {
 }
 
 /* Category Colors in Dark Mode */
-body.dark-mode .tool-card.category-speedup i { color: var(--dark-accent-cyan); }
-body.dark-mode .tool-card.category-hunting i { color: var(--dark-accent-green); }
-body.dark-mode .tool-card.category-training i { color: var(--dark-accent-purple); }
-body.dark-mode .tool-card.category-composition i { color: var(--dark-accent-blue); }
-body.dark-mode .tool-card.category-research i { color: var(--dark-accent-gold); }
-body.dark-mode .tool-card.category-war i { color: #F97316; }
+body.dark-mode .tool-card.category-speedup i { color: #06b6d4; }
+body.dark-mode .tool-card.category-hunting i { color: #3fb950; }
+body.dark-mode .tool-card.category-training i { color: #bc8cff; }
+body.dark-mode .tool-card.category-composition i { color: #4d94ff; }
+body.dark-mode .tool-card.category-research i { color: #f5a623; }
+body.dark-mode .tool-card.category-war i { color: #ffa657; }
+
+/* Dark Mode Footer */
+body.dark-mode footer {
+    color: var(--dark-secondary-text);
+    border-top-color: var(--dark-border);
+}
+
+body.dark-mode footer a {
+    color: var(--dark-accent);
+}
+
+body.dark-mode footer a:hover {
+    color: #06b6d4;
+}
 
 body.dark-mode .tool-card:hover {
     background: var(--dark-elevated);
