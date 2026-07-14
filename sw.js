@@ -1,17 +1,17 @@
-const CACHE_NAME = 'lords-mobile-hub-cache-v3.0';
+const CACHE_NAME = 'lords-mobile-hub-cache-v2';
 const urlsToCache = [
   '/lords-mobile-hunting/',
-  '/lords-mobile-hunting/index.html?v=3.0',
-  '/lords-mobile-hunting/style.css?v=3.0',
-  '/lords-mobile-hunting/translations.js?v=3.0',
-  '/lords-mobile-hunting/features.js?v=3.0',
-  '/lords-mobile-hunting/calculator.html?v=3.0',
-  '/lords-mobile-hunting/hunting.html?v=3.0',
-  '/lords-mobile-hunting/training.html?v=3.0',
-  '/lords-mobile-hunting/composition.html?v=3.0',
-  '/lords-mobile-hunting/migration.html?v=3.0',
-  '/lords-mobile-hunting/research.html?v=3.0',
-  '/lords-mobile-hunting/admin.html?v=3.0',
+  '/lords-mobile-hunting/index.html',
+  '/lords-mobile-hunting/style.css',
+  '/lords-mobile-hunting/translations.js',
+  '/lords-mobile-hunting/features.js',
+  '/lords-mobile-hunting/calculator.html',
+  '/lords-mobile-hunting/hunting.html',
+  '/lords-mobile-hunting/training.html',
+  '/lords-mobile-hunting/composition.html',
+  '/lords-mobile-hunting/migration.html',
+  '/lords-mobile-hunting/research.html',
+  '/lords-mobile-hunting/admin.html',
   '/lords-mobile-hunting/icons/icon-192x192.png',
   '/lords-mobile-hunting/icons/icon-512x512.png',
   '/lords-mobile-hunting/icons/apple-touch-icon.png',
@@ -30,7 +30,7 @@ self.addEventListener('install', event => {
   );
 });
 
-// Fetch - Network first, fallback to cache
+// Fetch - Network first, fallback to cache (fast loading + offline support)
 self.addEventListener('fetch', event => {
   event.respondWith(
     fetch(event.request)
@@ -48,9 +48,9 @@ self.addEventListener('fetch', event => {
           if (response) {
             return response;
           }
-          // If not in cache, return offline page
+          // If not in cache, return offline page for navigation requests
           if (event.request.mode === 'navigate') {
-            return caches.match('/lords-mobile-hunting/index.html?v=3.0');
+            return caches.match('/lords-mobile-hunting/index.html');
           }
         });
       })
