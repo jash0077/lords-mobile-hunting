@@ -178,8 +178,16 @@ header {
 
 .hero-section h1 {
     color: var(--light-primary-text);
-    font-size: 2.5em;
+    font-size: 3.2em;
     margin: 0 0 10px 0;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .hero-section p {
@@ -527,7 +535,13 @@ body.dark-mode .tool-card {
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
-body.dark-mode .hero-section h1,
+body.dark-mode .hero-section h1 {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e2e8f0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
 body.dark-mode .section-title,
 body.dark-mode .tool-card h3 {
     color: var(--dark-primary-text);
