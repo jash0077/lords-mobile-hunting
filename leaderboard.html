@@ -557,6 +557,7 @@
         <div class="nav-tabs">
             <button class="tab-btn active" data-tab="leaderboard">Leaderboard</button>
             <button class="tab-btn" data-tab="guild-fest">Guild Fest Ranking</button>
+            <button class="tab-btn" data-tab="monthly-summary">Monthly Summary</button>
         </div>
 
         <!-- Podium Section -->
@@ -590,6 +591,22 @@
                         <th>Player</th>
                         <th>Guild Fest Points</th>
                         <th>Kills</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- Monthly Summary Section -->
+        <div id="monthlySummarySection" class="guild-fest-section">
+            <table id="monthlySummaryTable">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Total Kills</th>
+                        <th>Total Might Loss</th>
+                        <th>Total Might Gain</th>
+                        <th>Active Players</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -671,6 +688,7 @@
                 renderGuildStats();
                 renderLeaderboard();
                 renderGuildFest();
+                renderMonthlySummary();
             } catch (error) {
                 console.error('Error fetching from Google Sheets:', error);
                 // Fallback to local JSON
@@ -681,9 +699,10 @@
                     populateMonthDropdown();
                     renderPodium();
                     renderGuildStats();
-                    renderLeaderboard();
-                    renderGuildFest();
-                } catch (e) {
+                renderLeaderboard();
+                renderGuildFest();
+                renderMonthlySummary();
+            } catch (e) {
                     console.error('Fallback also failed:', e);
                 }
             }
@@ -940,6 +959,7 @@
             renderGuildStats();
             renderLeaderboard();
             renderGuildFest();
+            renderMonthlySummary();
         });
 
         // Month filter
@@ -956,7 +976,57 @@
             renderGuildStats();
             renderLeaderboard();
             renderGuildFest();
+            renderMonthlySummary();
         });
+
+        // Render Monthly Summary
+        function renderMonthlySummary() {
+            const tbody = document.querySelector('#monthlySummaryTable tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const monthlyData = {};
+            allData.forEach(player => {
+                const month = player.MONTH || 'Unknown';
+                if (!monthlyData[month]) {
+                    monthlyData[month] = {
+                        kills: 0,
+                        loss: 0,
+                        gain: 0,
+                        players: new Set()
+                    };
+                }
+
+                // Parse values
+                const parseVal = (val) => {
+                    if (!val) return 0;
+                    let str = val.toString().toUpperCase().trim();
+                    let numeric = parseFloat(str.replace(/[^0-9.]/g, '')) || 0;
+                    if (str.includes('B')) numeric *= 1000000000;
+                    else if (str.includes('M')) numeric *= 1000000;
+                    else if (str.includes('K')) numeric *= 1000;
+                    return numeric;
+                };
+
+                monthlyData[month].kills += parseVal(player.KILL);
+                monthlyData[month].loss += parseVal(player['MIGHT LOSS']);
+                monthlyData[month].gain += parseVal(player['MIGHT GAIN']);
+                monthlyData[month].players.add(player.NAME);
+            });
+
+            Object.keys(monthlyData).sort().forEach(month => {
+                const data = monthlyData[month];
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${month}</strong></td>
+                    <td>${formatNumber(data.kills)}</td>
+                    <td>${formatNumber(data.loss)}</td>
+                    <td>${formatNumber(data.gain)}</td>
+                    <td>${data.players.size}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
 
         // Close modal on outside click
         window.addEventListener('click', function(event) {
