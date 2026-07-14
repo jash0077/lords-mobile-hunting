@@ -14,19 +14,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .calc-container {
-            background: rgba(30, 60, 114, 0.15);
+            background: var(--light-surface);
+            border: 1px solid var(--light-border);
             border-radius: 12px;
             padding: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             margin-top: 20px;
         }
 
+        body.dark-mode .calc-container {
+            background: var(--dark-surface);
+            border-color: var(--dark-border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
         .calc-section-label {
-            color: #ffc107;
+            color: var(--light-primary-text);
             font-weight: 700;
             font-size: 1.05em;
             margin-bottom: 15px;
             margin-top: 20px;
+        }
+
+        body.dark-mode .calc-section-label {
+            color: var(--dark-primary-text);
         }
 
         .calc-section-label:first-child {
@@ -69,23 +80,40 @@
         .calc-input {
             width: 100px;
             padding: 12px 14px;
-            border: 2px solid #ddd;
+            border: 1px solid var(--light-border);
+            background: var(--light-bg);
+            color: var(--light-primary-text);
             border-radius: 8px;
             font-size: 1em;
             text-align: center;
             transition: all 0.2s;
         }
 
+        body.dark-mode .calc-input {
+            border-color: var(--dark-border);
+            background: var(--dark-secondary-bg);
+            color: var(--dark-primary-text);
+        }
+
         .calc-input:focus {
             outline: none;
-            border-color: var(--light-blue);
-            box-shadow: 0 0 8px rgba(42, 82, 152, 0.2);
+            border-color: var(--light-accent);
+            box-shadow: 0 0 8px rgba(37, 99, 235, 0.1);
+        }
+
+        body.dark-mode .calc-input:focus {
+            border-color: var(--dark-accent);
+            box-shadow: 0 0 8px rgba(77, 148, 255, 0.1);
         }
 
         .calc-suffix {
-            color: #333;
+            color: var(--light-secondary-text);
             font-weight: 700;
             font-size: 1.1em;
+        }
+
+        body.dark-mode .calc-suffix {
+            color: var(--dark-secondary-text);
         }
 
         .calc-or {
@@ -135,12 +163,17 @@
         }
 
         .results-box {
-            background: rgba(30, 60, 114, 0.9);
+            background: var(--light-bg);
             border-radius: 10px;
             padding: 20px;
             margin-top: 25px;
-            border: 2px solid #d4a017;
+            border: 1px solid var(--light-border);
             display: none;
+        }
+
+        body.dark-mode .results-box {
+            background: var(--dark-secondary-bg);
+            border-color: var(--dark-border);
         }
 
         .results-box.show {
@@ -151,8 +184,12 @@
             text-align: center;
             font-size: 1.2em;
             font-weight: bold;
-            color: white;
+            color: var(--light-primary-text);
             margin-bottom: 15px;
+        }
+
+        body.dark-mode .results-title {
+            color: var(--dark-primary-text);
         }
 
         .result-row {
@@ -161,26 +198,38 @@
         }
 
         .result-label {
-            color: #ccc;
+            color: var(--light-secondary-text);
             font-size: 0.9em;
             font-weight: 500;
         }
 
+        body.dark-mode .result-label {
+            color: var(--dark-secondary-text);
+        }
+
         .result-value {
-            color: #ffc107;
+            color: var(--light-accent);
             font-weight: bold;
             font-size: 1.3em;
             margin-top: 4px;
         }
 
+        body.dark-mode .result-value {
+            color: var(--dark-accent);
+        }
+
         .result-value span {
-            color: #ffc107;
+            color: inherit;
         }
 
         .result-value .unit {
-            color: white;
+            color: var(--light-primary-text);
             font-size: 0.85em;
             font-weight: normal;
+        }
+
+        body.dark-mode .result-value .unit {
+            color: var(--dark-primary-text);
         }
 
         .result-divider {

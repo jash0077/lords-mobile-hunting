@@ -13,20 +13,32 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .calculator-card {
-            background: white;
+            background: var(--light-surface);
+            border: 1px solid var(--light-border);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             margin-top: 20px;
+        }
+
+        body.dark-mode .calculator-card {
+            background: var(--dark-surface);
+            border-color: var(--dark-border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         .speedup-row {
             display: flex;
             align-items: center;
             margin-bottom: 12px;
-            background: #fff;
-            border: 1px solid #eee;
+            background: var(--light-bg);
+            border: 1px solid var(--light-border);
             border-radius: 8px;
             padding: 5px 10px;
+        }
+
+        body.dark-mode .speedup-row {
+            background: var(--dark-secondary-bg);
+            border-color: var(--dark-border);
         }
         .speedup-icon {
             width: 50px;
@@ -55,12 +67,17 @@
         
         .speedup-input {
             flex-grow: 1;
+            background: transparent;
             border: none;
             padding: 10px;
             font-size: 1.1em;
             outline: none;
             text-align: left;
-            color: #555;
+            color: var(--light-primary-text);
+        }
+
+        body.dark-mode .speedup-input {
+            color: var(--dark-primary-text);
         }
 
         .calc-btn-container {
@@ -85,12 +102,20 @@
             margin-top: 25px;
             text-align: center;
             padding: 20px;
-            background: #f8f9fa;
+            background: var(--light-bg);
             border-radius: 10px;
-            border: 1px dashed #ccc;
+            border: 1px dashed var(--light-border);
         }
-        .result-display h3 { margin: 0 0 10px; color: #666; font-size: 1em; text-transform: uppercase; }
-        .result-display p { margin: 0; font-size: 1.4em; color: var(--dark-blue); font-weight: bold; }
+
+        body.dark-mode .result-display {
+            background: var(--dark-secondary-bg);
+            border-color: var(--dark-border);
+        }
+
+        .result-display h3 { margin: 0 0 10px; color: var(--light-secondary-text); font-size: 1em; text-transform: uppercase; }
+        body.dark-mode .result-display h3 { color: var(--dark-secondary-text); }
+        .result-display p { margin: 0; font-size: 1.4em; color: var(--light-accent); font-weight: bold; }
+        body.dark-mode .result-display p { color: var(--dark-accent); }
         
         @media (max-width: 480px) {
             .speedup-icon { width: 40px; height: 40px; font-size: 0.65em; }
