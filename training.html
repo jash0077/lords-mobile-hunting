@@ -3,792 +3,567 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#2c3e50">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="LM Hub">
-    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-    <link rel="manifest" href="manifest.json">
-    <title id="pageTitle" data-page-key="training_calculator"></title>
+    <meta name="theme-color" content="#0b0b0f">
+    <title id="pageTitle" data-page-key="training_calculator">Troops Calculator - Lords Mobile Hub</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .training-container {
-            background: var(--light-surface);
-            border: 1px solid var(--light-border);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        :root {
+            --card-bg: #13131a;
+            --card-border: #1c1c24;
+            --input-bg: #0b0b0f;
+            --accent-blue: #4d94ff;
+        }
+
+        .calc-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
             margin-top: 20px;
         }
 
-        body.dark-mode .training-container {
+        @media (max-width: 1024px) {
+            .calc-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .main-calc-area {
             background: var(--dark-surface);
-            border-color: var(--dark-border);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 25px;
         }
 
-        .tabs {
+        .settings-bar {
+            background: var(--dark-secondary-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
             display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .training-speed-input {
+            display: flex;
+            align-items: center;
             gap: 10px;
-            margin-bottom: 25px;
-            border-bottom: 2px solid var(--light-border);
+            background: var(--dark-bg);
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--dark-border);
         }
 
-        body.dark-mode .tabs {
-            border-bottom-color: var(--dark-border);
-        }
-
-        .tab-btn {
-            padding: 12px 20px;
+        .training-speed-input input {
             background: transparent;
             border: none;
-            color: var(--light-secondary-text);
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
+            color: white;
+            width: 60px;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
         }
 
-        body.dark-mode .tab-btn {
-            color: var(--dark-secondary-text);
-        }
-
-        .tab-btn.active {
-            color: var(--light-accent);
-            border-bottom-color: var(--light-accent);
-        }
-
-        body.dark-mode .tab-btn.active {
-            color: var(--dark-accent);
-            border-bottom-color: var(--dark-accent);
-        }
-
-        .tab-btn:hover {
-            color: var(--light-primary-text);
-        }
-
-        body.dark-mode .tab-btn:hover {
-            color: var(--dark-primary-text);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .input-group {
+        .tier-tabs {
+            display: flex;
+            gap: 10px;
             margin-bottom: 20px;
         }
 
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--light-primary-text);
-            font-weight: 600;
-            font-size: 0.95em;
-        }
-
-        body.dark-mode .input-label {
-            color: var(--dark-primary-text);
-        }
-
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .btn-toggle {
-            padding: 10px 16px;
-            background: var(--light-bg);
-            border: 1px solid var(--light-border);
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--light-secondary-text);
-            transition: all 0.2s;
-            font-size: 0.95em;
-        }
-
-        body.dark-mode .btn-toggle {
+        .tier-tab {
+            padding: 8px 20px;
             background: var(--dark-secondary-bg);
-            border-color: var(--dark-border);
+            border: 1px solid var(--dark-border);
             color: var(--dark-secondary-text);
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
         }
 
-        .btn-toggle:hover {
-            border-color: var(--light-accent);
-            color: var(--light-accent);
-        }
-
-        body.dark-mode .btn-toggle:hover {
-            border-color: var(--dark-accent);
-            color: var(--dark-accent);
-        }
-
-        .btn-toggle.selected {
-            background: var(--light-accent);
-            color: white;
-            border-color: var(--light-accent);
-        }
-
-        body.dark-mode .btn-toggle.selected {
+        .tier-tab.active {
             background: var(--dark-accent);
             color: var(--dark-bg);
             border-color: var(--dark-accent);
         }
 
-        .input-field {
-            width: 100%;
-            padding: 12px;
-            background: var(--light-bg);
-            color: var(--light-primary-text);
-            border: 1px solid var(--light-border);
-            border-radius: 8px;
-            font-size: 1em;
-            font-family: inherit;
-            transition: all 0.2s;
-            box-sizing: border-box;
-        }
-
-        body.dark-mode .input-field {
-            background: var(--dark-secondary-bg);
-            color: var(--dark-primary-text);
-            border-color: var(--dark-border);
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: var(--light-accent);
-            box-shadow: 0 0 8px rgba(37, 99, 235, 0.1);
-        }
-
-        body.dark-mode .input-field:focus {
-            border-color: var(--dark-accent);
-            box-shadow: 0 0 8px rgba(77, 148, 255, 0.1);
-        }
-
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 600px) {
-            .input-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .button-actions {
+        .reset-btn-top {
+            margin-left: auto;
+            background: transparent;
+            border: none;
+            color: var(--dark-secondary-text);
+            cursor: pointer;
             display: flex;
-            gap: 12px;
-            margin-top: 25px;
-            margin-bottom: 25px;
+            align-items: center;
+            gap: 5px;
         }
 
-        .btn-calculate {
-            flex: 1;
-            padding: 14px 24px;
-            background: linear-gradient(to bottom, #ff9800, #f57c00);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.05em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);
-        }
-
-        .btn-calculate:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(255, 152, 0, 0.4);
-        }
-
-        .btn-clear {
-            flex: 1;
-            padding: 14px 24px;
-            background: linear-gradient(to bottom, #00bcd4, #0097a7);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.05em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 10px rgba(0, 188, 212, 0.3);
-        }
-
-        .btn-clear:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 188, 212, 0.4);
-        }
-
-        .results-section {
-            background: var(--light-surface);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 25px;
-            border: 1px solid var(--light-border);
-            display: none;
-        }
-
-        body.dark-mode .results-section {
-            background: var(--dark-surface);
-            border-color: var(--dark-border);
-        }
-
-        .results-section.show {
-            display: block;
-        }
-
-        .results-title {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: var(--light-primary-text);
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        body.dark-mode .results-title {
-            color: var(--dark-primary-text);
-        }
-
-        .results-grid {
+        .troop-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
         }
 
-        .result-item {
-            background: var(--light-bg);
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid var(--light-accent);
-        }
-
-        body.dark-mode .result-item {
+        .troop-card {
             background: var(--dark-secondary-bg);
-            border-left-color: var(--dark-accent);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 15px;
         }
 
-        .result-label {
-            font-size: 0.85em;
-            color: var(--light-secondary-text);
+        .troop-img-container {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: #222;
+            position: relative;
+        }
+
+        .troop-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .troop-type-label {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 0.7em;
+            font-weight: bold;
+            color: white;
             text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 5px;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 5px;
+            border-radius: 2px;
         }
 
-        body.dark-mode .result-label {
-            color: var(--dark-secondary-text);
+        .troop-name {
+            margin: 10px 0 5px;
+            font-weight: bold;
+            color: white;
+            font-size: 1em;
         }
 
-        .result-value {
-            font-size: 1.4em;
-            color: var(--light-primary-text);
+        .troop-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .control-btn {
+            width: 30px;
+            height: 30px;
+            background: #2c2c34;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
             font-weight: bold;
         }
 
-        body.dark-mode .result-value {
-            color: var(--dark-primary-text);
-        }
-
-        .result-item.gems {
-            border-left-color: #ffc107;
-        }
-
-        .result-item.speedup {
-            border-left-color: #ff5722;
-        }
-
-        .result-item.food {
-            border-left-color: #8bc34a;
-        }
-
-        .result-item.wood {
-            border-left-color: #795548;
-        }
-
-        .result-item.stone {
-            border-left-color: #9e9e9e;
-        }
-
-        .result-item.ore {
-            border-left-color: #607d8b;
-        }
-
-        .result-item.gold {
-            border-left-color: #ffc107;
-        }
-
-        .info-text {
-            font-size: 0.85em;
-            color: #999;
-            margin-top: 10px;
+        .troop-input {
+            width: 80px;
+            background: #0b0b0f;
+            border: 1px solid #333;
+            color: white;
             text-align: center;
-            font-style: italic;
+            padding: 5px;
+            border-radius: 4px;
+            font-weight: bold;
         }
 
-        @media (max-width: 480px) {
-            .training-container {
-                padding: 15px;
-            }
+        .quick-add-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            padding: 0 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-            .tabs {
-                gap: 5px;
-            }
+        .quick-btn {
+            padding: 5px;
+            font-size: 0.75em;
+            background: #1c1c24;
+            border: 1px solid #333;
+            color: #ccc;
+            border-radius: 3px;
+            cursor: pointer;
+        }
 
-            .tab-btn {
-                padding: 10px 15px;
-                font-size: 0.9em;
-            }
+        .quick-btn.reset {
+            background: #2a1a1a;
+            color: #ff4d4d;
+        }
 
-            .button-actions {
-                flex-direction: column;
-            }
+        .results-panel {
+            background: var(--dark-surface);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
 
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
+        .results-header {
+            font-weight: bold;
+            color: white;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .res-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+        }
+
+        .res-label {
+            color: var(--dark-secondary-text);
+        }
+
+        .res-value {
+            color: white;
+            font-weight: bold;
+        }
+
+        .res-value.accent {
+            color: var(--dark-accent);
+        }
+
+        .empty-results {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+            color: var(--dark-secondary-text);
+            text-align: center;
+        }
+
+        .empty-results i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.3;
         }
     </style>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C6GVRLX79L"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-C6GVRLX79L');
-    </script>
 </head>
-<body>
+<body class="dark-mode">
 
 <header>
     <div class="language-switcher">
         <button class="lang-switcher-btn" id="langSwitcherBtn" onclick="document.getElementById('languageDropdown').classList.toggle('show')"><i class="fas fa-globe"></i> English</button>
         <div class="language-dropdown" id="languageDropdown">
-            <a href="#" class="lang-option" data-lang="en" onclick="setLanguage('en'); document.getElementById('languageDropdown').classList.remove('show');">English</a>
-            <a href="#" class="lang-option" data-lang="ja" onclick="setLanguage('ja'); document.getElementById('languageDropdown').classList.remove('show');">日本語</a>
-            <a href="#" class="lang-option" data-lang="zh" onclick="setLanguage('zh'); document.getElementById('languageDropdown').classList.remove('show');">中文</a>
-            <a href="#" class="lang-option" data-lang="hi" onclick="setLanguage('hi'); document.getElementById('languageDropdown').classList.remove('show');">हिन्दी</a>
-            <a href="#" class="lang-option" data-lang="es" onclick="setLanguage('es'); document.getElementById('languageDropdown').classList.remove('show');">Español</a>
-            <a href="#" class="lang-option" data-lang="fr" onclick="setLanguage('fr'); document.getElementById('languageDropdown').classList.remove('show');">Français</a>
-            <a href="#" class="lang-option" data-lang="ar" onclick="setLanguage('ar'); document.getElementById('languageDropdown').classList.remove('show');">العربية</a>
-            <a href="#" class="lang-option" data-lang="pt" onclick="setLanguage('pt'); document.getElementById('languageDropdown').classList.remove('show');">Português</a>
-            <a href="#" class="lang-option" data-lang="ru" onclick="setLanguage('ru'); document.getElementById('languageDropdown').classList.remove('show');">Русский</a>
-            <a href="#" class="lang-option" data-lang="vi" onclick="setLanguage('vi'); document.getElementById('languageDropdown').classList.remove('show');">Tiếng Việt</a>
-            <a href="#" class="lang-option" data-lang="id" onclick="setLanguage('id'); document.getElementById('languageDropdown').classList.remove('show');">Bahasa Indonesia</a>
+            <a href="#" class="lang-option" data-lang="en" onclick="setLanguage('en');">English</a>
+            <a href="#" class="lang-option" data-lang="ja" onclick="setLanguage('ja');">日本語</a>
+            <a href="#" class="lang-option" data-lang="zh" onclick="setLanguage('zh');">中文</a>
+            <a href="#" class="lang-option" data-lang="hi" onclick="setLanguage('hi');">हिन्दी</a>
+            <a href="#" class="lang-option" data-lang="es" onclick="setLanguage('es');">Español</a>
+            <a href="#" class="lang-option" data-lang="fr" onclick="setLanguage('fr');">Français</a>
+            <a href="#" class="lang-option" data-lang="pt" onclick="setLanguage('pt');">Português</a>
+            <a href="#" class="lang-option" data-lang="ru" onclick="setLanguage('ru');">Русский</a>
+            <a href="#" class="lang-option" data-lang="vi" onclick="setLanguage('vi');">Tiếng Việt</a>
         </div>
     </div>
     <div class="logo" data-translate-key="app_title">Lords Mobile Hub</div>
-    <div class="header-actions"><button id="refreshBtn" title="Refresh Data">🔄</button><button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Dark/Light Mode"><i class="fas fa-moon"></i></button><div class="hamburger" onclick="toggleMenu()">☰</div></div>
+    <div class="header-actions">
+        <button id="refreshBtn" title="Refresh Data">🔄</button>
+        <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+        <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </div>
     <nav class="nav-links" id="navLinks">
-        <a href="index.html" data-translate-key="home">Home</a>
-        <a href="calculator.html" data-translate-key="speedup_calculator">Speedup Calculator</a>
-        <a href="hunting.html" data-translate-key="monster_hunting">Monster Hunting</a>
-        <a href="training.html" data-translate-key="training_calculator">Training Calculator</a>
-        <a href="composition.html" data-translate-key="troop_composition">Troop Composition</a>
-        <a href="migration.html" data-translate-key="migration_guide">Migration Guide</a>
-        <a href="research.html" data-translate-key="research_construction">Research &amp; Construction</a>
+        <a href="index.html">Home</a>
+        <a href="calculator.html">Speedup Calculator</a>
+        <a href="hunting.html">Monster Hunting</a>
+        <a href="training.html" class="active">Training Calculator</a>
+        <a href="composition.html">Troop Composition</a>
+        <a href="migration.html">Migration Guide</a>
+        <a href="research.html">Research &amp; Construction</a>
     </nav>
 </header>
 
 <div class="container">
-    <div class="section-title" data-translate-key="training_calculator">Training Calculator</div>
-    
-    <div class="training-container">
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab(0)" data-translate-key="tab_speedups">No. of Speed Ups</button>
-            <button class="tab-btn" onclick="switchTab(1)" data-translate-key="tab_troops">No. of Troops</button>
+    <div class="section-title">Troops Calculator</div>
+    <p style="color: var(--dark-secondary-text); margin-bottom: 20px;">Enter the quantities of troops you want to train to see the resource cost, training time and recommended speedup plan.</p>
+
+    <div class="calc-wrapper">
+        <div class="main-calc-area">
+            <div class="settings-bar">
+                <div class="training-speed-input">
+                    <i class="fas fa-bolt" style="color: #ffc107;"></i>
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-size: 0.7em; font-weight: bold; color: #888;">Training Speed (%)</span>
+                        <input type="number" id="trainingSpeed" value="360" oninput="calculate()">
+                    </div>
+                    <span style="color: #888;">%</span>
+                </div>
+            </div>
+
+            <div class="tier-tabs">
+                <button class="tier-tab active" onclick="setTier(1)">T1</button>
+                <button class="tier-tab" onclick="setTier(2)">T2</button>
+                <button class="tier-tab" onclick="setTier(3)">T3</button>
+                <button class="tier-tab" onclick="setTier(4)">T4</button>
+                <button class="reset-btn-top" onclick="resetAll()"><i class="fas fa-trash-alt"></i> Reset All</button>
+            </div>
+
+            <div class="troop-grid">
+                <!-- Infantry -->
+                <div class="troop-card">
+                    <div class="troop-img-container">
+                        <span class="troop-type-label">Infantry</span>
+                        <img id="img-inf" src="images/troops/T1/inf.jpg" alt="Infantry">
+                    </div>
+                    <div class="troop-name" id="name-inf">Grunt</div>
+                    <div class="troop-controls">
+                        <button class="control-btn" onclick="adjustTroop('inf', -1000)">−</button>
+                        <input type="number" class="troop-input" id="inp-inf" value="0" oninput="calculate()">
+                        <button class="control-btn" onclick="adjustTroop('inf', 1000)">+</button>
+                    </div>
+                    <div class="quick-add-grid">
+                        <button class="quick-btn" onclick="adjustTroop('inf', 100000)">+100K</button>
+                        <button class="quick-btn" onclick="adjustTroop('inf', 500000)">+500K</button>
+                        <button class="quick-btn" onclick="adjustTroop('inf', 1000000)">+1M</button>
+                        <button class="quick-btn reset" onclick="resetTroop('inf')">✕</button>
+                    </div>
+                </div>
+
+                <!-- Ranged -->
+                <div class="troop-card">
+                    <div class="troop-img-container">
+                        <span class="troop-type-label">Ranged</span>
+                        <img id="img-rng" src="images/troops/T1/rng.jpg" alt="Ranged">
+                    </div>
+                    <div class="troop-name" id="name-rng">Archer</div>
+                    <div class="troop-controls">
+                        <button class="control-btn" onclick="adjustTroop('rng', -1000)">−</button>
+                        <input type="number" class="troop-input" id="inp-rng" value="0" oninput="calculate()">
+                        <button class="control-btn" onclick="adjustTroop('rng', 1000)">+</button>
+                    </div>
+                    <div class="quick-add-grid">
+                        <button class="quick-btn" onclick="adjustTroop('rng', 100000)">+100K</button>
+                        <button class="quick-btn" onclick="adjustTroop('rng', 500000)">+500K</button>
+                        <button class="quick-btn" onclick="adjustTroop('rng', 1000000)">+1M</button>
+                        <button class="quick-btn reset" onclick="resetTroop('rng')">✕</button>
+                    </div>
+                </div>
+
+                <!-- Cavalry -->
+                <div class="troop-card">
+                    <div class="troop-img-container">
+                        <span class="troop-type-label">Cavalry</span>
+                        <img id="img-cav" src="images/troops/T1/cav.jpg" alt="Cavalry">
+                    </div>
+                    <div class="troop-name" id="name-cav">Cataphract</div>
+                    <div class="troop-controls">
+                        <button class="control-btn" onclick="adjustTroop('cav', -1000)">−</button>
+                        <input type="number" class="troop-input" id="inp-cav" value="0" oninput="calculate()">
+                        <button class="control-btn" onclick="adjustTroop('cav', 1000)">+</button>
+                    </div>
+                    <div class="quick-add-grid">
+                        <button class="quick-btn" onclick="adjustTroop('cav', 100000)">+100K</button>
+                        <button class="quick-btn" onclick="adjustTroop('cav', 500000)">+500K</button>
+                        <button class="quick-btn" onclick="adjustTroop('cav', 1000000)">+1M</button>
+                        <button class="quick-btn reset" onclick="resetTroop('cav')">✕</button>
+                    </div>
+                </div>
+
+                <!-- Siege -->
+                <div class="troop-card">
+                    <div class="troop-img-container">
+                        <span class="troop-type-label">Siege</span>
+                        <img id="img-siege" src="images/troops/T1/siege.jpg" alt="Siege">
+                    </div>
+                    <div class="troop-name" id="name-siege">Ballista</div>
+                    <div class="troop-controls">
+                        <button class="control-btn" onclick="adjustTroop('siege', -1000)">−</button>
+                        <input type="number" class="troop-input" id="inp-siege" value="0" oninput="calculate()">
+                        <button class="control-btn" onclick="adjustTroop('siege', 1000)">+</button>
+                    </div>
+                    <div class="quick-add-grid">
+                        <button class="quick-btn" onclick="adjustTroop('siege', 100000)">+100K</button>
+                        <button class="quick-btn" onclick="adjustTroop('siege', 500000)">+500K</button>
+                        <button class="quick-btn" onclick="adjustTroop('siege', 1000000)">+1M</button>
+                        <button class="quick-btn reset" onclick="resetTroop('siege')">✕</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Tab 1: Calculate Speed Ups -->
-        <div class="tab-content active">
-            <div class="input-group">
-                <label class="input-label" data-translate-key="troop_tier">Troop Tier</label>
-                <div class="button-group" id="tierGroup1">
-                    <button class="btn-toggle selected" onclick="selectTier(this, 'T1', 0)">T1</button>
-                    <button class="btn-toggle" onclick="selectTier(this, 'T2', 0)">T2</button>
-                    <button class="btn-toggle" onclick="selectTier(this, 'T3', 0)">T3</button>
-                    <button class="btn-toggle" onclick="selectTier(this, 'T4', 0)">T4</button>
+        <div class="results-panel">
+            <div class="results-header">Calculation Results</div>
+            <div id="results-content">
+                <div class="empty-results">
+                    <i class="fas fa-helmet-safety"></i>
+                    <p>Enter troop quantities to see the plan.</p>
                 </div>
             </div>
-
-            <div class="input-group">
-                <label class="input-label" data-translate-key="troop_type">Troop Type</label>
-                <div class="button-group" id="typeGroup1">
-                    <button class="btn-toggle selected" onclick="selectType(this, 'Infantry', 0)" data-translate-key="infantry">Infantry</button>
-                    <button class="btn-toggle" onclick="selectType(this, 'Ranged', 0)" data-translate-key="ranged">Ranged</button>
-                    <button class="btn-toggle" onclick="selectType(this, 'Cavalry', 0)" data-translate-key="cavalry">Cavalry</button>
-                    <button class="btn-toggle" onclick="selectType(this, 'Siege', 0)" data-translate-key="siege">Siege</button>
-                </div>
-            </div>
-
-            <div class="input-row">
-                <div class="input-group">
-                    <label class="input-label" data-translate-key="number_of_troops">Number of Troops</label>
-                    <input type="number" class="input-field" id="troops1" data-translate-placeholder-key="enter_troops_placeholder" value="1000" min="0">
-                </div>
-                <div class="input-group">
-                    <label class="input-label" data-translate-key="training_speed">Training Speed (%)
-                    </label>
-                    <input type="number" class="input-field" id="trainingSpeed1" placeholder="0" value="0" min="0" max="1000">
-                </div>
-            </div>
-
-            <div class="input-row">
-                <div class="input-group">
-                    <label class="input-label" data-translate-key="subsidy">Subsidy (%)
-                    </label>
-                    <input type="number" class="input-field" id="subsidy1" placeholder="0" value="0" min="0" max="100">
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab 2: Calculate Troops -->
-        <div class="tab-content">
-            <div class="input-group">
-                <label class="input-label" data-translate-key="troop_tier">Troop Tier</label>
-                <div class="button-group" id="tierGroup2">
-                    <button class="btn-toggle selected" onclick="selectTier(this, 'T1', 1)">T1</button>
-                    <button class="btn-toggle" onclick="selectTier(this, 'T2', 1)">T2</button>
-                    <button class="btn-toggle" onclick="selectTier(this, 'T3', 1)">T3</button>
-                    <button class="btn-toggle" onclick="selectTier(this, 'T4', 1)">T4</button>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label class="input-label" data-translate-key="troop_type">Troop Type</label>
-                <div class="button-group" id="typeGroup2">
-                    <button class="btn-toggle selected" onclick="selectType(this, 'Infantry', 1)" data-translate-key="infantry">Infantry</button>
-                    <button class="btn-toggle" onclick="selectType(this, 'Ranged', 1)" data-translate-key="ranged">Ranged</button>
-                    <button class="btn-toggle" onclick="selectType(this, 'Cavalry', 1)" data-translate-key="cavalry">Cavalry</button>
-                    <button class="btn-toggle" onclick="selectType(this, 'Siege', 1)" data-translate-key="siege">Siege</button>
-                </div>
-            </div>
-
-            <div class="input-row">
-                <div class="input-group">
-                    <label class="input-label" data-translate-key="speedups_format">Speed Ups (format: 0d4h10m)</label>
-                    <input type="text" class="input-field" id="speedups2" data-translate-placeholder-key="speedups_placeholder" value="0d4h10m">
-                </div>
-                <div class="input-group">
-                    <label class="input-label" data-translate-key="training_speed">Training Speed (%)
-                    </label>
-                    <input type="number" class="input-field" id="trainingSpeed2" placeholder="0" value="0" min="0" max="1000">
-                </div>
-            </div>
-
-            <div class="input-row">
-                <div class="input-group">
-                    <label class="input-label" data-translate-key="subsidy">Subsidy (%)
-                    </label>
-                    <input type="number" class="input-field" id="subsidy2" placeholder="0" value="0" min="0" max="100">
-                </div>
-            </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="button-actions">
-            <button class="btn-calculate" onclick="calculate()" data-translate-key="calculate">Calculate</button>
-            <button class="btn-clear" onclick="clearAll()" data-translate-key="clear_all">Clear All</button>
-        </div>
-
-        <!-- Results Section -->
-        <div class="results-section" id="resultsSection">
-            <div class="results-title" data-translate-key="results">Results</div>
-            <div class="results-grid">
-                <div class="result-item gems">
-                    <div class="result-label" data-translate-key="gems_required">Gems Required</div>
-                    <div class="result-value" id="gemsResult">0</div>
-                </div>
-                <div class="result-item speedup">
-                    <div class="result-label" data-translate-key="speedups_required">Speed Ups Required</div>
-                    <div class="result-value" id="speedupResult">0d 0h 0m</div>
-                </div>
-                <div class="result-item food">
-                    <div class="result-label" data-translate-key="food_required">Food Required</div>
-                    <div class="result-value" id="foodResult">0</div>
-                </div>
-                <div class="result-item wood">
-                    <div class="result-label" data-translate-key="timber_required">Timber (Wood) Required</div>
-                    <div class="result-value" id="woodResult">0</div>
-                </div>
-                <div class="result-item stone">
-                    <div class="result-label" data-translate-key="stones_required">Stones Required</div>
-                    <div class="result-value" id="stoneResult">0</div>
-                </div>
-                <div class="result-item ore">
-                    <div class="result-label" data-translate-key="ore_required">Ore Required</div>
-                    <div class="result-value" id="oreResult">0</div>
-                </div>
-                <div class="result-item gold">
-                    <div class="result-label" data-translate-key="gold_required">Gold Required</div>
-                    <div class="result-value" id="goldResult">0</div>
-                </div>
-            </div>
-            <div class="info-text" data-translate-key="calculation_info">* All calculations based on current input values</div>
         </div>
     </div>
 </div>
 
 <footer>
-    <p data-translate-key="footer_text">&copy; 2026 Lords Mobile Hub | <a href="admin.html" style="color:inherit;text-decoration:none;">jash0077</a></p>
+    <p>&copy; 2026 Lords Mobile Hub | jash0077</p>
 </footer>
 
 <script>
-    let currentTab = 0; // 0 for Speed Ups, 1 for Troops
-    let selectedTier = ['T1', 'T1']; // For tab 1 and tab 2 respectively
-    let selectedType = ['Infantry', 'Infantry']; // For tab 1 and tab 2 respectively
-
-    const baseData = {
-        T1: { food: 30, wood: 30, stone: 30, ore: 30, gold: 0, time: 15 },
-        T2: { food: 60, wood: 60, stone: 60, ore: 60, gold: 3, time: 30 },
-        T3: { food: 105, wood: 105, stone: 105, ore: 105, gold: 7, time: 60 },
-        T4: { food: 700, wood: 700, stone: 700, ore: 700, gold: 350, time: 120 }
+    let currentTier = 1;
+    const troopData = {
+        1: { 
+            names: { inf: 'Grunt', rng: 'Archer', cav: 'Cataphract', siege: 'Ballista' },
+            costs: { food: 30, wood: 30, stone: 30, ore: 30, gold: 0, time: 15 }
+        },
+        2: { 
+            names: { inf: 'Gladiator', rng: 'Sharpshooter', cav: 'Reptilian Rider', siege: 'Catapult' },
+            costs: { food: 60, wood: 60, stone: 60, ore: 60, gold: 3, time: 30 }
+        },
+        3: { 
+            names: { inf: 'Royal Guard', rng: 'Stealth Sniper', cav: 'Royal Cavalry', siege: 'Trebuchet' },
+            costs: { food: 105, wood: 105, stone: 105, ore: 105, gold: 7, time: 60 }
+        },
+        4: { 
+            names: { inf: 'Heroic Fighter', rng: 'Heroic Cannoneer', cav: 'Ancient Drake Rider', siege: 'Destroyer' },
+            costs: { food: 700, wood: 700, stone: 700, ore: 700, gold: 350, time: 120 }
+        }
     };
 
-    function switchTab(tabIndex) {
-        currentTab = tabIndex;
-        document.querySelectorAll('.tab-btn').forEach((btn, index) => {
-            btn.classList.toggle('active', index === tabIndex);
+    function setTier(tier) {
+        currentTier = tier;
+        document.querySelectorAll('.tier-tab').forEach((tab, i) => {
+            tab.classList.toggle('active', i + 1 === tier);
         });
-        document.querySelectorAll('.tab-content').forEach((content, index) => {
-            content.classList.toggle('active', index === tabIndex);
+
+        // Update images and names
+        const types = ['inf', 'rng', 'cav', 'siege'];
+        types.forEach(type => {
+            document.getElementById(`img-${type}`).src = `images/troops/T${tier}/${type}.jpg`;
+            document.getElementById(`name-${type}`).textContent = troopData[tier].names[type];
         });
-        document.getElementById('resultsSection').classList.remove('show');
+        calculate();
     }
 
-    function selectTier(button, tier, tabIndex) {
-        document.querySelectorAll(`#tierGroup${tabIndex + 1} .btn-toggle`).forEach(btn => {
-            btn.classList.remove('selected');
+    function adjustTroop(type, amount) {
+        const input = document.getElementById(`inp-${type}`);
+        let val = parseInt(input.value) || 0;
+        val = Math.max(0, val + amount);
+        input.value = val;
+        calculate();
+    }
+
+    function resetTroop(type) {
+        document.getElementById(`inp-${type}`).value = 0;
+        calculate();
+    }
+
+    function resetAll() {
+        ['inf', 'rng', 'cav', 'siege'].forEach(type => {
+            document.getElementById(`inp-${type}`).value = 0;
         });
-        button.classList.add('selected');
-        selectedTier[tabIndex] = tier;
+        calculate();
     }
 
-    function selectType(button, type, tabIndex) {
-        document.querySelectorAll(`#typeGroup${tabIndex + 1} .btn-toggle`).forEach(btn => {
-            btn.classList.remove('selected');
-        });
-        button.classList.add('selected');
-        selectedType[tabIndex] = type;
+    function formatNumber(num) {
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+        return num.toLocaleString();
     }
 
-    function formatTime(totalSeconds) {
-        const days = Math.floor(totalSeconds / (24 * 3600));
-        totalSeconds %= (24 * 3600);
-        const hours = Math.floor(totalSeconds / 3600);
-        totalSeconds %= 3600;
-        const minutes = Math.floor(totalSeconds / 60);
-        return `${days}d ${hours}h ${minutes}m`;
-    }
-
-    function parseTime(timeStr) {
-        // Parse format like "1d2h30m"
-        const dayMatch = timeStr.match(/(\d+)d/);
-        const hourMatch = timeStr.match(/(\d+)h/);
-        const minMatch = timeStr.match(/(\d+)m/);
+    function formatTime(seconds) {
+        const d = Math.floor(seconds / (24 * 3600));
+        const h = Math.floor((seconds % (24 * 3600)) / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = Math.floor(seconds % 60);
         
-        const days = dayMatch ? parseInt(dayMatch[1]) : 0;
-        const hours = hourMatch ? parseInt(hourMatch[1]) : 0;
-        const minutes = minMatch ? parseInt(minMatch[1]) : 0;
-        
-        return days * 86400 + hours * 3600 + minutes * 60;
-    }
-
-    function applyResourceExceptions(resources, type) {
-        const res = { ...resources };
-        if (type === 'Infantry') {
-            res.wood = 0;
-        } else if (type === 'Cavalry') {
-            res.wood = 0;
-        } else if (type === 'Ranged') {
-            res.ore = 0;
-        }
+        let res = '';
+        if (d > 0) res += d + 'd ';
+        if (h > 0 || d > 0) res += h + 'h ';
+        res += m + 'm';
         return res;
     }
 
     function calculate() {
-        const resultsSection = document.getElementById('resultsSection');
-        
-        try {
-            if (currentTab === 0) {
-                // Calculate Speed Ups needed
-                const troops = parseInt(document.getElementById('troops1').value) || 0;
-                const trainingSpeed = parseFloat(document.getElementById('trainingSpeed1').value) || 0;
-                const subsidy = parseFloat(document.getElementById('subsidy1').value) || 0;
-                
-                if (troops <= 0) {
-                    alert(translations[localStorage.getItem("selectedLanguage") || "en"]["alert_valid_troops"]);
-                    return;
-                }
-                
-                const tier = selectedTier[0];
-                const type = selectedType[0];
-                const baseResources = baseData[tier];
-                
-                // Calculate training time
-                const totalBaseTime = baseResources.time * troops;
-                const actualTime = totalBaseTime / (1 + trainingSpeed / 100);
-                
-                // Calculate resources
-                let resources = {
-                    food: baseResources.food * troops,
-                    wood: baseResources.wood * troops,
-                    stone: baseResources.stone * troops,
-                    ore: baseResources.ore * troops,
-                    gold: baseResources.gold * troops
-                };
-                
-                resources = applyResourceExceptions(resources, type);
-                
-                // Apply subsidy
-                resources.food = Math.ceil(resources.food * (1 - subsidy / 100));
-                resources.wood = Math.ceil(resources.wood * (1 - subsidy / 100));
-                resources.stone = Math.ceil(resources.stone * (1 - subsidy / 100));
-                resources.ore = Math.ceil(resources.ore * (1 - subsidy / 100));
-                resources.gold = Math.ceil(resources.gold * (1 - subsidy / 100));
-                
-                // Calculate gems (1 gem = 1.5 minutes)
-                const totalMinutes = actualTime / 60;
-                const gems = Math.ceil(totalMinutes / 1.5);
-                
-                // Display results
-                document.getElementById('gemsResult').textContent = gems.toLocaleString();
-                document.getElementById('speedupResult').textContent = formatTime(actualTime);
-                document.getElementById('foodResult').textContent = resources.food.toLocaleString();
-                document.getElementById('woodResult').textContent = resources.wood.toLocaleString();
-                document.getElementById('stoneResult').textContent = resources.stone.toLocaleString();
-                document.getElementById('oreResult').textContent = resources.ore.toLocaleString();
-                document.getElementById('goldResult').textContent = resources.gold.toLocaleString();
-                
-            } else {
-                // Calculate Troops from Speed Ups
-                const speedupStr = document.getElementById('speedups2').value || '0d0h0m';
-                const trainingSpeed = parseFloat(document.getElementById('trainingSpeed2').value) || 0;
-                const subsidy = parseFloat(document.getElementById('subsidy2').value) || 0;
-                
-                const speedupSeconds = parseTime(speedupStr);
-                
-                const tier = selectedTier[1];
-                const type = selectedType[1];
-                const baseResources = baseData[tier];
-                const baseTime = baseResources.time;
-                
-                // Calculate troops: actualTime = totalBaseTime / (1 + trainingSpeed/100)
-                // totalBaseTime = baseTime * troops
-                // troops = actualTime * (1 + trainingSpeed/100) / baseTime
-                const troops = Math.floor(speedupSeconds * (1 + trainingSpeed / 100) / baseTime);
-                
-                if (troops <= 0) {
-                    alert(translations[localStorage.getItem("selectedLanguage") || "en"]["alert_invalid_speedup_format"]);
-                    return;
-                }
-                
-                // Calculate resources
-                let resources = {
-                    food: baseResources.food * troops,
-                    wood: baseResources.wood * troops,
-                    stone: baseResources.stone * troops,
-                    ore: baseResources.ore * troops,
-                    gold: baseResources.gold * troops
-                };
-                
-                resources = applyResourceExceptions(resources, type);
-                
-                // Apply subsidy
-                resources.food = Math.ceil(resources.food * (1 - subsidy / 100));
-                resources.wood = Math.ceil(resources.wood * (1 - subsidy / 100));
-                resources.stone = Math.ceil(resources.stone * (1 - subsidy / 100));
-                resources.ore = Math.ceil(resources.ore * (1 - subsidy / 100));
-                resources.gold = Math.ceil(resources.gold * (1 - subsidy / 100));
-                
-                // Calculate gems
-                const totalMinutes = speedupSeconds / 60;
-                const gems = Math.ceil(totalMinutes / 1.5);
-                
-                // Display results
-                document.getElementById('gemsResult').textContent = gems.toLocaleString();
-                document.getElementById('speedupResult').textContent = formatTime(speedupSeconds);
-                document.getElementById('foodResult').textContent = resources.food.toLocaleString();
-                document.getElementById('woodResult').textContent = resources.wood.toLocaleString();
-                document.getElementById('stoneResult').textContent = resources.stone.toLocaleString();
-                document.getElementById('oreResult').textContent = resources.ore.toLocaleString();
-                document.getElementById('goldResult').textContent = resources.gold.toLocaleString();
-            }
-            
-            resultsSection.classList.add('show');
-        } catch (error) {
-            alert(translations[localStorage.getItem("selectedLanguage") || "en"]["alert_calculation_error"]);
-            console.error(error);
-        }
-    }
+        const speed = parseFloat(document.getElementById('trainingSpeed').value) || 0;
+        const troops = {
+            inf: parseInt(document.getElementById('inp-inf').value) || 0,
+            rng: parseInt(document.getElementById('inp-rng').value) || 0,
+            cav: parseInt(document.getElementById('inp-cav').value) || 0,
+            siege: parseInt(document.getElementById('inp-siege').value) || 0
+        };
 
-    function clearAll() {
-        // Clear Tab 1
-        document.getElementById('troops1').value = '1000';
-        document.getElementById('trainingSpeed1').value = '0';
-        document.getElementById('subsidy1').value = '0';
+        const totalTroops = Object.values(troops).reduce((a, b) => a + b, 0);
         
-        // Clear Tab 2
-        document.getElementById('speedups2').value = '0d4h10m';
-        document.getElementById('trainingSpeed2').value = '0';
-        document.getElementById('subsidy2').value = '0';
-        
-        // Reset selections
-        selectedTier = ['T1', 'T1'];
-        selectedType = ['Infantry', 'Infantry'];
-        
-        // Reset buttons
-        document.querySelectorAll('#tierGroup1 .btn-toggle').forEach((btn, i) => {
-            btn.classList.toggle('selected', i === 0);
-        });
-        document.querySelectorAll('#typeGroup1 .btn-toggle').forEach((btn, i) => {
-            btn.classList.toggle('selected', i === 0);
-        });
-        document.querySelectorAll('#tierGroup2 .btn-toggle').forEach((btn, i) => {
-            btn.classList.toggle('selected', i === 0);
-        });
-        document.querySelectorAll('#typeGroup2 .btn-toggle').forEach((btn, i) => {
-            btn.classList.toggle('selected', i === 0);
-        });
-        
-        // Hide results
-        document.getElementById('resultsSection').classList.remove('show');
+        if (totalTroops === 0) {
+            document.getElementById('results-content').innerHTML = `
+                <div class="empty-results">
+                    <i class="fas fa-helmet-safety"></i>
+                    <p>Enter troop quantities to see the plan.</p>
+                </div>`;
+            return;
+        }
+
+        const costs = troopData[currentTier].costs;
+        let totalFood = 0, totalWood = 0, totalStone = 0, totalOre = 0, totalGold = 0, totalTime = 0;
+
+        // Apply troop specific resource rules
+        // Infantry: No Wood
+        totalFood += troops.inf * costs.food;
+        totalStone += troops.inf * costs.stone;
+        totalOre += troops.inf * costs.ore;
+        totalGold += troops.inf * costs.gold;
+        totalTime += troops.inf * costs.time;
+
+        // Ranged: No Ore
+        totalFood += troops.rng * costs.food;
+        totalWood += troops.rng * costs.wood;
+        totalStone += troops.rng * costs.stone;
+        totalGold += troops.rng * costs.gold;
+        totalTime += troops.rng * costs.time;
+
+        // Cavalry: No Wood
+        totalFood += troops.cav * costs.food;
+        totalStone += troops.cav * costs.stone;
+        totalOre += troops.cav * costs.ore;
+        totalGold += troops.cav * costs.gold;
+        totalTime += troops.cav * costs.time;
+
+        // Siege: All resources
+        totalFood += troops.siege * costs.food;
+        totalWood += troops.siege * costs.wood;
+        totalStone += troops.siege * costs.stone;
+        totalOre += troops.siege * costs.ore;
+        totalGold += troops.siege * costs.gold;
+        totalTime += troops.siege * costs.time;
+
+        const actualTime = totalTime / (1 + speed / 100);
+        const gems = Math.ceil((actualTime / 60) / 1.5);
+
+        document.getElementById('results-content').innerHTML = `
+            <div class="res-row"><span class="res-label">Total Troops</span><span class="res-value">${totalTroops.toLocaleString()}</span></div>
+            <div class="res-row"><span class="res-label">Training Time</span><span class="res-value accent">${formatTime(actualTime)}</span></div>
+            <div class="res-row"><span class="res-label">Gems (Instant)</span><span class="res-value" style="color:#ffc107;">${gems.toLocaleString()}</span></div>
+            <div style="margin-top:20px; font-weight:bold; color:#888; font-size:0.8em; text-transform:uppercase;">Resources Required</div>
+            <div class="res-row"><span class="res-label">Food</span><span class="res-value">${totalFood.toLocaleString()}</span></div>
+            <div class="res-row"><span class="res-label">Wood</span><span class="res-value">${totalWood.toLocaleString()}</span></div>
+            <div class="res-row"><span class="res-label">Stone</span><span class="res-value">${totalStone.toLocaleString()}</span></div>
+            <div class="res-row"><span class="res-label">Ore</span><span class="res-value">${totalOre.toLocaleString()}</span></div>
+            <div class="res-row"><span class="res-label">Gold</span><span class="res-value">${totalGold.toLocaleString()}</span></div>
+        `;
     }
 
     function toggleMenu() {
         document.getElementById('navLinks').classList.toggle('active');
     }
-
 </script>
 <script src="translations.js"></script>
 <script src="features.js"></script>
-
-<script>
-  // Register Service Worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(registration => {
-        console.log('Service Worker registered successfully:', registration);
-      })
-      .catch(error => {
-        console.log('Service Worker registration failed:', error);
-      });
-  }
-</script>
-
-
+</body>
 </html>
