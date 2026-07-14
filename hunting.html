@@ -21,16 +21,22 @@
         }
 
         .monster-btn {
-            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--light-blue) 100%);
-            color: white;
-            border: none;
+            background: var(--light-accent-highlight);
+            color: var(--light-primary-text);
+            border: 1px solid var(--light-border);
             padding: 16px 12px;
             border-radius: 10px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s;
             text-align: center;
+        }
+
+        body.dark-mode .monster-btn {
+            background: var(--dark-secondary-bg);
+            color: var(--dark-primary-text);
+            border-color: var(--dark-border);
         }
 
         .monster-btn:hover {
@@ -63,7 +69,8 @@
         }
 
         .modal-content {
-            background: white;
+            background: var(--light-surface);
+            color: var(--light-primary-text);
             border-radius: 16px;
             overflow: hidden;
             max-width: 500px;
@@ -73,18 +80,31 @@
             animation: modalIn 0.3s ease;
         }
 
+        body.dark-mode .modal-content {
+            background: var(--dark-surface);
+            color: var(--dark-primary-text);
+            border: 1px solid var(--dark-border);
+        }
+
         @keyframes modalIn {
             from { transform: scale(0.8); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
 
         .modal-header {
-            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--light-blue) 100%);
-            color: white;
+            background: var(--light-bg);
+            color: var(--light-primary-text);
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid var(--light-border);
+        }
+
+        body.dark-mode .modal-header {
+            background: var(--dark-secondary-bg);
+            color: var(--dark-primary-text);
+            border-bottom-color: var(--dark-border);
         }
 
         .modal-header h3 {

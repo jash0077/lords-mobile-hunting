@@ -3,11 +3,11 @@
     --light-bg: #f8fafc;
     --light-surface: #ffffff;
     --light-primary-text: #0f172a;
-    --light-secondary-text: #64748b;
-    --light-muted-text: #94a3b8;
-    --light-border: rgba(15, 23, 42, 0.08);
+    --light-secondary-text: #334155;
+    --light-muted-text: #64748b;
+    --light-border: #e2e8f0;
     --light-accent: #2563eb;
-    --light-accent-highlight: rgba(37, 99, 235, 0.1);
+    --light-accent-highlight: #e2e8f0;
     
     /* Dark Mode Colors (from zaxlen33) */
     --dark-bg: #0b0b0f;
@@ -28,10 +28,10 @@
     --accent-cyan: #06b6d4;
     --accent-orange: #ffa657;
     
-    /* Gradients */
-    --green-speedup: linear-gradient(180deg, #4caf50 0%, #2e7d32 100%);
-    --blue-speedup: linear-gradient(180deg, #2196f3 0%, #1565c0 100%);
-    --red-speedup: linear-gradient(180deg, #f44336 0%, #c62828 100%);
+    /* Gradients (Updated for zaxlen33 theme) */
+    --green-speedup: linear-gradient(180deg, var(--accent-green) 0%, #2d8a3e 100%);
+    --blue-speedup: linear-gradient(180deg, var(--accent-blue) 0%, #2563eb 100%);
+    --red-speedup: linear-gradient(180deg, #f85149 0%, #cf222e 100%);
 }
 
 body {
@@ -794,6 +794,18 @@ button {
     transition: all 0.2s;
 }
 
+.monster-btn {
+    background: #e2e8f0 !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+body.dark-mode .monster-btn {
+    background: #1e293b !important;
+    color: #f3f4f6 !important;
+    border: 1px solid #334155 !important;
+}
+
 button:hover {
     background: var(--light-accent-highlight);
     transform: translateY(-2px);
@@ -802,7 +814,7 @@ button:hover {
 
 body.dark-mode button {
     background: var(--dark-accent);
-    color: var(--dark-bg);
+    color: #0b0b0f;
 }
 
 body.dark-mode button:hover {
@@ -824,8 +836,8 @@ table {
 }
 
 thead {
-    background: var(--light-accent-highlight);
-    color: var(--light-primary-text);
+    background: #e2e8f0;
+    color: #0f172a;
 }
 
 th {
@@ -841,7 +853,7 @@ td {
 }
 
 tbody tr:hover {
-    background: var(--light-accent-highlight);
+    background: #f1f5f9;
 }
 
 body.dark-mode table {
