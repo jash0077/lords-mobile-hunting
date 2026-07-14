@@ -609,7 +609,7 @@
         let allData = [];
         let filteredData = [];
 
-    const SHEET_ID = '1PGJ-Ad74mpx-v3RbqHku2310jiCCyYcb85eC1G3d8wM';
+        const SHEET_ID = '1PGJ-Ad74mpx-v3RbqHku2310jiCCyYcb85eC1G3d8wM';
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
         // Parse CSV text into array of objects
         function parseCSV(csv) {
@@ -646,15 +646,12 @@
                 });
                 // Map Google Sheet columns to expected keys
                 const mapped = {
-                    NAME: obj['Player Name'] || obj['NAME'] || '',
-                    KILL: obj['Kills (Total)'] || obj['KILL'] || '',
-                    'KILLS_GAINED': obj['Kills Gained (30D)'] || '',
-                    'MIGHT GAIN': obj['Might Gained (30D)'] || obj['MIGHT GAIN'] || '',
-                    'MIGHT LOSE': obj['Might Lost (30D)'] || obj['MIGHT LOSE'] || '',
-                    'NET_MIGHT': obj['Net Might'] || '',
-                    'MIGHT LOSS': obj['Might Lost (30D)'] || obj['MIGHT LOSE'] || '',
+                    NAME: obj['Player'] || obj['NAME'] || '',
+                    KILL: obj['Kills INCREASE'] || obj['KILL'] || '',
+                    'MIGHT GAIN': obj['MightGain'] || obj['MIGHT GAIN'] || '',
+                    'MIGHT LOSS': obj['MightLoss'] || obj['MIGHT LOSS'] || '',
                     RANK: obj['RANK'] || '',
-                    MONTH: obj['MONTH'] || '',
+                    MONTH: obj['Date'] || obj['MONTH'] || '',
                     'GUILD FEST': obj['GUILD FEST'] || ''
                 };
                 if (mapped.NAME) data.push(mapped);
@@ -732,7 +729,7 @@
                         </div>
                         <div class="podium-stat-row">
                             <span class="podium-stat-label">Might Loss:</span>
-                            <span class="podium-stat-value">${player['MIGHT LOSE'] || '-'}</span>
+                            <span class="podium-stat-value">${player['MIGHT LOSS'] || '-'}</span>
                         </div>
                         <div class="podium-stat-row">
                             <span class="podium-stat-label">Might Gain:</span>
@@ -755,7 +752,7 @@
             }, 0);
 
             const totalMightLoss = filteredData.reduce((sum, p) => {
-                const loss = parseInt(p['MIGHT LOSE']) || 0;
+                const loss = parseInt(p['MIGHT LOSS']) || 0;
                 return sum + loss;
             }, 0);
 
@@ -829,7 +826,7 @@
                     <td class="rank-cell">${rankDisplay}</td>
                     <td>${playerName}</td>
                     <td>${player.KILL || '-'}</td>
-                    <td>${player['MIGHT LOSE'] || '-'}</td>
+                    <td>${player['MIGHT LOSS'] || '-'}</td>
                     <td>${player['MIGHT GAIN'] || '-'}</td>
                 `;
                 tbody.appendChild(row);
