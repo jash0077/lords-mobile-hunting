@@ -451,8 +451,18 @@
             </div>
         </div>
 
+        <!-- Tab Navigation -->
+        <div class="tab-container" style="margin-bottom: 20px; display: flex; gap: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+            <button class="tab-btn active" id="tab-war" onclick="switchTab('war')" style="background: none; border: none; color: var(--text-primary); cursor: pointer; font-size: 1rem; font-weight: 600; padding: 10px 0; position: relative;">
+                <i class="fas fa-swords"></i> War Reports
+            </button>
+            <button class="tab-btn" id="tab-gf" onclick="switchTab('gf')" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1rem; font-weight: 600; padding: 10px 0; position: relative;">
+                <i class="fas fa-trophy"></i> Guild Fest
+            </button>
+        </div>
+
         <!-- Monthly Reports Section -->
-        <div class="reports-section">
+        <div class="reports-section" id="war-section">
             <div class="section-header">
                 <h2><i class="fas fa-file-alt"></i> All War Reports</h2>
                 <div style="position: relative;">
@@ -469,6 +479,33 @@
             </div>
             <div id="reports-list">
                 <!-- Reports will be injected here -->
+            </div>
+        </div>
+
+        <!-- Guild Fest Section -->
+        <div class="reports-section" id="gf-section" style="display: none;">
+            <div class="section-header">
+                <h2><i class="fas fa-trophy"></i> Guild Fest Ranking</h2>
+                <div style="display: flex; gap: 10px;">
+                    <select id="gfMonth" class="lang-btn" onchange="renderGFTable()">
+                        <option value="">Select Month</option>
+                    </select>
+                </div>
+            </div>
+            <div class="chart-section" style="padding: 0; border: none; background: transparent;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Points</th>
+                            <th>Rank</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gfTableBody">
+                        <!-- GF Data injected here -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -512,6 +549,7 @@
     <script>
         let allData = [];
         let currentSort = 'rank';
+        let currentView = 'war';
         const SHEET_ID = '1PGJ-Ad74mpx-v3RbqHku2310jiCCyYcb85eC1G3d8wM';
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
@@ -593,22 +631,27 @@
             return num.toLocaleString();
         }
 
+        function switchTab(view) {
+            currentView = view;
+            document.getElementById('war-section').style.display = view === 'war' ? 'block' : 'none';
+            document.getElementById('gf-section').style.display = view === 'gf' ? 'block' : 'none';
+            
+            document.getElementById('tab-war').classList.toggle('active', view === 'war');
+            document.getElementById('tab-gf').classList.toggle('active', view === 'gf');
+            
+            document.getElementById('tab-war').style.color = view === 'war' ? 'var(--text-primary)' : 'var(--text-secondary)';
+            document.getElementById('tab-gf').style.color = view === 'gf' ? 'var(--text-primary)' : 'var(--text-secondary)';
+            
+            if (view === 'gf') renderGFTable();
+        }
+
         function processAndRender() {
-            // Group by month
             const monthlyData = {};
             allData.forEach(p => {
                 const m = p.MONTH || 'Unknown';
                 if (!monthlyData[m]) {
                     monthlyData[m] = {
-                        name: m,
-                        players: 0,
-                        might: 0,
-                        kills: 0,
-                        killsGain: 0,
-                        mightLoss: 0,
-                        mightGain: 0,
-                        snapshots: 0,
-                        playerList: []
+                        name: m, players: 0, might: 0, kills: 0, killsGain: 0, mightLoss: 0, mightGain: 0, snapshots: 0, playerList: []
                     };
                 }
                 monthlyData[m].players++;
@@ -624,18 +667,14 @@
             const months = Object.keys(monthlyData).sort((a, b) => new Date(b) - new Date(a));
             const lastMonth = monthlyData[months[0]];
 
-            // Update Stats
             document.getElementById('stat-months').textContent = months.length;
             document.getElementById('stat-members').textContent = lastMonth.players;
             document.getElementById('stat-might').textContent = formatNumber(lastMonth.might);
             document.getElementById('stat-kills').textContent = formatNumber(lastMonth.kills);
             document.getElementById('stat-avg-might').textContent = formatNumber(lastMonth.might / lastMonth.players);
-            document.getElementById('total-reports-count').textContent = `${months.length} reports`;
 
-            // Render Chart
             renderChart(monthlyData);
 
-            // Render Reports List
             const list = document.getElementById('reports-list');
             list.innerHTML = '';
             months.forEach((m, idx) => {
@@ -658,13 +697,39 @@
                 list.appendChild(item);
             });
 
-            // Populate Modal Month Dropdown
             const modalMonth = document.getElementById('modalMonth');
+            const gfMonth = document.getElementById('gfMonth');
+            modalMonth.innerHTML = '<option value="">All Months</option>';
+            gfMonth.innerHTML = '';
             months.forEach(m => {
                 const opt = document.createElement('option');
-                opt.value = m;
-                opt.textContent = m;
-                modalMonth.appendChild(opt);
+                opt.value = m; opt.textContent = m;
+                modalMonth.appendChild(opt.cloneNode(true));
+                gfMonth.appendChild(opt);
+            });
+            
+            if (currentView === 'gf') renderGFTable();
+        }
+
+        function renderGFTable() {
+            const month = document.getElementById('gfMonth').value;
+            const tbody = document.getElementById('gfTableBody');
+            if (!month || !allData.length) return;
+
+            let filtered = allData.filter(p => p.MONTH === month && p['GUILD FEST']);
+            filtered.sort((a, b) => parseVal(b['GUILD FEST']) - parseVal(a['GUILD FEST']));
+
+            tbody.innerHTML = '';
+            filtered.forEach((p, idx) => {
+                const row = document.createElement('tr');
+                const rankVal = p.RANK && p.RANK.match(/R[1-5]/) ? p.RANK : 'R1';
+                row.innerHTML = `
+                    <td>${idx + 1}</td>
+                    <td><strong>${p.NAME}</strong></td>
+                    <td><span class="latest-badge" style="background: var(--accent-gold); color: #000;">${p['GUILD FEST']}</span></td>
+                    <td><span class="rank-badge ${rankVal.toLowerCase()}">${rankVal}</span></td>
+                `;
+                tbody.appendChild(row);
             });
         }
 
