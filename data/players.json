@@ -1,20 +1,56 @@
 [
     {
-        "RANK": "3",
-        "PLAYER": "",
-        "KILL": "100M",
-        "MIGHT LOSS": "30M",
-        "MIGHT GAIN": "20M",
-        "": "",
         "NAME": "JASH",
-        "GUILD FEST": "1600"
+        "KILL": "15M",
+        "MIGHT LOSS": "10M",
+        "MIGHT GAIN": "5M",
+        "MONTH": "2026-07-01",
+        "RANK": "",
+        "GUILD FEST": ""
     },
     {
-        "RANK": "R4",
-        "PLAYER": "",
-        "KILL": "Om",
-        "MIGHT LOSS": "",
-        "MIGHT GAIN": "100M",
-        "": ""
+        "NAME": "RAM",
+        "KILL": "20M",
+        "MIGHT LOSS": "50M",
+        "MIGHT GAIN": "2M",
+        "MONTH": "2026-07-08",
+        "RANK": "",
+        "GUILD FEST": ""
+    },
+    {
+        "NAME": "POP",
+        "KILL": "50M",
+        "MIGHT LOSS": "30M",
+        "MIGHT GAIN": "10M",
+        "MONTH": "2026-07-01",
+        "RANK": "",
+        "GUILD FEST": ""
+    },
+    {
+        "NAME": "SPICYGIRL ",
+        "KILL": "60M",
+        "MIGHT LOSS": "1M",
+        "MIGHT GAIN": "800M",
+        "MONTH": "2026-07-08",
+        "RANK": "",
+        "GUILD FEST": ""
+    },
+    {
+        "NAME": "Kumar",
+        "KILL": "50M",
+        "MIGHT LOSS": "1M",
+        "MIGHT GAIN": "520M",
+        "MONTH": "2026-07-01",
+        "RANK": "",
+        "GUILD FEST": ""
+    },
+    {
+        "NAME": "SHYAM",
+        "KILL": "1M",
+        "MIGHT LOSS": "1M",
+        "MIGHT GAIN": "30M",
+        "MONTH": "2026-07-08",
+        "RANK": "",
+        "GUILD FEST": ""
     }
 ]
