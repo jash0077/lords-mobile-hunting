@@ -12,6 +12,7 @@
     <title>Troop Composition - Lords Mobile Hub</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .comp-container {
             background: var(--light-surface);
@@ -217,6 +218,41 @@
             color: var(--dark-accent);
         }
 
+        .comp-chart-container {
+            margin-top: 25px;
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--light-border);
+            display: none;
+        }
+
+        body.dark-mode .comp-chart-container {
+            background: var(--dark-secondary-bg);
+            border-color: var(--dark-border);
+        }
+
+        .comp-chart-container.show {
+            display: block;
+        }
+
+        .comp-chart-box {
+            height: 300px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .comp-chart-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--light-primary-text);
+        }
+
+        body.dark-mode .comp-chart-title {
+            color: var(--dark-primary-text);
+        }
+
         @media (max-width: 480px) {
             .comp-container {
                 padding: 15px;
@@ -355,6 +391,17 @@
                 <span class="comp-result-value" id="resT4Cav">0</span>
             </div>
         </div>
+
+        <div class="comp-chart-container" id="compCharts">
+            <div class="comp-chart-title">📊 Troop Distribution</div>
+            <div class="comp-chart-box">
+                <canvas id="troopChart"></canvas>
+            </div>
+            <div class="comp-chart-title">🎯 T5 vs T4 Breakdown</div>
+            <div class="comp-chart-box">
+                <canvas id="tierChart"></canvas>
+            </div>
+        </div>
     </div>
 
     <footer>
@@ -366,6 +413,9 @@
     function toggleMenu() {
         document.getElementById('navLinks').classList.toggle('active');
     }
+
+    let troopChart = null;
+    let tierChart = null;
 
     function calculateComp() {
         const totalTroops = parseInt(document.getElementById('compTroopQty').value) || 0;
@@ -405,6 +455,80 @@
         document.getElementById('resT4Cav').textContent = t4Cav.toLocaleString();
 
         document.getElementById('compResults').classList.add('show');
+        document.getElementById('compCharts').classList.add('show');
+
+        // Destroy existing charts if they exist
+        if (troopChart) troopChart.destroy();
+        if (tierChart) tierChart.destroy();
+
+        // Create Troop Distribution Chart
+        const troopCtx = document.getElementById('troopChart').getContext('2d');
+        troopChart = new Chart(troopCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['T5 Infantry', 'T5 Ranged', 'T5 Cavalry', 'T4 Infantry', 'T4 Ranged', 'T4 Cavalry'],
+                datasets: [{
+                    data: [t5Inf, t5Ran, t5Cav, t4Inf, t4Ran, t4Cav],
+                    backgroundColor: [
+                        '#FFC107', '#FF9800', '#FF5722',
+                        '#FFEB3B', '#FFA726', '#EF5350'
+                    ],
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#94949e', padding: 15, font: { size: 12 } }
+                    }
+                }
+            }
+        });
+
+        // Create T5 vs T4 Chart
+        const tierCtx = document.getElementById('tierChart').getContext('2d');
+        tierChart = new Chart(tierCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Infantry', 'Ranged', 'Cavalry'],
+                datasets: [
+                    {
+                        label: 'T5',
+                        data: [t5Inf, t5Ran, t5Cav],
+                        backgroundColor: '#4D94FF'
+                    },
+                    {
+                        label: 'T4',
+                        data: [t4Inf, t4Ran, t4Cav],
+                        backgroundColor: '#BC8CFF'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#94949e' },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    },
+                    x: {
+                        ticks: { color: '#94949e' },
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#94949e', padding: 15, font: { size: 12 } }
+                    }
+                }
+            }
+        });
     }
 
     function clearComp() {
@@ -415,6 +539,9 @@
         document.getElementById('compRanged').value = '4';
         document.getElementById('compCavalry').value = '8';
         document.getElementById('compResults').classList.remove('show');
+        document.getElementById('compCharts').classList.remove('show');
+        if (troopChart) troopChart.destroy();
+        if (tierChart) tierChart.destroy();
     }
 </script>
 <script src="translations.js"></script>

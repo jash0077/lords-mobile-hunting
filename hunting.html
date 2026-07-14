@@ -15,37 +15,54 @@
     <style>
         .monster-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
             margin-top: 20px;
         }
 
         .monster-btn {
-            background: var(--light-accent-highlight);
-            color: var(--light-primary-text);
-            border: 1px solid var(--light-border);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #f3f4f6;
+            border: 2px solid rgba(77, 148, 255, 0.3);
             padding: 16px 12px;
-            border-radius: 10px;
-            font-size: 1em;
+            border-radius: 12px;
+            font-size: 0.95em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .monster-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .monster-btn:hover::before {
+            left: 100%;
         }
 
         body.dark-mode .monster-btn {
-            background: var(--dark-secondary-bg);
-            color: var(--dark-primary-text);
-            border-color: var(--dark-border);
+            background: linear-gradient(135deg, #13131a 0%, #1c1c24 100%);
+            border-color: rgba(77, 148, 255, 0.5);
         }
 
         .monster-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(77, 148, 255, 0.4);
+            border-color: rgba(77, 148, 255, 0.8);
         }
 
         .monster-btn:active {
-            transform: translateY(0);
+            transform: translateY(-2px);
         }
 
         /* Modal Overlay */
@@ -56,12 +73,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             z-index: 2000;
             justify-content: center;
             align-items: center;
             padding: 20px;
             box-sizing: border-box;
+            backdrop-filter: blur(4px);
         }
 
         .modal-overlay.active {
@@ -69,72 +87,176 @@
         }
 
         .modal-content {
-            background: var(--light-surface);
-            color: var(--light-primary-text);
-            border-radius: 16px;
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            color: #0f172a;
+            border-radius: 20px;
             overflow: hidden;
-            max-width: 500px;
+            max-width: 600px;
             width: 100%;
             max-height: 90vh;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
             animation: modalIn 0.3s ease;
+            border: 1px solid rgba(77, 148, 255, 0.2);
         }
 
         body.dark-mode .modal-content {
-            background: var(--dark-surface);
-            color: var(--dark-primary-text);
-            border: 1px solid var(--dark-border);
+            background: linear-gradient(135deg, #0b0b0f 0%, #13131a 100%);
+            color: #f3f4f6;
+            border-color: rgba(77, 148, 255, 0.3);
         }
 
         @keyframes modalIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from { transform: scale(0.8) rotateX(-10deg); opacity: 0; }
+            to { transform: scale(1) rotateX(0); opacity: 1; }
         }
 
         .modal-header {
-            background: var(--light-bg);
-            color: var(--light-primary-text);
-            padding: 15px 20px;
+            background: linear-gradient(135deg, #4d94ff 0%, #2563eb 100%);
+            color: white;
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--light-border);
+            border-bottom: 3px solid rgba(77, 148, 255, 0.3);
         }
 
         body.dark-mode .modal-header {
-            background: var(--dark-secondary-bg);
-            color: var(--dark-primary-text);
-            border-bottom-color: var(--dark-border);
+            background: linear-gradient(135deg, #4d94ff 0%, #2563eb 100%);
         }
 
         .modal-header h3 {
             margin: 0;
-            font-size: 1.2em;
+            font-size: 1.4em;
+            font-weight: 700;
         }
 
         .modal-close {
             background: rgba(255,255,255,0.2);
             border: none;
             color: white;
-            font-size: 1.5em;
+            font-size: 1.8em;
             cursor: pointer;
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
 
         .modal-close:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.4);
+            transform: rotate(90deg);
         }
 
         .modal-image {
             width: 100%;
             height: auto;
             display: block;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .hero-lineup {
+            margin-top: 20px;
+        }
+
+        .lineup-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        body.dark-mode .lineup-title {
+            color: #f3f4f6;
+        }
+
+        .heroes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, rgba(77, 148, 255, 0.1) 0%, rgba(77, 148, 255, 0.05) 100%);
+            border: 2px solid rgba(77, 148, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        body.dark-mode .hero-card {
+            background: linear-gradient(135deg, rgba(77, 148, 255, 0.15) 0%, rgba(77, 148, 255, 0.08) 100%);
+            border-color: rgba(77, 148, 255, 0.4);
+        }
+
+        .hero-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(77, 148, 255, 0.8);
+            box-shadow: 0 5px 15px rgba(77, 148, 255, 0.2);
+        }
+
+        .hero-icon {
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+
+        .hero-name {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #0f172a;
+            line-height: 1.3;
+        }
+
+        body.dark-mode .hero-name {
+            color: #f3f4f6;
+        }
+
+        .damage-type {
+            font-size: 0.75em;
+            margin-top: 6px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .damage-physical {
+            background: rgba(255, 152, 0, 0.2);
+            color: #f57c00;
+        }
+
+        .damage-magic {
+            background: rgba(156, 39, 176, 0.2);
+            color: #8e24aa;
+        }
+
+        .damage-mixed {
+            background: rgba(76, 175, 80, 0.2);
+            color: #388e3c;
+        }
+
+        @media (max-width: 600px) {
+            .monster-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+                gap: 10px;
+            }
+            .modal-content {
+                max-width: 95vw;
+            }
+            .heroes-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
         @media (max-width: 400px) {
@@ -143,8 +265,11 @@
                 gap: 8px;
             }
             .monster-btn {
-                padding: 14px 8px;
-                font-size: 0.85em;
+                padding: 12px 8px;
+                font-size: 0.8em;
+            }
+            .heroes-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -202,7 +327,7 @@
     </footer>
 </div>
 
-<!-- Modal for showing monster image -->
+<!-- Modal for showing monster image and heroes -->
 <div class="modal-overlay" id="monsterModal" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -210,10 +335,141 @@
             <button class="modal-close" onclick="closeModal()">&times;</button>
         </div>
         <img id="modalImage" class="modal-image" src="" alt="">
+        <div class="modal-body">
+            <div class="hero-lineup">
+                <div class="lineup-title">🎯 Recommended Heroes</div>
+                <div class="heroes-grid" id="heroesGrid">
+                    <!-- Heroes will be populated here -->
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
+    const monsterHeroes = {
+        "Bon Appeti": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Bombin", icon: "🔥", type: "Physical" },
+            { name: "Grim Reaper", icon: "💀", type: "Magic" }
+        ],
+        "Queen Bee": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" },
+            { name: "Trickster", icon: "🎭", type: "Mixed" }
+        ],
+        "Mega Maggot": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Grim Reaper", icon: "💀", type: "Magic" },
+            { name: "Bombin", icon: "🔥", type: "Physical" }
+        ],
+        "Hootclaw": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" },
+            { name: "Grim Reaper", icon: "💀", type: "Magic" }
+        ],
+        "Tidal Titan": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Trickster", icon: "🎭", type: "Mixed" },
+            { name: "Bombin", icon: "🔥", type: "Physical" }
+        ],
+        "Mecha Trojan": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" },
+            { name: "Grim Reaper", icon: "💀", type: "Magic" }
+        ],
+        "Grim Reaper": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Bombin", icon: "🔥", type: "Physical" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" }
+        ],
+        "Blackwing": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Trickster", icon: "🎭", type: "Mixed" },
+            { name: "Grim Reaper", icon: "💀", type: "Magic" }
+        ],
+        "Snow Beast": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" },
+            { name: "Bombin", icon: "🔥", type: "Physical" }
+        ],
+        "Frostwing": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Grim Reaper", icon: "💀", type: "Magic" },
+            { name: "Trickster", icon: "🎭", type: "Mixed" }
+        ],
+        "Voodoo Shaman": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" },
+            { name: "Bombin", icon: "🔥", type: "Physical" }
+        ],
+        "Terrorthorn": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Grim Reaper", icon: "💀", type: "Magic" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" }
+        ],
+        "Serpent Gladiator": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Bombin", icon: "🔥", type: "Physical" },
+            { name: "Trickster", icon: "🎭", type: "Mixed" }
+        ],
+        "Saberfang": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" },
+            { name: "Grim Reaper", icon: "💀", type: "Magic" }
+        ],
+        "Noceros": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Bombin", icon: "🔥", type: "Physical" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" }
+        ],
+        "Jade Wyrm": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Trickster", icon: "🎭", type: "Mixed" },
+            { name: "Grim Reaper", icon: "💀", type: "Magic" }
+        ],
+        "Hell Drider": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" },
+            { name: "Bombin", icon: "🔥", type: "Physical" }
+        ],
+        "Hardrox": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Grim Reaper", icon: "💀", type: "Magic" },
+            { name: "Trickster", icon: "🎭", type: "Mixed" }
+        ],
+        "Gryphon": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Bombin", icon: "🔥", type: "Physical" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" }
+        ],
+        "Gawrilla": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" },
+            { name: "Grim Reaper", icon: "💀", type: "Magic" }
+        ],
+        "Gargantua": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Bombin", icon: "🔥", type: "Physical" },
+            { name: "Trickster", icon: "🎭", type: "Mixed" }
+        ],
+        "Cottageroar": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Grim Reaper", icon: "💀", type: "Magic" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" }
+        ],
+        "Arctic Flipper": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Bombin", icon: "🔥", type: "Physical" },
+            { name: "Lava Lord", icon: "🌋", type: "Magic" }
+        ],
+        "Necrosis": [
+            { name: "Gorgana", icon: "👑", type: "Physical" },
+            { name: "Trickster", icon: "🎭", type: "Mixed" },
+            { name: "Grim Reaper", icon: "💀", type: "Magic" }
+        ]
+    };
+
     const monsters = [
         { name: "Bon Appeti", image: "images/photo_AQADZA9rG92AgVR-.jpg" },
         { name: "Queen Bee", image: "images/photo_AQADZQ9rG92AgVR-.jpg" },
@@ -255,6 +511,23 @@
         document.getElementById('modalTitle').textContent = name;
         document.getElementById('modalImage').src = imageSrc;
         document.getElementById('modalImage').alt = name;
+        
+        // Populate heroes
+        const heroesGrid = document.getElementById('heroesGrid');
+        heroesGrid.innerHTML = '';
+        const heroes = monsterHeroes[name] || [];
+        heroes.forEach(hero => {
+            const heroCard = document.createElement('div');
+            heroCard.className = 'hero-card';
+            const damageClass = 'damage-' + hero.type.toLowerCase().replace(' ', '-');
+            heroCard.innerHTML = `
+                <div class="hero-icon">${hero.icon}</div>
+                <div class="hero-name">${hero.name}</div>
+                <div class="damage-type ${damageClass}">${hero.type}</div>
+            `;
+            heroesGrid.appendChild(heroCard);
+        });
+        
         document.getElementById('monsterModal').classList.add('active');
         document.body.style.overflow = 'hidden';
     }
@@ -295,5 +568,5 @@
   }
 </script>
 
-
+
 </html>
