@@ -155,15 +155,20 @@
             }
 
             try {
-                // Use a proxy or direct fetch if it's on GitHub Pages
                 const response = await fetch(SHEET_URL);
                 if (!response.ok) throw new Error('Network response was not ok');
                 const csvText = await response.text();
                 const data = parseCSV(csvText);
 
-                const playerHistory = data.filter(p => p.NAME === playerName).sort((a, b) => new Date(a.MONTH) - new Date(b.MONTH));
+                // Use a more robust matching logic (case-insensitive and trimmed)
+                const searchName = playerName.trim().toLowerCase();
+                const playerHistory = data.filter(p => p.NAME.trim().toLowerCase() === searchName).sort((a, b) => new Date(a.MONTH) - new Date(b.MONTH));
+                
                 if (playerHistory.length === 0) {
-                    document.getElementById('loading').innerHTML = '<p style="color:#ff4d4d;">Player Not Found</p>';
+                    document.getElementById('loading').innerHTML = `
+                        <p style="color:#ff4d4d; font-size: 1.2rem;">Player Not Found</p>
+                        <p style="color:var(--text-secondary); font-size: 0.9rem; margin-top: 10px;">Searching for: <strong>${playerName}</strong></p>
+                    `;
                     return;
                 }
 
