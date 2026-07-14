@@ -3,9 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guild Kill Leaderboard</title>
+    <title>War Dashboard | HEM Guild</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --bg-dark: #0b0b0f;
+            --bg-card: #13131a;
+            --bg-elevated: #1c1c24;
+            --text-primary: #f3f4f6;
+            --text-secondary: #94949e;
+            --accent-blue: #4d94ff;
+            --accent-purple: #bc8cff;
+            --accent-green: #3fb950;
+            --accent-gold: #f5a623;
+            --border: rgba(255, 255, 255, 0.06);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,11 +28,11 @@
         }
 
         body {
-            background: #0b0b0f;
-            color: #f3f4f6;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
             padding: 20px;
-            min-height: 100vh;
+            line-height: 1.5;
         }
 
         .container {
@@ -30,670 +45,445 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
-            padding: 20px;
-            background: #13131a;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
-        h1 {
-            font-size: 2.5em;
-            margin: 0;
+        .header-title h1 {
             font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
             font-weight: 800;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, #4d94ff 0%, #bc8cff 100%);
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 20px rgba(77, 148, 255, 0.3);
-            position: relative;
-            display: inline-block;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 60px;
-            height: 4px;
-            background: #f5a623;
-            border-radius: 2px;
-        }
-
-        .header-controls {
             display: flex;
-            gap: 15px;
             align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .month-dropdown {
-            padding: 10px 15px;
-            background: #1e293b;
-            border: 2px solid #2563eb;
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .month-dropdown:hover {
-            background: #334155;
-            border-color: #3b82f6;
-        }
-
-        .search-box {
-            padding: 10px 15px;
-            background: #1e293b;
-            border: 2px solid #2563eb;
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
-            min-width: 200px;
-        }
-
-        .search-box::placeholder {
-            color: #94a3b8;
-        }
-
-        .nav-tabs {
-            display: flex;
             gap: 10px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #334155;
-            padding-bottom: 10px;
         }
 
-        .nav-tabs button {
-            padding: 10px 20px;
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: all 0.3s;
-            border-bottom: 3px solid transparent;
+        .header-title p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 4px;
         }
 
-        .nav-tabs button.active {
-            color: #2563eb;
-            border-bottom-color: #2563eb;
+        .nav-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
         }
 
-        .nav-tabs button:hover {
-            color: #3b82f6;
+        .lang-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        /* Podium Section */
-        .podium-section {
+        /* Summary Cards */
+        .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
-        .podium-card {
-            background: #13131a;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
+        .summary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            transition: all 0.3s;
+            transition: transform 0.3s;
         }
 
-        .podium-card.gold {
-            border-color: #fbbf24;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+        .summary-card:hover {
+            transform: translateY(-5px);
         }
 
-        .podium-card.silver {
-            border-color: #e5e7eb;
-            box-shadow: 0 0 20px rgba(229, 231, 235, 0.2);
-        }
-
-        .podium-card.bronze {
-            border-color: #d97706;
-            box-shadow: 0 0 20px rgba(217, 119, 6, 0.3);
-        }
-
-        .podium-card::before {
+        .summary-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, currentColor, transparent);
+            width: 4px;
+            height: 100%;
+            background: var(--accent-color, var(--accent-blue));
         }
 
-        .podium-rank {
-            font-size: 2em;
-            font-weight: bold;
-            margin-bottom: 10px;
+        .card-icon {
+            font-size: 1.2rem;
+            color: var(--accent-color, var(--accent-blue));
+            margin-bottom: 16px;
+            opacity: 0.8;
         }
 
-        .podium-card.gold .podium-rank {
-            color: #fbbf24;
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
         }
 
-        .podium-card.silver .podium-rank {
-            color: #e5e7eb;
+        .card-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .podium-card.bronze .podium-rank {
-            color: #d97706;
+        /* Chart Section */
+        .chart-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
         }
 
-        .podium-player-name {
-            font-size: 1.3em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            cursor: pointer;
-            color: #e0e7ff;
-            transition: color 0.3s;
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
-        .podium-player-name:hover {
-            color: #2563eb;
+        .section-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-container {
+            height: 350px;
+            position: relative;
+        }
+
+        /* Monthly Reports List */
+        .reports-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .report-item {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .report-item:last-child {
+            border-bottom: none;
+        }
+
+        .report-month {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .month-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .latest-badge {
+            background: rgba(77, 148, 255, 0.1);
+            color: var(--accent-blue);
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .snapshot-count {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .report-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .stat-item i {
+            width: 16px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .stat-item span {
+            color: var(--text-secondary);
+        }
+
+        .stat-item strong {
+            color: var(--text-primary);
+        }
+
+        .view-breakdown {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .view-breakdown:hover {
             text-decoration: underline;
         }
 
-        .podium-stats {
-            font-size: 0.9em;
-            color: #cbd5e1;
-            line-height: 1.6;
+        /* Search & Filter Overlay */
+        .search-overlay {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
         }
 
-        .podium-stat-row {
+        .action-btn {
+            background: var(--accent-blue);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(77, 148, 255, 0.4);
+            border: none;
+            font-size: 1.2rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .modal-header {
             display: flex;
             justify-content: space-between;
-            margin: 5px 0;
-        }
-
-        .podium-stat-label {
-            color: #94a3b8;
-        }
-
-        .podium-stat-value {
-            font-weight: bold;
-            color: #e0e7ff;
-        }
-
-        /* Guild Stats Section */
-        .guild-stats-section {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            border: 2px solid #2563eb;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 40px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-        }
-
-        .stat-card {
-            text-align: center;
-            padding: 15px;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 8px;
-            border: 1px solid #475569;
-        }
-
-        .stat-label {
-            color: #94a3b8;
-            font-size: 0.9em;
-            margin-bottom: 8px;
-        }
-
-        .stat-value {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #2563eb;
-        }
-
-        /* Leaderboard Table */
-        .leaderboard-section {
-            display: none;
-        }
-
-        .leaderboard-section.active {
-            display: block;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: #13131a;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
         th {
-            background: #1c1c24;
-            padding: 15px;
             text-align: left;
-            font-weight: 600;
-            color: #94949e;
+            padding: 12px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
             text-transform: uppercase;
-            font-size: 0.8em;
-            letter-spacing: 0.05em;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            border-bottom: 1px solid var(--border);
         }
 
         td {
-            padding: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            color: #f3f4f6;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
         }
 
-        tr:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .rank-cell {
-            font-weight: bold;
-            text-align: center;
-            min-width: 60px;
-        }
+        tr:hover { background: rgba(255,255,255,0.02); }
 
         .rank-badge {
-            display: inline-block;
-            padding: 4px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.85em;
-            font-weight: bold;
-            margin-left: 5px;
-        }
-
-        .rank-badge.r5 {
-            background: rgba(255, 215, 0, 0.12);
-            color: #ffd700;
-            border: 1px solid rgba(255, 215, 0, 0.25);
-            text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
-        }
-
-        .rank-badge.r4 {
-            background: rgba(6, 182, 212, 0.12);
-            color: #06b6d4;
-            border: 1px solid rgba(6, 182, 212, 0.25);
-        }
-
-        .rank-badge.r3 {
-            background: rgba(255, 166, 87, 0.12);
-            color: #ffa657;
-            border: 1px solid rgba(255, 166, 87, 0.25);
-        }
-
-        .rank-badge.r2 {
-            background: rgba(77, 148, 255, 0.1);
-            color: #4d94ff;
-            border: 1px solid rgba(77, 148, 255, 0.22);
-        }
-
-        .rank-badge.r1 {
-            background: rgba(148, 148, 158, 0.08);
-            color: #94949e;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .player-name {
-            cursor: pointer;
-            color: #4d94ff;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .player-name:hover {
-            color: #06b6d4;
-            text-decoration: underline;
-        }
-
-        .gold-text {
-            color: #fbbf24;
+            font-size: 0.75rem;
             font-weight: bold;
         }
-
-        .silver-text {
-            color: #e5e7eb;
-            font-weight: bold;
-        }
-
-        .bronze-text {
-            color: #d97706;
-            font-weight: bold;
-        }
-
-        /* Guild Fest Section */
-        .guild-fest-section {
-            display: none;
-        }
-
-        .guild-fest-section.active {
-            display: block;
-        }
-
-        .guild-fest-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #1e293b;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        /* Player Profile Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            border: 2px solid #2563eb;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-            animation: slideUp 0.3s;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #ef4444;
-            border: none;
-            color: white;
-            font-size: 1.5em;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .close-btn:hover {
-            background: #dc2626;
-            transform: scale(1.1);
-        }
-
-        .profile-header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #475569;
-        }
-
-        .profile-name {
-            font-size: 2em;
-            font-weight: bold;
-            color: #2563eb;
-            margin-bottom: 10px;
-        }
-
-        .profile-rank {
-            font-size: 1.1em;
-            color: #cbd5e1;
-        }
-
-        .profile-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .profile-stat {
-            background: rgba(15, 23, 42, 0.5);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #475569;
-        }
-
-        .profile-stat-label {
-            color: #94a3b8;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .profile-stat-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #2563eb;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #94a3b8;
-        }
-
-        .loading::after {
-            content: '';
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #2563eb;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        .r5 { background: rgba(245, 166, 35, 0.1); color: var(--accent-gold); }
+        .r4 { background: rgba(77, 148, 255, 0.1); color: var(--accent-blue); }
 
         @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            h1 {
-                font-size: 1.5em;
-            }
-
-            .header-controls {
-                width: 100%;
-                flex-direction: column;
-            }
-
-            .search-box {
-                width: 100%;
-                min-width: unset;
-            }
-
-            .month-dropdown {
-                width: 100%;
-            }
-
-            .podium-section {
-                grid-template-columns: 1fr;
-            }
-
-            .guild-stats-section {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .profile-stats {
-                grid-template-columns: 1fr;
-            }
-
-            table {
-                font-size: 0.9em;
-            }
-
-            td, th {
-                padding: 10px;
-            }
+            .report-item { grid-template-columns: 1fr; }
+            .summary-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>WELCOME TO HEM GUILD</h1>
-            <div class="header-controls">
-                <select id="monthDropdown" class="month-dropdown">
-                    <option value="">All Months</option>
-                </select>
-                <input type="text" id="searchInput" class="search-box" placeholder="Search Player...">
+            <div class="header-title">
+                <h1>🏰 War | HEM Guild</h1>
+                <p>Weekly guild war data — guild power, kills, and growth tracking.</p>
+            </div>
+            <div class="nav-controls">
+                <button class="lang-btn"><i class="fas fa-globe"></i> EN <i class="fas fa-chevron-down"></i></button>
+                <a href="index.html" class="lang-btn" style="text-decoration:none;"><i class="fas fa-home"></i></a>
             </div>
         </header>
 
-        <!-- Navigation Tabs -->
-        <div class="nav-tabs">
-            <button class="tab-btn active" data-tab="leaderboard">Leaderboard</button>
-            <button class="tab-btn" data-tab="guild-fest">Guild Fest Ranking</button>
-            <button class="tab-btn" data-tab="monthly-summary">Monthly Summary</button>
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+            <div class="summary-card" style="--accent-color: var(--accent-green);">
+                <div class="card-icon"><i class="far fa-calendar-alt"></i></div>
+                <div class="card-value" id="stat-months">0</div>
+                <div class="card-label">Monthly Reports</div>
+            </div>
+            <div class="summary-card" style="--accent-color: var(--accent-blue);">
+                <div class="card-icon"><i class="fas fa-users"></i></div>
+                <div class="card-value" id="stat-members">0</div>
+                <div class="card-label">Members (Last Report)</div>
+            </div>
+            <div class="summary-card" style="--accent-color: var(--accent-purple);">
+                <div class="card-icon"><i class="fas fa-castle"></i></div>
+                <div class="card-value" id="stat-might">0</div>
+                <div class="card-label">Total Might (Last Report)</div>
+            </div>
+            <div class="summary-card" style="--accent-color: var(--accent-gold);">
+                <div class="card-icon"><i class="fas fa-swords"></i></div>
+                <div class="card-value" id="stat-kills">0</div>
+                <div class="card-label">Total Kills (Last Report)</div>
+            </div>
+            <div class="summary-card" style="--accent-color: var(--accent-blue);">
+                <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
+                <div class="card-value" id="stat-avg-might">0</div>
+                <div class="card-label">Avg. Might (Last Report)</div>
+            </div>
         </div>
 
-        <!-- Podium Section -->
-        <div id="podiumContainer" class="podium-section"></div>
+        <!-- Chart Section -->
+        <div class="chart-section">
+            <div class="section-header">
+                <h2><i class="fas fa-chart-line"></i> 52-Week History — Guild Power & Kills</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="historyChart"></canvas>
+            </div>
+        </div>
 
-        <!-- Guild Statistics Section -->
-        <div id="guildStatsContainer" class="guild-stats-section"></div>
+        <!-- Monthly Reports Section -->
+        <div class="reports-section">
+            <div class="section-header">
+                <h2><i class="fas fa-file-alt"></i> All War Reports</h2>
+                <span class="snapshot-count" id="total-reports-count">0 reports</span>
+            </div>
+            <div id="reports-list">
+                <!-- Reports will be injected here -->
+            </div>
+        </div>
+    </div>
 
-        <!-- Leaderboard Table Section -->
-        <div id="leaderboardSection" class="leaderboard-section active">
-            <table id="leaderboardTable">
+    <!-- Floating Action Buttons -->
+    <div class="search-overlay">
+        <button class="action-btn" onclick="openFullLeaderboard()"><i class="fas fa-list-ol"></i></button>
+    </div>
+
+    <!-- Full Leaderboard Modal -->
+    <div id="leaderboardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Full Guild Leaderboard</h2>
+                <button class="lang-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+                <input type="text" id="modalSearch" placeholder="Search player..." class="lang-btn" style="flex: 1; padding: 10px;">
+                <select id="modalMonth" class="lang-btn">
+                    <option value="">All Months</option>
+                </select>
+            </div>
+            <table>
                 <thead>
                     <tr>
                         <th>Rank</th>
                         <th>Player</th>
                         <th>Might</th>
-                        <th>Player Kill</th>
-                        <th>Kills Increase</th>
-                        <th>Might Loss</th>
-                        <th>Might Gain</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <!-- Guild Fest Section -->
-        <div id="guildFestSection" class="guild-fest-section">
-            <table id="guildFestTable" class="guild-fest-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Player</th>
-                        <th>Guild Fest Points</th>
-                        <th>Kills</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <!-- Monthly Summary Section -->
-        <div id="monthlySummarySection" class="guild-fest-section">
-            <table id="monthlySummaryTable">
-                <thead>
-                    <tr>
-                        <th>Month</th>
                         <th>Total Kills</th>
-                        <th>Total Might Loss</th>
-                        <th>Total Might Gain</th>
-                        <th>Active Players</th>
+                        <th>Kills Gain</th>
+                        <th>Might Loss</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody id="modalTableBody">
+                    <!-- Data injected here -->
+                </tbody>
             </table>
-        </div>
-    </div>
-
-    <!-- Player Profile Modal -->
-    <div id="profileModal" class="modal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeProfile()">&times;</button>
-            <div id="profileContent"></div>
         </div>
     </div>
 
     <script>
         let allData = [];
-        let filteredData = [];
-
         const SHEET_ID = '1PGJ-Ad74mpx-v3RbqHku2310jiCCyYcb85eC1G3d8wM';
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
-        // Parse CSV text into array of objects
+
+        async function init() {
+            try {
+                const response = await fetch(SHEET_URL);
+                const csvText = await response.text();
+                allData = parseCSV(csvText);
+                processAndRender();
+            } catch (error) {
+                console.error('Fetch failed:', error);
+                // Try fallback
+                try {
+                    const response = await fetch('data/players.json');
+                    allData = await response.json();
+                    processAndRender();
+                } catch(e) { console.error('Fallback failed'); }
+            }
+        }
+
         function parseCSV(csv) {
             const lines = csv.split('\n').filter(l => l.trim());
             if (lines.length < 2) return [];
             
-            // Proper CSV parsing that handles commas inside quotes
             function parseLine(line) {
                 const result = [];
                 let current = '';
                 let inQuotes = false;
                 for (let i = 0; i < line.length; i++) {
                     const ch = line[i];
-                    if (ch === '"') {
-                        inQuotes = !inQuotes;
-                    } else if (ch === ',' && !inQuotes) {
+                    if (ch === '"') inQuotes = !inQuotes;
+                    else if (ch === ',' && !inQuotes) {
                         result.push(current.trim());
                         current = '';
-                    } else {
-                        current += ch;
-                    }
+                    } else current += ch;
                 }
                 result.push(current.trim());
                 return result;
@@ -707,7 +497,6 @@
                 headers.forEach((h, idx) => {
                     obj[h] = values[idx] || '';
                 });
-                // Map Google Sheet columns to expected keys
                 const mapped = {
                     NAME: obj['Player'] || obj['NAME'] || '',
                     MIGHT: obj['Might'] || obj['MIGHT'] || '',
@@ -724,118 +513,6 @@
             return data;
         }
 
-        // Load data from Google Sheets
-        async function fetchLeaderboardData() {
-            try {
-                const response = await fetch(SHEET_URL);
-                const csvText = await response.text();
-                allData = parseCSV(csvText);
-                filteredData = [...allData];
-                populateMonthDropdown();
-                renderPodium();
-                renderGuildStats();
-                renderLeaderboard();
-                renderGuildFest();
-                renderMonthlySummary();
-            } catch (error) {
-                console.error('Error fetching from Google Sheets:', error);
-                // Fallback to local JSON
-                try {
-                    const response = await fetch('data/players.json?t=' + new Date().getTime());
-                    allData = await response.json();
-                    filteredData = [...allData];
-                    populateMonthDropdown();
-                    renderPodium();
-                    renderGuildStats();
-                renderLeaderboard();
-                renderGuildFest();
-                renderMonthlySummary();
-            } catch (e) {
-                    console.error('Fallback also failed:', e);
-                }
-            }
-        }
-
-        // Populate month dropdown
-        function populateMonthDropdown() {
-            const months = new Set();
-            allData.forEach(player => {
-                if (player.MONTH) months.add(player.MONTH);
-            });
-
-            const dropdown = document.getElementById('monthDropdown');
-            Array.from(months).sort().forEach(month => {
-                const option = document.createElement('option');
-                option.value = month;
-                option.textContent = month;
-                dropdown.appendChild(option);
-            });
-        }
-
-        // Render podium cards
-        function renderPodium() {
-            const container = document.getElementById('podiumContainer');
-            container.innerHTML = '';
-
-            const top3 = filteredData.slice(0, 3);
-            const medals = ['gold', 'silver', 'bronze'];
-            const medalIcons = ['🥇', '🥈', '🥉'];
-
-            top3.forEach((player, index) => {
-                const card = document.createElement('div');
-                card.className = `podium-card ${medals[index]}`;
-                const rank = index + 1;
-
-                card.innerHTML = `
-                    <div class="podium-rank">${medalIcons[index]} ${rank}</div>
-                    <div class="podium-player-name" onclick="showProfile('${player.NAME}')">${player.NAME}</div>
-                    <div class="podium-stats">
-                        <div class="podium-stat-row">
-                            <span class="podium-stat-label">Kills:</span>
-                            <span class="podium-stat-value">${player.KILL || '-'}</span>
-                        </div>
-                        <div class="podium-stat-row">
-                            <span class="podium-stat-label">Might Loss:</span>
-                            <span class="podium-stat-value">${player['MIGHT LOSS'] || '-'}</span>
-                        </div>
-                        <div class="podium-stat-row">
-                            <span class="podium-stat-label">Might Gain:</span>
-                            <span class="podium-stat-value">${player['MIGHT GAIN'] || '-'}</span>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // Render guild statistics
-        function renderGuildStats() {
-            const container = document.getElementById('guildStatsContainer');
-            container.innerHTML = '';
-
-            const totalKills = filteredData.reduce((sum, p) => sum + parseVal(p.KILL), 0);
-            const totalMightLoss = filteredData.reduce((sum, p) => sum + parseVal(p['MIGHT LOSS']), 0);
-            const totalMightGain = filteredData.reduce((sum, p) => sum + parseVal(p['MIGHT GAIN']), 0);
-
-            const stats = [
-                { label: 'Total Guild Kills', value: formatNumber(totalKills) },
-                { label: 'Total Might Loss', value: formatNumber(totalMightLoss) },
-                { label: 'Total Might Gain', value: formatNumber(totalMightGain) },
-                { label: 'Active Players', value: filteredData.length }
-            ];
-
-            stats.forEach(stat => {
-                const card = document.createElement('div');
-                card.className = 'stat-card';
-                card.innerHTML = `
-                    <div class="stat-label">${stat.label}</div>
-                    <div class="stat-value">${stat.value}</div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // Parse values with suffixes (M, B, K)
         function parseVal(val) {
             if (!val) return 0;
             let str = val.toString().toUpperCase().trim();
@@ -846,238 +523,186 @@
             return numeric;
         }
 
-        // Format numbers
         function formatNumber(num) {
-            if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
-            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
+            if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
             if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-            return num.toString();
+            return num.toLocaleString();
         }
 
-        // Get rank badge
-        function getRankBadge(rank) {
-            const rankMap = { '5': 'r5', '4': 'r4', '3': 'r3', '2': 'r2', '1': 'r1' };
-            const rankClass = rankMap[rank];
-            if (rankClass) {
-                return `<span class="rank-badge ${rankClass}">R${rank}</span>`;
-            }
-            return '';
-        }
-
-        // Render leaderboard table
-        function renderLeaderboard() {
-            const tbody = document.querySelector('#leaderboardTable tbody');
-            tbody.innerHTML = '';
-
-            filteredData.forEach((player, index) => {
-                const rank = index + 1;
-                let rankDisplay = rank;
-                let rankClass = '';
-
-                if (rank === 1) {
-                    rankDisplay = '<span class="gold-text">🥇 1</span>';
-                    rankClass = 'gold-text';
-                } else if (rank === 2) {
-                    rankDisplay = '<span class="silver-text">🥈 2</span>';
-                    rankClass = 'silver-text';
-                } else if (rank === 3) {
-                    rankDisplay = '<span class="bronze-text">🥉 3</span>';
-                    rankClass = 'bronze-text';
-                }
-
-                const rankBadge = getRankBadge(player.RANK || '');
-                const playerName = `<a class="player-name" onclick="showProfile('${player.NAME}')">${player.NAME}</a>${rankBadge}`;
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="rank-cell">${rankDisplay}</td>
-                    <td>${playerName}</td>
-                    <td>${player.MIGHT || '-'}</td>
-                    <td>${player.PLAYER_KILL || '-'}</td>
-                    <td>${player.KILL || '-'}</td>
-                    <td>${player['MIGHT LOSS'] || '-'}</td>
-                    <td>${player['MIGHT GAIN'] || '-'}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Render Guild Fest ranking
-        function renderGuildFest() {
-            const tbody = document.querySelector('#guildFestTable tbody');
-            tbody.innerHTML = '';
-
-            const guildFestData = [...filteredData]
-                .filter(p => p['GUILD FEST'] && p['GUILD FEST'] !== '-')
-                .sort((a, b) => {
-                    const aVal = parseInt(b['GUILD FEST']) || 0;
-                    const bVal = parseInt(a['GUILD FEST']) || 0;
-                    return aVal - bVal;
-                });
-
-            guildFestData.forEach((player, index) => {
-                const rank = index + 1;
-                let rankDisplay = rank;
-
-                if (rank === 1) {
-                    rankDisplay = '<span class="gold-text">🥇 1</span>';
-                } else if (rank === 2) {
-                    rankDisplay = '<span class="silver-text">🥈 2</span>';
-                } else if (rank === 3) {
-                    rankDisplay = '<span class="bronze-text">🥉 3</span>';
-                }
-
-                const rankBadge = getRankBadge(player.RANK || '');
-                const playerName = `<a class="player-name" onclick="showProfile('${player.NAME}')">${player.NAME}</a>${rankBadge}`;
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="rank-cell">${rankDisplay}</td>
-                    <td>${playerName}</td>
-                    <td>${player['GUILD FEST'] || '-'}</td>
-                    <td>${player.KILL || '-'}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Show player profile
-        function showProfile(playerName) {
-            const player = allData.find(p => p.NAME === playerName);
-            if (!player) return;
-
-            const modal = document.getElementById('profileModal');
-            const content = document.getElementById('profileContent');
-
-            const rankBadge = getRankBadge(player.RANK || '');
-            const overallRank = allData.findIndex(p => p.NAME === playerName) + 1;
-
-            content.innerHTML = `
-                <div class="profile-header">
-                    <div class="profile-name">${player.NAME}</div>
-                    <div class="profile-rank">Overall Rank: #${overallRank} ${rankBadge}</div>
-                </div>
-                <div class="profile-stats">
-                    <div class="profile-stat">
-                        <div class="profile-stat-label">Total Kills</div>
-                        <div class="profile-stat-value">${player.KILL || '-'}</div>
-                    </div>
-                    <div class="profile-stat">
-                        <div class="profile-stat-label">Might Loss</div>
-                        <div class="profile-stat-value">${player['MIGHT LOSE'] || '-'}</div>
-                    </div>
-                    <div class="profile-stat">
-                        <div class="profile-stat-label">Might Gain</div>
-                        <div class="profile-stat-value">${player['MIGHT GAIN'] || '-'}</div>
-                    </div>
-                    <div class="profile-stat">
-                        <div class="profile-stat-label">Guild Fest</div>
-                        <div class="profile-stat-value">${player['GUILD FEST'] || '-'}</div>
-                    </div>
-                </div>
-            `;
-
-            modal.classList.add('show');
-        }
-
-        // Close profile modal
-        function closeProfile() {
-            document.getElementById('profileModal').classList.remove('show');
-        }
-
-        // Tab switching
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                const tab = btn.dataset.tab;
-                document.getElementById('leaderboardSection').classList.toggle('active', tab === 'leaderboard');
-                document.getElementById('guildFestSection').classList.toggle('active', tab === 'guild-fest');
-            });
-        });
-
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('keyup', function() {
-            const filter = this.value.toUpperCase();
-            filteredData = allData.filter(player => 
-                player.NAME.toUpperCase().includes(filter) &&
-                (document.getElementById('monthDropdown').value === '' || 
-                 player.MONTH === document.getElementById('monthDropdown').value)
-            );
-            renderPodium();
-            renderGuildStats();
-            renderLeaderboard();
-            renderGuildFest();
-            renderMonthlySummary();
-        });
-
-        // Month filter
-        document.getElementById('monthDropdown').addEventListener('change', function() {
-            const month = this.value;
-            const search = document.getElementById('searchInput').value.toUpperCase();
-
-            filteredData = allData.filter(player => 
-                (month === '' || player.MONTH === month) &&
-                player.NAME.toUpperCase().includes(search)
-            );
-
-            renderPodium();
-            renderGuildStats();
-            renderLeaderboard();
-            renderGuildFest();
-            renderMonthlySummary();
-        });
-
-        // Render Monthly Summary
-        function renderMonthlySummary() {
-            const tbody = document.querySelector('#monthlySummaryTable tbody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
+        function processAndRender() {
+            // Group by month
             const monthlyData = {};
-            allData.forEach(player => {
-                const month = player.MONTH || 'Unknown';
-                if (!monthlyData[month]) {
-                    monthlyData[month] = {
+            allData.forEach(p => {
+                const m = p.MONTH || 'Unknown';
+                if (!monthlyData[m]) {
+                    monthlyData[m] = {
+                        name: m,
+                        players: 0,
+                        might: 0,
                         kills: 0,
-                        loss: 0,
-                        gain: 0,
-                        players: new Set()
+                        killsGain: 0,
+                        mightLoss: 0,
+                        mightGain: 0,
+                        snapshots: 0,
+                        playerList: []
                     };
                 }
-
-                monthlyData[month].kills += parseVal(player.KILL);
-                monthlyData[month].loss += parseVal(player['MIGHT LOSS']);
-                monthlyData[month].gain += parseVal(player['MIGHT GAIN']);
-                monthlyData[month].players.add(player.NAME);
+                monthlyData[m].players++;
+                monthlyData[m].might += parseVal(p.MIGHT);
+                monthlyData[m].kills += parseVal(p.PLAYER_KILL);
+                monthlyData[m].killsGain += parseVal(p.KILL);
+                monthlyData[m].mightLoss += parseVal(p['MIGHT LOSS']);
+                monthlyData[m].mightGain += parseVal(p['MIGHT GAIN']);
+                monthlyData[m].snapshots++;
+                monthlyData[m].playerList.push(p);
             });
 
-            Object.keys(monthlyData).sort().forEach(month => {
-                const data = monthlyData[month];
+            const months = Object.keys(monthlyData).sort((a, b) => new Date(b) - new Date(a));
+            const lastMonth = monthlyData[months[0]];
+
+            // Update Stats
+            document.getElementById('stat-months').textContent = months.length;
+            document.getElementById('stat-members').textContent = lastMonth.players;
+            document.getElementById('stat-might').textContent = formatNumber(lastMonth.might);
+            document.getElementById('stat-kills').textContent = formatNumber(lastMonth.kills);
+            document.getElementById('stat-avg-might').textContent = formatNumber(lastMonth.might / lastMonth.players);
+            document.getElementById('total-reports-count').textContent = `${months.length} reports`;
+
+            // Render Chart
+            renderChart(monthlyData);
+
+            // Render Reports List
+            const list = document.getElementById('reports-list');
+            list.innerHTML = '';
+            months.forEach((m, idx) => {
+                const data = monthlyData[m];
+                const item = document.createElement('div');
+                item.className = 'report-item';
+                item.innerHTML = `
+                    <div class="report-month">
+                        <div class="month-name">${m} ${idx === 0 ? '<span class="latest-badge">Latest</span>' : ''}</div>
+                        <div class="snapshot-count"><i class="fas fa-users"></i> Players: <strong>${data.players}</strong></div>
+                        <a href="#" class="view-breakdown" onclick="openFullLeaderboard('${m}')">View member breakdown →</a>
+                    </div>
+                    <div class="report-stats">
+                        <div class="stat-item"><i class="fas fa-swords"></i> <span>Current Guild Kills:</span> <strong>${formatNumber(data.kills)}</strong></div>
+                        <div class="stat-item"><i class="fas fa-chart-area"></i> <span>Average Might:</span> <strong>${formatNumber(data.might / data.players)}</strong></div>
+                        <div class="stat-item"><i class="fas fa-plus-circle"></i> <span>Total Kills Gained:</span> <strong>${formatNumber(data.killsGain)}</strong></div>
+                        <div class="stat-item"><i class="fas fa-minus-circle"></i> <span>Total Might Loss:</span> <strong>${formatNumber(data.mightLoss)}</strong></div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+
+            // Populate Modal Month Dropdown
+            const modalMonth = document.getElementById('modalMonth');
+            months.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = m;
+                modalMonth.appendChild(opt);
+            });
+        }
+
+        function renderChart(monthlyData) {
+            const ctx = document.getElementById('historyChart').getContext('2d');
+            const months = Object.keys(monthlyData).sort((a, b) => new Date(a) - new Date(b));
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Guild Power',
+                            data: months.map(m => monthlyData[m].might),
+                            borderColor: '#4d94ff',
+                            backgroundColor: 'rgba(77, 148, 255, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Total Kills',
+                            data: months.map(m => monthlyData[m].kills),
+                            borderColor: '#f85149',
+                            backgroundColor: 'transparent',
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { callback: value => formatNumber(value), color: '#94949e' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { callback: value => formatNumber(value), color: '#94949e' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94949e' }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { color: '#f3f4f6', usePointStyle: true } }
+                    }
+                }
+            });
+        }
+
+        function openFullLeaderboard(month = '') {
+            const modal = document.getElementById('leaderboardModal');
+            modal.classList.add('active');
+            if (month) document.getElementById('modalMonth').value = month;
+            renderModalTable();
+        }
+
+        function closeModal() {
+            document.getElementById('leaderboardModal').classList.remove('active');
+        }
+
+        function renderModalTable() {
+            const month = document.getElementById('modalMonth').value;
+            const search = document.getElementById('modalSearch').value.toLowerCase();
+            const tbody = document.getElementById('modalTableBody');
+            
+            let filtered = allData;
+            if (month) filtered = filtered.filter(p => p.MONTH === month);
+            if (search) filtered = filtered.filter(p => p.NAME.toLowerCase().includes(search));
+
+            tbody.innerHTML = '';
+            filtered.forEach((p, idx) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td><strong>${month}</strong></td>
-                    <td>${formatNumber(data.kills)}</td>
-                    <td>${formatNumber(data.loss)}</td>
-                    <td>${formatNumber(data.gain)}</td>
-                    <td>${data.players.size}</td>
+                    <td>${idx + 1}</td>
+                    <td><strong>${p.NAME}</strong> <span class="rank-badge r${p.RANK || '1'}">R${p.RANK || '1'}</span></td>
+                    <td>${p.MIGHT}</td>
+                    <td>${p.PLAYER_KILL}</td>
+                    <td>${p.KILL}</td>
+                    <td>${p['MIGHT LOSS']}</td>
                 `;
                 tbody.appendChild(row);
             });
         }
 
-        // Close modal on outside click
-        window.addEventListener('click', function(event) {
-            const modal = document.getElementById('profileModal');
-            if (event.target === modal) {
-                modal.classList.remove('show');
-            }
-        });
+        document.getElementById('modalSearch').addEventListener('input', renderModalTable);
+        document.getElementById('modalMonth').addEventListener('change', renderModalTable);
 
-        // Load data on page load
-        window.addEventListener('load', fetchLeaderboardData);
+        init();
     </script>
-
 </body>
 </html>
