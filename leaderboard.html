@@ -333,13 +333,65 @@
         tr:hover { background: rgba(255,255,255,0.02); }
 
         .rank-badge {
-            padding: 2px 6px;
+            padding: 4px 8px;
             border-radius: 4px;
             font-size: 0.75rem;
-            font-weight: bold;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 8px;
         }
-        .r5 { background: rgba(245, 166, 35, 0.1); color: var(--accent-gold); }
-        .r4 { background: rgba(77, 148, 255, 0.1); color: var(--accent-blue); }
+        .r5 { background: rgba(245, 166, 35, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+        .r4 { background: rgba(77, 148, 255, 0.15); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); }
+        .r3 { background: rgba(188, 140, 255, 0.15); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.3); }
+        .r2 { background: rgba(59, 130, 246, 0.1); color: #93c5fd; border: 1px solid rgba(147, 197, 253, 0.2); }
+        .r1 { background: rgba(148, 148, 158, 0.1); color: #94949e; border: 1px solid rgba(148, 148, 158, 0.2); }
+
+        /* Sort Menu */
+        .sort-menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 200px;
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .sort-menu.active {
+            display: block;
+        }
+
+        .sort-option {
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .sort-option:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .sort-option.active {
+            color: var(--accent-blue);
+        }
+
+        .sort-option i {
+            font-size: 0.8rem;
+            display: none;
+        }
+
+        .sort-option.active i {
+            display: block;
+        }
 
         @media (max-width: 768px) {
             .report-item { grid-template-columns: 1fr; }
@@ -403,7 +455,17 @@
         <div class="reports-section">
             <div class="section-header">
                 <h2><i class="fas fa-file-alt"></i> All War Reports</h2>
-                <span class="snapshot-count" id="total-reports-count">0 reports</span>
+                <div style="position: relative;">
+                    <button class="lang-btn" onclick="toggleSortMenu()">
+                        <i class="fas fa-sort-amount-down"></i> Sort <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div id="sortMenu" class="sort-menu">
+                        <div class="sort-option active" onclick="setSort('rank')">Sort by Rank <i class="fas fa-check"></i></div>
+                        <div class="sort-option" onclick="setSort('kills')">Sort by Kills <i class="fas fa-check"></i></div>
+                        <div class="sort-option" onclick="setSort('might')">Sort by Might <i class="fas fa-check"></i></div>
+                        <div class="sort-option" onclick="setSort('name')">Sort by Name <i class="fas fa-check"></i></div>
+                    </div>
+                </div>
             </div>
             <div id="reports-list">
                 <!-- Reports will be injected here -->
@@ -449,6 +511,7 @@
 
     <script>
         let allData = [];
+        let currentSort = 'rank';
         const SHEET_ID = '1PGJ-Ad74mpx-v3RbqHku2310jiCCyYcb85eC1G3d8wM';
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
@@ -664,6 +727,20 @@
             });
         }
 
+        function toggleSortMenu() {
+            document.getElementById('sortMenu').classList.toggle('active');
+        }
+
+        function setSort(type) {
+            currentSort = type;
+            document.querySelectorAll('.sort-option').forEach(opt => {
+                const isMatch = opt.getAttribute('onclick').includes(`'${type}'`);
+                opt.classList.toggle('active', isMatch);
+            });
+            document.getElementById('sortMenu').classList.remove('active');
+            renderModalTable();
+        }
+
         function openFullLeaderboard(month = '') {
             const modal = document.getElementById('leaderboardModal');
             modal.classList.add('active');
@@ -680,16 +757,37 @@
             const search = document.getElementById('modalSearch').value.toLowerCase();
             const tbody = document.getElementById('modalTableBody');
             
-            let filtered = allData;
+            if (!allData || allData.length === 0) return;
+
+            let filtered = [...allData];
             if (month) filtered = filtered.filter(p => p.MONTH === month);
             if (search) filtered = filtered.filter(p => p.NAME.toLowerCase().includes(search));
+
+            // Apply Sorting
+            filtered.sort((a, b) => {
+                if (currentSort === 'rank') {
+                    const rMap = { 'R5': 5, 'R4': 4, 'R3': 3, 'R2': 2, 'R1': 1 };
+                    const aVal = rMap[a.RANK] || 0;
+                    const bVal = rMap[b.RANK] || 0;
+                    if (bVal !== aVal) return bVal - aVal;
+                    return parseVal(b.PLAYER_KILL) - parseVal(a.PLAYER_KILL);
+                } else if (currentSort === 'kills') {
+                    return parseVal(b.PLAYER_KILL) - parseVal(a.PLAYER_KILL);
+                } else if (currentSort === 'might') {
+                    return parseVal(b.MIGHT) - parseVal(a.MIGHT);
+                } else if (currentSort === 'name') {
+                    return a.NAME.localeCompare(b.NAME);
+                }
+                return 0;
+            });
 
             tbody.innerHTML = '';
             filtered.forEach((p, idx) => {
                 const row = document.createElement('tr');
+                const rankVal = p.RANK && p.RANK.match(/R[1-5]/) ? p.RANK : 'R1';
                 row.innerHTML = `
                     <td>${idx + 1}</td>
-                    <td><strong>${p.NAME}</strong> <span class="rank-badge r${p.RANK || '1'}">R${p.RANK || '1'}</span></td>
+                    <td><strong>${p.NAME}</strong> <span class="rank-badge ${rankVal.toLowerCase()}">${rankVal}</span></td>
                     <td>${p.MIGHT}</td>
                     <td>${p.PLAYER_KILL}</td>
                     <td>${p.KILL}</td>
@@ -698,6 +796,14 @@
                 tbody.appendChild(row);
             });
         }
+
+        // Close sort menu on outside click
+        window.addEventListener('click', (e) => {
+            if (!e.target.closest('.section-header')) {
+                const menu = document.getElementById('sortMenu');
+                if (menu) menu.classList.remove('active');
+            }
+        });
 
         document.getElementById('modalSearch').addEventListener('input', renderModalTable);
         document.getElementById('modalMonth').addEventListener('change', renderModalTable);
