@@ -209,6 +209,68 @@
             transform: translateY(-1px);
         }
 
+        .calc-btn-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .calc-btn {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 14px 70px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+            position: relative;
+            overflow: hidden;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .reset-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .reset-btn:hover::before {
+            left: 100%;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+        }
+
+        .reset-btn:active {
+            transform: translateY(-1px);
+        }
+
+        body.dark-mode .reset-btn {
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        body.dark-mode .reset-btn:hover {
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+        }
+
         .result-display {
             margin-top: 25px;
             text-align: center;
@@ -300,6 +362,7 @@
 
         <div class="calc-btn-container">
             <button class="calc-btn" onclick="calculate()">Calculate</button>
+            <button class="reset-btn" onclick="resetCalculator()">Reset</button>
         </div>
 
         <div class="result-display">
@@ -350,6 +413,14 @@
             <div><strong>${totalHours.toFixed(2)}</strong> Hours</div>
             <div><strong>${totalDays.toFixed(2)}</strong> Days</div>
         `;
+    }
+
+    function resetCalculator() {
+        const inputs = document.querySelectorAll('.speedup-input');
+        inputs.forEach(input => {
+            input.value = '0';
+        });
+        document.getElementById('total-display').innerHTML = '';
     }
 </script>
 <script src="translations.js"></script>
