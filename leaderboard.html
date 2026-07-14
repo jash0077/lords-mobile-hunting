@@ -765,20 +765,9 @@
             const container = document.getElementById('guildStatsContainer');
             container.innerHTML = '';
 
-            const totalKills = filteredData.reduce((sum, p) => {
-                const kills = parseInt(p.KILL) || 0;
-                return sum + kills;
-            }, 0);
-
-            const totalMightLoss = filteredData.reduce((sum, p) => {
-                const loss = parseInt(p['MIGHT LOSS']) || 0;
-                return sum + loss;
-            }, 0);
-
-            const totalMightGain = filteredData.reduce((sum, p) => {
-                const gain = parseInt(p['MIGHT GAIN']) || 0;
-                return sum + gain;
-            }, 0);
+            const totalKills = filteredData.reduce((sum, p) => sum + parseVal(p.KILL), 0);
+            const totalMightLoss = filteredData.reduce((sum, p) => sum + parseVal(p['MIGHT LOSS']), 0);
+            const totalMightGain = filteredData.reduce((sum, p) => sum + parseVal(p['MIGHT GAIN']), 0);
 
             const stats = [
                 { label: 'Total Guild Kills', value: formatNumber(totalKills) },
@@ -796,6 +785,17 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        // Parse values with suffixes (M, B, K)
+        function parseVal(val) {
+            if (!val) return 0;
+            let str = val.toString().toUpperCase().trim();
+            let numeric = parseFloat(str.replace(/[^0-9.]/g, '')) || 0;
+            if (str.includes('B')) numeric *= 1000000000;
+            else if (str.includes('M')) numeric *= 1000000;
+            else if (str.includes('K')) numeric *= 1000;
+            return numeric;
         }
 
         // Format numbers
@@ -996,17 +996,6 @@
                         players: new Set()
                     };
                 }
-
-                // Parse values
-                const parseVal = (val) => {
-                    if (!val) return 0;
-                    let str = val.toString().toUpperCase().trim();
-                    let numeric = parseFloat(str.replace(/[^0-9.]/g, '')) || 0;
-                    if (str.includes('B')) numeric *= 1000000000;
-                    else if (str.includes('M')) numeric *= 1000000;
-                    else if (str.includes('K')) numeric *= 1000;
-                    return numeric;
-                };
 
                 monthlyData[month].kills += parseVal(player.KILL);
                 monthlyData[month].loss += parseVal(player['MIGHT LOSS']);
