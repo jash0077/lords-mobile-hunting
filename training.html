@@ -14,25 +14,36 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .training-container {
-            background: rgba(30, 60, 114, 0.15);
+            background: var(--light-surface);
+            border: 1px solid var(--light-border);
             border-radius: 12px;
             padding: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             margin-top: 20px;
+        }
+
+        body.dark-mode .training-container {
+            background: var(--dark-surface);
+            border-color: var(--dark-border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
         .tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 25px;
-            border-bottom: 2px solid rgba(42, 82, 152, 0.2);
+            border-bottom: 2px solid var(--light-border);
+        }
+
+        body.dark-mode .tabs {
+            border-bottom-color: var(--dark-border);
         }
 
         .tab-btn {
             padding: 12px 20px;
             background: transparent;
             border: none;
-            color: #666;
+            color: var(--light-secondary-text);
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
@@ -41,13 +52,26 @@
             margin-bottom: -2px;
         }
 
+        body.dark-mode .tab-btn {
+            color: var(--dark-secondary-text);
+        }
+
         .tab-btn.active {
-            color: var(--light-blue);
-            border-bottom-color: var(--light-blue);
+            color: var(--light-accent);
+            border-bottom-color: var(--light-accent);
+        }
+
+        body.dark-mode .tab-btn.active {
+            color: var(--dark-accent);
+            border-bottom-color: var(--dark-accent);
         }
 
         .tab-btn:hover {
-            color: var(--dark-blue);
+            color: var(--light-primary-text);
+        }
+
+        body.dark-mode .tab-btn:hover {
+            color: var(--dark-primary-text);
         }
 
         .tab-content {
@@ -65,9 +89,13 @@
         .input-label {
             display: block;
             margin-bottom: 8px;
-            color: var(--dark-blue);
+            color: var(--light-primary-text);
             font-weight: 600;
             font-size: 0.95em;
+        }
+
+        body.dark-mode .input-label {
+            color: var(--dark-primary-text);
         }
 
         .button-group {
@@ -79,42 +107,72 @@
 
         .btn-toggle {
             padding: 10px 16px;
-            background: white;
-            border: 2px solid #ddd;
+            background: var(--light-bg);
+            border: 1px solid var(--light-border);
             border-radius: 20px;
             cursor: pointer;
             font-weight: 600;
-            color: #666;
+            color: var(--light-secondary-text);
             transition: all 0.2s;
             font-size: 0.95em;
         }
 
+        body.dark-mode .btn-toggle {
+            background: var(--dark-secondary-bg);
+            border-color: var(--dark-border);
+            color: var(--dark-secondary-text);
+        }
+
         .btn-toggle:hover {
-            border-color: var(--light-blue);
-            color: var(--light-blue);
+            border-color: var(--light-accent);
+            color: var(--light-accent);
+        }
+
+        body.dark-mode .btn-toggle:hover {
+            border-color: var(--dark-accent);
+            color: var(--dark-accent);
         }
 
         .btn-toggle.selected {
-            background: var(--light-blue);
+            background: var(--light-accent);
             color: white;
-            border-color: var(--light-blue);
+            border-color: var(--light-accent);
+        }
+
+        body.dark-mode .btn-toggle.selected {
+            background: var(--dark-accent);
+            color: var(--dark-bg);
+            border-color: var(--dark-accent);
         }
 
         .input-field {
             width: 100%;
             padding: 12px;
-            border: 2px solid #ddd;
+            background: var(--light-bg);
+            color: var(--light-primary-text);
+            border: 1px solid var(--light-border);
             border-radius: 8px;
             font-size: 1em;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: inherit;
             transition: all 0.2s;
             box-sizing: border-box;
         }
 
+        body.dark-mode .input-field {
+            background: var(--dark-secondary-bg);
+            color: var(--dark-primary-text);
+            border-color: var(--dark-border);
+        }
+
         .input-field:focus {
             outline: none;
-            border-color: var(--light-blue);
-            box-shadow: 0 0 8px rgba(42, 82, 152, 0.2);
+            border-color: var(--light-accent);
+            box-shadow: 0 0 8px rgba(37, 99, 235, 0.1);
+        }
+
+        body.dark-mode .input-field:focus {
+            border-color: var(--dark-accent);
+            box-shadow: 0 0 8px rgba(77, 148, 255, 0.1);
         }
 
         .input-row {
@@ -176,12 +234,17 @@
         }
 
         .results-section {
-            background: white;
+            background: var(--light-surface);
             border-radius: 10px;
             padding: 20px;
             margin-top: 25px;
-            border: 1px solid #eee;
+            border: 1px solid var(--light-border);
             display: none;
+        }
+
+        body.dark-mode .results-section {
+            background: var(--dark-surface);
+            border-color: var(--dark-border);
         }
 
         .results-section.show {
@@ -191,9 +254,13 @@
         .results-title {
             font-size: 1.2em;
             font-weight: bold;
-            color: var(--dark-blue);
+            color: var(--light-primary-text);
             margin-bottom: 15px;
             text-align: center;
+        }
+
+        body.dark-mode .results-title {
+            color: var(--dark-primary-text);
         }
 
         .results-grid {
@@ -203,24 +270,37 @@
         }
 
         .result-item {
-            background: #f8f9fa;
+            background: var(--light-bg);
             padding: 15px;
             border-radius: 8px;
-            border-left: 4px solid var(--light-blue);
+            border-left: 4px solid var(--light-accent);
+        }
+
+        body.dark-mode .result-item {
+            background: var(--dark-secondary-bg);
+            border-left-color: var(--dark-accent);
         }
 
         .result-label {
             font-size: 0.85em;
-            color: #666;
+            color: var(--light-secondary-text);
             text-transform: uppercase;
             font-weight: 600;
             margin-bottom: 5px;
         }
 
+        body.dark-mode .result-label {
+            color: var(--dark-secondary-text);
+        }
+
         .result-value {
             font-size: 1.4em;
-            color: var(--dark-blue);
+            color: var(--light-primary-text);
             font-weight: bold;
+        }
+
+        body.dark-mode .result-value {
+            color: var(--dark-primary-text);
         }
 
         .result-item.gems {

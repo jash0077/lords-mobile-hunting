@@ -14,19 +14,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .comp-container {
-            background: rgba(30, 60, 114, 0.15);
+            background: var(--light-surface);
+            border: 1px solid var(--light-border);
             border-radius: 12px;
             padding: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             margin-top: 20px;
+        }
+
+        body.dark-mode .comp-container {
+            background: var(--dark-surface);
+            border-color: var(--dark-border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
         .comp-section-label {
             font-weight: 700;
-            color: var(--dark-blue);
+            color: var(--light-primary-text);
             font-size: 1.1em;
             margin-bottom: 18px;
             margin-top: 10px;
+        }
+
+        body.dark-mode .comp-section-label {
+            color: var(--dark-primary-text);
         }
 
         .comp-input-row {
@@ -59,19 +70,30 @@
         .comp-label {
             min-width: 85px;
             font-weight: 600;
-            color: var(--dark-blue);
+            color: var(--light-primary-text);
             font-size: 1em;
+        }
+
+        body.dark-mode .comp-label {
+            color: var(--dark-primary-text);
         }
 
         .comp-input {
             width: 130px;
             padding: 12px 14px;
-            border: 2px solid #ddd;
+            border: 1px solid var(--light-border);
             border-radius: 8px;
             font-size: 1em;
             text-align: center;
             transition: all 0.2s;
-            background: white;
+            background: var(--light-bg);
+            color: var(--light-primary-text);
+        }
+
+        body.dark-mode .comp-input {
+            background: var(--dark-secondary-bg);
+            border-color: var(--dark-border);
+            color: var(--dark-primary-text);
         }
 
         .comp-input:focus {
@@ -132,12 +154,17 @@
         }
 
         .comp-results {
-            background: rgba(30, 60, 114, 0.92);
+            background: var(--light-bg);
             border-radius: 12px;
             padding: 22px;
             margin-top: 25px;
-            border: 2px solid #d4a017;
+            border: 1px solid var(--light-border);
             display: none;
+        }
+
+        body.dark-mode .comp-results {
+            background: var(--dark-secondary-bg);
+            border-color: var(--dark-border);
         }
 
         .comp-results.show {
@@ -148,8 +175,12 @@
             text-align: center;
             font-size: 1.3em;
             font-weight: bold;
-            color: white;
+            color: var(--light-primary-text);
             margin-bottom: 18px;
+        }
+
+        body.dark-mode .comp-results-title {
+            color: var(--dark-primary-text);
         }
 
         .comp-result-row {
@@ -157,7 +188,11 @@
             align-items: center;
             gap: 12px;
             margin-bottom: 12px;
-            color: white;
+            color: var(--light-primary-text);
+        }
+
+        body.dark-mode .comp-result-row {
+            color: var(--dark-primary-text);
         }
 
         .comp-result-row .comp-icon {
@@ -173,9 +208,13 @@
         }
 
         .comp-result-value {
-            color: #ffc107;
+            color: var(--light-accent);
             font-weight: bold;
             font-size: 1.15em;
+        }
+
+        body.dark-mode .comp-result-value {
+            color: var(--dark-accent);
         }
 
         @media (max-width: 480px) {
