@@ -5,7 +5,7 @@ const translations = {
         "speedup_calculator": "Speedup Calculator",
         "monster_hunting": "Monster Hunting",
         "training_calculator": "Training Calculator",
-        "welcome_title": "Welcome to Lords Mobile Hub",
+        "welcome_title": "WELCOME TO HEM GUILD",
         "welcome_description": "Your one-stop destination for essential tools and guides to dominate the kingdom.",
         "available_tools": "Available Tools",
         "speedup_card_description": "Calculate your total speedups in minutes, hours, and days with our easy-to-use tool.",
