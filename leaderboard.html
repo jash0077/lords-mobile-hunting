@@ -573,7 +573,9 @@
                     <tr>
                         <th>Rank</th>
                         <th>Player</th>
-                        <th>Kills</th>
+                        <th>Might</th>
+                        <th>Player Kill</th>
+                        <th>Kills Increase</th>
                         <th>Might Loss</th>
                         <th>Might Gain</th>
                     </tr>
@@ -664,6 +666,8 @@
                 // Map Google Sheet columns to expected keys
                 const mapped = {
                     NAME: obj['Player'] || obj['NAME'] || '',
+                    MIGHT: obj['Might'] || obj['MIGHT'] || '',
+                    PLAYER_KILL: obj['Player Kill'] || obj['PLAYER_KILL'] || '',
                     KILL: obj['Kills INCREASE'] || obj['KILL'] || '',
                     'MIGHT GAIN': obj['MightGain'] || obj['MIGHT GAIN'] || '',
                     'MIGHT LOSS': obj['MightLoss'] || obj['MIGHT LOSS'] || '',
@@ -844,6 +848,8 @@
                 row.innerHTML = `
                     <td class="rank-cell">${rankDisplay}</td>
                     <td>${playerName}</td>
+                    <td>${player.MIGHT || '-'}</td>
+                    <td>${player.PLAYER_KILL || '-'}</td>
                     <td>${player.KILL || '-'}</td>
                     <td>${player['MIGHT LOSS'] || '-'}</td>
                     <td>${player['MIGHT GAIN'] || '-'}</td>

@@ -272,7 +272,15 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Kills</label>
+                <label>Player Might</label>
+                <input type="text" id="newMight" placeholder="e.g. 500M">
+            </div>
+            <div class="form-group">
+                <label>Player Kill</label>
+                <input type="text" id="newPlayerKill" placeholder="e.g. 20M">
+            </div>
+            <div class="form-group">
+                <label>Kills Increase</label>
                 <input type="text" id="newKills" placeholder="e.g. 1.5B">
             </div>
             <div class="form-group">
@@ -306,7 +314,9 @@
                         <th>#</th>
                         <th>Name</th>
                         <th>Rank</th>
-                        <th>Kills</th>
+                        <th>Might</th>
+                        <th>Player Kill</th>
+                        <th>Kills Increase</th>
                         <th>Might Loss</th>
                         <th>Might Gain</th>
                         <th>Guild Fest</th>
@@ -341,7 +351,15 @@
             </select>
         </div>
         <div class="form-group" style="margin-bottom: 15px;">
-            <label>Kills</label>
+            <label>Player Might</label>
+            <input type="text" id="editMight">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label>Player Kill</label>
+            <input type="text" id="editPlayerKill">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label>Kills Increase</label>
             <input type="text" id="editKills">
         </div>
         <div class="form-group" style="margin-bottom: 15px;">
@@ -518,6 +536,8 @@
                 <td style="color: #64748b;">${index + 1}</td>
                 <td><strong>${p.NAME}</strong></td>
                 <td><span class="rank-badge ${rankClass}">R${p.RANK || '1'}</span></td>
+                <td>${p.MIGHT || '-'}</td>
+                <td>${p.PLAYER_KILL || '-'}</td>
                 <td>${p.KILL || '-'}</td>
                 <td>${p['MIGHT LOSS'] || '-'}</td>
                 <td>${p['MIGHT GAIN'] || '-'}</td>
@@ -538,6 +558,8 @@
         const newPlayer = {
             NAME: name,
             RANK: document.getElementById('newRank').value,
+            MIGHT: document.getElementById('newMight').value || '-',
+            PLAYER_KILL: document.getElementById('newPlayerKill').value || '-',
             KILL: document.getElementById('newKills').value || '-',
             'MIGHT LOSS': document.getElementById('newLoss').value || '-',
             'MIGHT GAIN': document.getElementById('newGain').value || '-',
@@ -552,6 +574,8 @@
         if (saved) {
             // Clear form
             document.getElementById('newName').value = '';
+            document.getElementById('newMight').value = '';
+            document.getElementById('newPlayerKill').value = '';
             document.getElementById('newKills').value = '';
             document.getElementById('newLoss').value = '';
             document.getElementById('newGain').value = '';
@@ -569,6 +593,8 @@
         const p = players[index];
         document.getElementById('editName').value = p.NAME;
         document.getElementById('editRank').value = p.RANK || '1';
+        document.getElementById('editMight').value = p.MIGHT || '';
+        document.getElementById('editPlayerKill').value = p.PLAYER_KILL || '';
         document.getElementById('editKills').value = p.KILL || '';
         document.getElementById('editLoss').value = p['MIGHT LOSS'] || '';
         document.getElementById('editGain').value = p['MIGHT GAIN'] || '';
@@ -583,6 +609,8 @@
         
         players[editIndex].NAME = document.getElementById('editName').value.trim();
         players[editIndex].RANK = document.getElementById('editRank').value;
+        players[editIndex].MIGHT = document.getElementById('editMight').value || '-';
+        players[editIndex].PLAYER_KILL = document.getElementById('editPlayerKill').value || '-';
         players[editIndex].KILL = document.getElementById('editKills').value || '-';
         players[editIndex]['MIGHT LOSS'] = document.getElementById('editLoss').value || '-';
         players[editIndex]['MIGHT GAIN'] = document.getElementById('editGain').value || '-';
