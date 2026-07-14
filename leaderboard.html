@@ -38,10 +38,42 @@
         }
 
         h1 {
-            font-size: 2em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 2.5em;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #4d94ff 0%, #bc8cff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(77, 148, 255, 0.3);
+            position: relative;
+            display: inline-block;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: #f5a623;
+            border-radius: 2px;
         }
 
         .header-controls {
@@ -556,7 +588,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>🏆 Guild Kill Leaderboard</h1>
+            <h1>WELCOME TO HEM GUILD</h1>
             <div class="header-controls">
                 <select id="monthDropdown" class="month-dropdown">
                     <option value="">All Months</option>
