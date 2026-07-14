@@ -443,24 +443,67 @@ footer a:hover {
 
 /* Theme Toggle Button */
 .theme-toggle {
-    background: none;
-    border: 2px solid rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     color: white;
-    font-size: 1.2em;
+    font-size: 1.1em;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    transition: all 0.3s;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
+    width: auto;
     height: 40px;
+    min-width: 40px;
 }
 
 .theme-toggle:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
     border-color: white;
+    transform: scale(1.05);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Refresh Button */
+#refreshBtn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: 40px;
+    min-width: 40px;
+}
+
+#refreshBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: white;
+    transform: scale(1.05);
+}
+
+#refreshBtn:active {
+    transform: scale(0.95);
+}
+
+#refreshBtn.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* ==========================================
@@ -576,13 +619,27 @@ body.dark-mode footer a:hover {
 }
 
 body.dark-mode .theme-toggle {
-    border-color: rgba(34, 184, 207, 0.5);
+    border-color: rgba(77, 148, 255, 0.3);
     color: var(--dark-accent);
+    background: rgba(77, 148, 255, 0.1);
 }
 
 body.dark-mode .theme-toggle:hover {
-    background: rgba(34, 184, 207, 0.1);
+    background: rgba(77, 148, 255, 0.2);
     border-color: var(--dark-accent);
+    transform: scale(1.05);
+}
+
+body.dark-mode #refreshBtn {
+    border-color: rgba(77, 148, 255, 0.3);
+    color: var(--dark-accent);
+    background: rgba(77, 148, 255, 0.1);
+}
+
+body.dark-mode #refreshBtn:hover {
+    background: rgba(77, 148, 255, 0.2);
+    border-color: var(--dark-accent);
+    transform: scale(1.05);
 }
 
 /* ==========================================

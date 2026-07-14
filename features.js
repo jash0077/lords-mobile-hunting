@@ -147,7 +147,13 @@ function initRefreshButton() {
     const refreshBtn = document.getElementById('refreshBtn');
     if (refreshBtn) {
         refreshBtn.addEventListener('click', () => {
-            location.reload();
+            // Add spinning animation
+            refreshBtn.classList.add('spinning');
+            
+            // Reload after a short delay to show animation
+            setTimeout(() => {
+                location.reload();
+            }, 600);
         });
     }
 }
