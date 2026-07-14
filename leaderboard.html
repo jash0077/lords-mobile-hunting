@@ -374,6 +374,97 @@
             color: white;
         }
 
+        /* Search Section Styles */
+        .search-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px 20px 15px 45px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 0 0 4px rgba(77, 148, 255, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .member-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .member-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .member-card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(77, 148, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+        }
+
+        .member-details h4 { margin: 0; font-size: 0.95rem; }
+        .member-details .rank-badge { margin: 0; margin-top: 4px; display: inline-block; }
+
+        .member-results::-webkit-scrollbar { width: 6px; }
+        .member-results::-webkit-scrollbar-track { background: transparent; }
+        .member-results::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -519,6 +610,21 @@
             </div>
             <div class="chart-container">
                 <canvas id="historyChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Search Member Section -->
+        <div class="search-section">
+            <div class="section-header">
+                <h2><i class="fas fa-users"></i> Search Member</h2>
+                <span class="snapshot-count" id="total-members-count">0 Players</span>
+            </div>
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="memberSearchInput" class="search-input" placeholder="Type player name to check profile...">
+            </div>
+            <div id="memberSearchResults" class="member-results">
+                <!-- Results injected here -->
             </div>
         </div>
 
@@ -755,8 +861,10 @@
             document.getElementById('stat-might').textContent = formatNumber(lastMonth.might);
             document.getElementById('stat-kills').textContent = formatNumber(lastMonth.kills);
             document.getElementById('stat-avg-might').textContent = formatNumber(lastMonth.might / lastMonth.players);
+            document.getElementById('total-members-count').textContent = `${lastMonth.players} Players`;
 
             renderChart(monthlyData);
+            renderSearchResults(''); // Initial render with all members
 
             const list = document.getElementById('reports-list');
             list.innerHTML = '';
@@ -876,6 +984,55 @@
         function closeProfileModal() {
             document.getElementById('profileModal').classList.remove('active');
         }
+
+        function renderSearchResults(query) {
+            const resultsContainer = document.getElementById('memberSearchResults');
+            if (!allData.length) return;
+
+            // Get latest month's members
+            const months = [...new Set(allData.map(p => p.MONTH))].sort((a, b) => new Date(b) - new Date(a));
+            const latestMonth = months[0];
+            let members = allData.filter(p => p.MONTH === latestMonth);
+
+            if (query) {
+                members = members.filter(p => p.NAME.toLowerCase().includes(query.toLowerCase()));
+            }
+
+            // Sort by Rank then Name
+            members.sort((a, b) => {
+                const rMap = { 'R5': 5, 'R4': 4, 'R3': 3, 'R2': 2, 'R1': 1 };
+                const aVal = rMap[a.RANK] || 0;
+                const bVal = rMap[b.RANK] || 0;
+                if (bVal !== aVal) return bVal - aVal;
+                return a.NAME.localeCompare(b.NAME);
+            });
+
+            resultsContainer.innerHTML = '';
+            members.forEach(p => {
+                const rankVal = p.RANK && p.RANK.match(/R[1-5]/) ? p.RANK : 'R1';
+                const card = document.createElement('div');
+                card.className = 'member-card';
+                card.innerHTML = `
+                    <div class="member-info">
+                        <div class="member-avatar">${p.NAME.charAt(0)}</div>
+                        <div class="member-details">
+                            <h4>${p.NAME}</h4>
+                            <span class="rank-badge ${rankVal.toLowerCase()}">${rankVal}</span>
+                        </div>
+                    </div>
+                    <button class="view-profile-btn" onclick="viewPlayerProfile('${p.NAME}')">View Profile</button>
+                `;
+                resultsContainer.appendChild(card);
+            });
+
+            if (members.length === 0) {
+                resultsContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 20px;">No members found matching your search.</div>';
+            }
+        }
+
+        document.getElementById('memberSearchInput').addEventListener('input', (e) => {
+            renderSearchResults(e.target.value);
+        });
 
         function renderChart(monthlyData) {
             const ctx = document.getElementById('historyChart').getContext('2d');
