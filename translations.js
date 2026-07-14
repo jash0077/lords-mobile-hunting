@@ -79,7 +79,9 @@ const translations = {
         "troop_composition_label": "Troop Composition:",
         "research_speed_calculator": "Research & Construction Speed Calculator",
         "war": "War",
-        "war_card_description": "Track guild kills, might loss, and war rankings."
+        "war_card_description": "Track guild kills, might loss, and war rankings.",
+        "guild_festival": "Guild Festival",
+        "festival_card_description": "Plan your missions and track your points to reach your target with our advanced calculator."
     },
     "es": {
         "app_title": "Lords Mobile Hub",

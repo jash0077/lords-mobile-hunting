@@ -9,7 +9,8 @@ const searchData = [
     { title: "Training Calculator", keywords: "training troops tier resources calculator", url: "training.html", key: "training_calculator" },
     { title: "Troop Composition", keywords: "troop composition T5 T4 infantry ranged cavalry ratio split", url: "composition.html", key: "troop_composition" },
     { title: "Migration Guide", keywords: "migration guide kingdom move transfer", url: "migration.html", key: "migration_guide" },
-    { title: "Research & Construction", keywords: "research construction speed boost guild helps", url: "research.html", key: "research_construction" }
+    { title: "Research & Construction", keywords: "research construction speed boost guild helps", url: "research.html", key: "research_construction" },
+    { title: "Guild Festival", keywords: "guild festival fest mission calculator points league", url: "festival.html", key: "guild_festival" }
 ];
 
 function initSearch() {
