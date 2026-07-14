@@ -157,22 +157,28 @@
         .score-cell {
             display: flex;
             gap: 5px;
+            justify-content: flex-end;
         }
         .btn-score {
             border: none;
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-weight: bold;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 0.8em;
-            min-width: 45px;
+            font-size: 0.85em;
+            min-width: 50px;
             transition: all 0.2s;
-            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light-secondary-text);
         }
-        .btn-score:hover { transform: translateY(-2px); opacity: 0.9; }
-        .btn-score.base { background: var(--accent-blue); }
-        .btn-score.bonus { background: var(--accent-purple); }
-        .btn-score.double { background: var(--accent-orange); }
+        body.dark-mode .btn-score { color: var(--dark-secondary-text); }
+        .btn-score:hover { transform: scale(1.05); }
+        .btn-score.base { color: #8b8b8b; }
+        .btn-score.bonus { color: #4d94ff; border: 1px solid rgba(77, 148, 255, 0.2); }
+        .btn-score.double { color: #ff4d4d; border: 1px solid rgba(255, 77, 77, 0.2); }
+        body.dark-mode .btn-score.base { color: #6b7280; }
+        body.dark-mode .btn-score.bonus { color: #4d94ff; background: rgba(77, 148, 255, 0.1); }
+        body.dark-mode .btn-score.double { color: #f85149; background: rgba(248, 81, 73, 0.1); }
 
         .plan-item {
             display: flex;
@@ -329,10 +335,15 @@
                                 <option value="Castle">Castle</option>
                                 <option value="Events">Events</option>
                                 <option value="Familiars">Familiars</option>
+                                <option value="Gear">Gear</option>
+                                <option value="Heroes">Heroes</option>
                                 <option value="Hunting">Hunting</option>
                                 <option value="Labyrinth">Labyrinth</option>
+                                <option value="Might">Might</option>
                                 <option value="Resource">Resource</option>
                                 <option value="Speedups">Speedups</option>
+                                <option value="Spending">Spending</option>
+                                <option value="Tycoon">Tycoon</option>
                                 <option value="Other">Other</option>
                             </select>
                         </div>
@@ -367,29 +378,61 @@
     </footer>
 
     <script>
-        // Full data extracted from reference site
+        // Full database extracted from reference site
         const missions = [
             {"base":261,"bonus":313,"cat":"Artifacts","double":522,"name":"Upgrade Artifacts","req":"7 times","time":"3d"},
             {"base":261,"bonus":313,"cat":"Artifacts","double":522,"name":"Enhance Artifacts","req":"4 times","time":"3d"},
             {"base":253,"bonus":303,"cat":"Artifacts","double":506,"name":"Spend Artifact Coins","req":"32.5k","time":"3d"},
             {"base":216,"bonus":259,"cat":"Artifacts","double":432,"name":"Upgrade Artifacts","req":"6 times","time":"2d"},
+            {"base":216,"bonus":259,"cat":"Artifacts","double":432,"name":"Enhance Artifacts","req":"4 times","time":"2d"},
             {"base":210,"bonus":252,"cat":"Artifacts","double":420,"name":"Spend Artifact Coins","req":"17.5k","time":"2d"},
+            {"base":180,"bonus":216,"cat":"Artifacts","double":360,"name":"Upgrade Artifacts","req":"3 times","time":"24h"},
+            {"base":180,"bonus":216,"cat":"Artifacts","double":360,"name":"Enhance Artifacts","req":"2 times","time":"24h"},
+            {"base":175,"bonus":210,"cat":"Artifacts","double":350,"name":"Spend Artifact Coins","req":"10k","time":"24h"},
+            {"base":156,"bonus":183,"cat":"Artifacts","double":312,"name":"Upgrade Artifacts","req":"2 times","time":"24h"},
+            {"base":156,"bonus":183,"cat":"Artifacts","double":312,"name":"Enhance Artifacts","req":"1 time","time":"24h"},
+            {"base":148,"bonus":210,"cat":"Artifacts","double":296,"name":"Spend Artifact Coins","req":"5k","time":"24h"},
             {"base":145,"bonus":174,"cat":"Bastions","double":290,"name":"Obtain Essence 19+","req":"7 times","time":"2d"},
+            {"base":144,"bonus":173,"cat":"Bastions","double":288,"name":"Obtain Essence 19+","req":"7 times","time":"24h"},
             {"base":138,"bonus":165,"cat":"Bastions","double":276,"name":"Win Battle vs. Chaos Bastion (Leader)","req":"9 times","time":"24h"},
+            {"base":120,"bonus":144,"cat":"Bastions","double":240,"name":"Obtain Essence 19+","req":"4 times","time":"24h"},
+            {"base":115,"bonus":138,"cat":"Bastions","double":230,"name":"Win Battle vs. Chaos Bastion (Leader)","req":"6 times","time":"24h"},
+            {"base":97,"bonus":116,"cat":"Bastions","double":194,"name":"Win Battle vs. Chaos Bastion (As Leader)","req":"3 times","time":"24h"},
+            {"base":97,"bonus":116,"cat":"Bastions","double":194,"name":"Win Battle vs. Chaos Bastion (Leader)","req":"3 times","time":"24h"},
             {"base":261,"bonus":313,"cat":"Castle","double":522,"name":"Obtain Castle Style Star","req":"4 times","time":"3d"},
+            {"base":261,"bonus":313,"cat":"Castle","double":522,"name":"Obtain Castle Style Star","req":"3 times","time":"3d"},
+            {"base":216,"bonus":259,"cat":"Castle","double":432,"name":"Obtain Castle Style Star","req":"2 times","time":"2d"},
+            {"base":216,"bonus":259,"cat":"Castle","double":432,"name":"Obtain Castle Style Star","req":"2 times","time":"24h"},
+            {"base":180,"bonus":216,"cat":"Castle","double":360,"name":"Obtain Castle Style Star","req":"1 time","time":"24h"},
             {"base":268,"bonus":330,"cat":"Events","double":536,"name":"Achieve Top 10 in Infernal Event","req":"4 times","time":"3d"},
             {"base":253,"bonus":303,"cat":"Events","double":506,"name":"Complete Phase 3 of Infernal Event","req":"10 times","time":"3d"},
+            {"base":223,"bonus":268,"cat":"Events","double":446,"name":"Achieve Top 10 in Infernal Event","req":"2 times","time":"2d"},
+            {"base":222,"bonus":266,"cat":"Events","double":444,"name":"Achieve Top 10 in Infernal Event","req":"2 times","time":"24h"},
+            {"base":210,"bonus":252,"cat":"Events","double":420,"name":"Complete Phase 3 of Infernal Event","req":"6 times","time":"2d"},
+            {"base":185,"bonus":222,"cat":"Events","double":370,"name":"Achieve Top 10 in Infernal Event","req":"1 time","time":"24h"},
+            {"base":175,"bonus":210,"cat":"Events","double":350,"name":"Complete Phase 3 of Infernal Event","req":"3 times","time":"24h"},
+            {"base":148,"bonus":210,"cat":"Events","double":296,"name":"Complete Phase 3 of Infernal Event","req":"2 times","time":"24h"},
             {"base":150,"bonus":180,"cat":"Familiars","double":300,"name":"Use Familiar Battle Skills","req":"3 times","time":"24h"},
-            {"base":175,"bonus":210,"cat":"Hunting","double":350,"name":"Hit Monsters","req":"120 times","time":"3d"},
-            {"base":156,"bonus":187,"cat":"Labyrinth","double":312,"name":"Spend Holy Stars","req":"50k","time":"2d"},
+            {"base":150,"bonus":180,"cat":"Familiars","double":300,"name":"Use Familiar Skills","req":"3 times","time":"24h"},
+            {"base":150,"bonus":180,"cat":"Familiars","double":300,"name":"Merge Pacts (Pact 4)","req":"80 times","time":"2d"},
+            {"base":150,"bonus":180,"cat":"Familiars","double":300,"name":"Merge Pacts (Pact 3)","req":"120 times","time":"2d"},
+            {"base":217,"bonus":260,"cat":"Speedups","double":434,"name":"Use Speedups","req":"65 days","time":"3d"},
+            {"base":217,"bonus":260,"cat":"Speedups","double":434,"name":"Reduce Time with Creation Speedups","req":"29d 6h","time":"3d"},
+            {"base":180,"bonus":216,"cat":"Speedups","double":360,"name":"Use Speedups","req":"25 days","time":"2d"},
+            {"base":180,"bonus":216,"cat":"Speedups","double":360,"name":"Reduce Time with Creation Speedups","req":"15d 18h","time":"2d"},
+            {"base":180,"bonus":216,"cat":"Speedups","double":360,"name":"Use Speedups","req":"35 days","time":"2d"},
+            {"base":150,"bonus":180,"cat":"Speedups","double":300,"name":"Use Speedups","req":"20 days","time":"24h"},
+            {"base":150,"bonus":180,"cat":"Speedups","double":300,"name":"Reduce Time with Creation Speedups","req":"9 days","time":"24h"},
+            {"base":127,"bonus":152,"cat":"Speedups","double":254,"name":"Use Speedups","req":"10 days","time":"24h"},
+            {"base":145,"bonus":174,"cat":"Hunting","double":290,"name":"Hit Monsters","req":"120 times","time":"3d"},
+            {"base":145,"bonus":174,"cat":"Labyrinth","double":290,"name":"Spend Holy Stars","req":"50k","time":"2d"},
             {"base":145,"bonus":174,"cat":"Resource","double":290,"name":"Gather Resources","req":"45M","time":"2d"},
-            {"base":145,"bonus":174,"cat":"Speedups","double":290,"name":"Use Speed Ups","req":"20d","time":"3d"},
-            {"base":145,"bonus":174,"cat":"Other","double":290,"name":"Spend Guild Coins","req":"1.2M","time":"2d"},
-            {"base":145,"bonus":174,"cat":"Other","double":290,"name":"Cargo Ship Trades","req":"32 times","time":"3d"},
-            {"base":145,"bonus":174,"cat":"Other","double":290,"name":"Complete Admin Quests","req":"250","time":"3d"},
-            {"base":145,"bonus":174,"cat":"Other","double":290,"name":"Complete Guild Quests","req":"250","time":"3d"},
-            {"base":145,"bonus":174,"cat":"Other","double":290,"name":"Open Mystery Boxes","req":"45","time":"2d"},
-            {"base":145,"bonus":174,"cat":"Other","double":290,"name":"Send Help","req":"140","time":"2d"}
+            {"base":145,"bonus":174,"cat":"Spending","double":290,"name":"Spend Gems","req":"50k","time":"2d"},
+            {"base":145,"bonus":174,"cat":"Tycoon","double":290,"name":"Spend Luck Tokens","req":"120","time":"2d"},
+            {"base":145,"bonus":174,"cat":"Gear","double":290,"name":"Obtain [Legendary] Loot","req":"3 times","time":"3d"},
+            {"base":145,"bonus":174,"cat":"Heroes","double":290,"name":"Complete Hero Stages","req":"230","time":"4d"},
+            {"base":145,"bonus":174,"cat":"Might","double":290,"name":"Increase Might (Research)","req":"3M","time":"4d"},
+            {"base":145,"bonus":174,"cat":"Other","double":290,"name":"Spend Guild Coins","req":"2.4M","time":"4d"}
         ];
 
         let plan = [];
