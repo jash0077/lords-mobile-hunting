@@ -155,13 +155,15 @@
             }
 
             try {
+                // Use a proxy or direct fetch if it's on GitHub Pages
                 const response = await fetch(SHEET_URL);
+                if (!response.ok) throw new Error('Network response was not ok');
                 const csvText = await response.text();
                 const data = parseCSV(csvText);
 
                 const playerHistory = data.filter(p => p.NAME === playerName).sort((a, b) => new Date(a.MONTH) - new Date(b.MONTH));
                 if (playerHistory.length === 0) {
-                    document.getElementById('playerName').textContent = 'Player Not Found';
+                    document.getElementById('loading').innerHTML = '<p style="color:#ff4d4d;">Player Not Found</p>';
                     return;
                 }
 
@@ -170,7 +172,7 @@
                 document.getElementById('playerName').childNodes[0].textContent = latest.NAME + ' ';
                 document.getElementById('playerAvatar').textContent = latest.NAME.charAt(0).toUpperCase();
                 document.getElementById('playerGuild').textContent = latest.GUILD;
-                document.getElementById('playerRank').textContent = latest.RANK;
+                document.getElementById('playerRank').textContent = latest.RANK || 'R1';
                 document.getElementById('playerSeen').textContent = `First Seen: ${playerHistory[0].MONTH} | Last Seen: ${latest.MONTH}`;
                 
                 document.getElementById('mightVal').textContent = latest.MIGHT;
@@ -183,10 +185,17 @@
                 document.getElementById('killsGain').textContent = `Gain: ${kGain}`;
                 document.getElementById('killsGain').style.color = '#3fb950';
 
-                const killsNum = parseFloat(kGain.replace(/[^0-9.]/g, '')) || 0;
-                if (kGain.includes('M')) killsNum *= 1000000;
-                else if (kGain.includes('K')) killsNum *= 1000;
-                
+                const parseVal = (v) => {
+                    if (!v) return 0;
+                    let s = v.toString().toUpperCase();
+                    let n = parseFloat(s.replace(/[^0-9.]/g, '')) || 0;
+                    if (s.includes('B')) n *= 1e9;
+                    else if (s.includes('M')) n *= 1e6;
+                    else if (s.includes('K')) n *= 1e3;
+                    return n;
+                };
+
+                const killsNum = parseVal(kGain);
                 const percent = Math.min(100, (killsNum / 1000000) * 100);
                 document.getElementById('quotaProgressText').textContent = `${kGain} / 1M kills this month`;
                 document.getElementById('quotaBar').style.width = percent + '%';
@@ -197,7 +206,7 @@
 
             } catch (error) {
                 console.error('Error loading profile:', error);
-                document.getElementById('playerName').textContent = 'Error loading data';
+                document.getElementById('loading').innerHTML = '<p style="color:#ff4d4d;">Error loading player data. Please try again later.</p>';
             }
         }
 
@@ -209,6 +218,7 @@
                 let n = parseFloat(s.replace(/[^0-9.]/g, '')) || 0;
                 if (s.includes('B')) n *= 1e9;
                 else if (s.includes('M')) n *= 1e6;
+                else if (s.includes('K')) n *= 1e3;
                 return n;
             };
 
