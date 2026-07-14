@@ -16,15 +16,27 @@
         .calc-container {
             background: var(--light-surface);
             border: 1px solid var(--light-border);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border-radius: 14px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             margin-top: 20px;
+            animation: slideInUp 0.5s ease;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         body.dark-mode .calc-container {
-            background: var(--dark-surface);
-            border-color: var(--dark-border);
+            background: linear-gradient(135deg, #13131a 0%, #1c1c24 100%);
+            border-color: rgba(77, 148, 255, 0.2);
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 

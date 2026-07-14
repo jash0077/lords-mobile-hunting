@@ -15,15 +15,27 @@
         .calculator-card {
             background: var(--light-surface);
             border: 1px solid var(--light-border);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             margin-top: 20px;
+            animation: slideInUp 0.5s ease;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         body.dark-mode .calculator-card {
-            background: var(--dark-surface);
-            border-color: var(--dark-border);
+            background: linear-gradient(135deg, #13131a 0%, #1c1c24 100%);
+            border-color: rgba(77, 148, 255, 0.2);
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         .speedup-row {
@@ -32,18 +44,29 @@
             margin-bottom: 12px;
             background: var(--light-bg);
             border: 1px solid var(--light-border);
-            border-radius: 8px;
-            padding: 5px 10px;
+            border-radius: 10px;
+            padding: 12px 15px;
+            transition: all 0.2s ease;
+        }
+
+        .speedup-row:hover {
+            border-color: rgba(77, 148, 255, 0.5);
+            box-shadow: 0 2px 8px rgba(77, 148, 255, 0.1);
         }
 
         body.dark-mode .speedup-row {
             background: var(--dark-secondary-bg);
-            border-color: var(--dark-border);
+            border-color: rgba(77, 148, 255, 0.2);
+        }
+
+        body.dark-mode .speedup-row:hover {
+            border-color: rgba(77, 148, 255, 0.5);
+            box-shadow: 0 2px 8px rgba(77, 148, 255, 0.2);
         }
         .speedup-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 6px;
+            width: 55px;
+            height: 55px;
+            border-radius: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -54,7 +77,13 @@
             margin-right: 15px;
             flex-shrink: 0;
             position: relative;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        }
+
+        .speedup-row:hover .speedup-icon {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
         }
         .speedup-icon::before {
             content: "▶▶";
@@ -85,18 +114,43 @@
             margin-top: 25px;
         }
         .calc-btn {
-            background: linear-gradient(to bottom, #2a5298, #1e3c72);
+            background: linear-gradient(135deg, #4d94ff 0%, #2563eb 100%);
             color: white;
             border: none;
-            padding: 12px 60px;
-            border-radius: 8px;
+            padding: 14px 70px;
+            border-radius: 10px;
             font-size: 1.1em;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 10px rgba(30, 60, 114, 0.3);
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(77, 148, 255, 0.3);
+            position: relative;
+            overflow: hidden;
         }
-        .calc-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(30, 60, 114, 0.4); }
+
+        .calc-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .calc-btn:hover::before {
+            left: 100%;
+        }
+
+        .calc-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(77, 148, 255, 0.4);
+        }
+
+        .calc-btn:active {
+            transform: translateY(-1px);
+        }
 
         .result-display {
             margin-top: 25px;
