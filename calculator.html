@@ -47,6 +47,26 @@
             border-radius: 10px;
             padding: 12px 15px;
             transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .gem-info {
+            font-size: 0.8em;
+            color: #bc8cff;
+            margin-left: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            min-width: 80px;
+        }
+
+        .gem-info i {
+            font-size: 1em;
+        }
+
+        body.dark-mode .gem-info {
+            color: #bc8cff;
         }
 
         .speedup-row:hover {
@@ -259,24 +279,24 @@
     
     <div class="calculator-card">
         <!-- Minute Speedups -->
-        <div class="speedup-row"><div class="speedup-icon icon-green">1m</div><input type="number" class="speedup-input" value="0" data-mins="1"></div>
-        <div class="speedup-row"><div class="speedup-icon icon-green">3m</div><input type="number" class="speedup-input" value="0" data-mins="3"></div>
-        <div class="speedup-row"><div class="speedup-icon icon-green">5m</div><input type="number" class="speedup-input" value="0" data-mins="5"></div>
-        <div class="speedup-row"><div class="speedup-icon icon-green">10m</div><input type="number" class="speedup-input" value="0" data-mins="10"></div>
-        <div class="speedup-row"><div class="speedup-icon icon-green">15m</div><input type="number" class="speedup-input" value="0" data-mins="15"></div>
-        <div class="speedup-row"><div class="speedup-icon icon-green">30m</div><input type="number" class="speedup-input" value="0" data-mins="30"></div>
-        <div class="speedup-row"><div class="speedup-icon icon-green">60m</div><input type="number" class="speedup-input" value="0" data-mins="60"></div>
+        <div class="speedup-row"><div class="speedup-icon icon-green">1m</div><input type="number" class="speedup-input" value="0" data-mins="1" data-gems="5"><div class="gem-info"><i class="fas fa-gem"></i> 5</div></div>
+        <div class="speedup-row"><div class="speedup-icon icon-green">3m</div><input type="number" class="speedup-input" value="0" data-mins="3" data-gems="15"><div class="gem-info"><i class="fas fa-gem"></i> 15</div></div>
+        <div class="speedup-row"><div class="speedup-icon icon-green">5m</div><input type="number" class="speedup-input" value="0" data-mins="5" data-gems="25"><div class="gem-info"><i class="fas fa-gem"></i> 25</div></div>
+        <div class="speedup-row"><div class="speedup-icon icon-green">10m</div><input type="number" class="speedup-input" value="0" data-mins="10" data-gems="50"><div class="gem-info"><i class="fas fa-gem"></i> 50</div></div>
+        <div class="speedup-row"><div class="speedup-icon icon-green">15m</div><input type="number" class="speedup-input" value="0" data-mins="15" data-gems="70"><div class="gem-info"><i class="fas fa-gem"></i> 70</div></div>
+        <div class="speedup-row"><div class="speedup-icon icon-green">30m</div><input type="number" class="speedup-input" value="0" data-mins="30" data-gems="110"><div class="gem-info"><i class="fas fa-gem"></i> 110</div></div>
+        <div class="speedup-row"><div class="speedup-icon icon-green">60m</div><input type="number" class="speedup-input" value="0" data-mins="60" data-gems="130"><div class="gem-info"><i class="fas fa-gem"></i> 130</div></div>
 
         <!-- Hour Speedups -->
-        <div class="speedup-row"><div class="speedup-icon icon-blue">3h</div><input type="number" class="speedup-input" value="0" data-mins="180"></div>
-        <div class="speedup-row"><div class="speedup-icon icon-blue">8h</div><input type="number" class="speedup-input" value="0" data-mins="480"></div>
-        <div class="speedup-row"><div class="speedup-icon icon-blue">15h</div><input type="number" class="speedup-input" value="0" data-mins="900"></div>
-        <div class="speedup-row"><div class="speedup-icon icon-blue">24h</div><input type="number" class="speedup-input" value="0" data-mins="1440"></div>
+        <div class="speedup-row"><div class="speedup-icon icon-blue">3h</div><input type="number" class="speedup-input" value="0" data-mins="180" data-gems="300"><div class="gem-info"><i class="fas fa-gem"></i> 300</div></div>
+        <div class="speedup-row"><div class="speedup-icon icon-blue">8h</div><input type="number" class="speedup-input" value="0" data-mins="480" data-gems="650"><div class="gem-info"><i class="fas fa-gem"></i> 650</div></div>
+        <div class="speedup-row"><div class="speedup-icon icon-blue">15h</div><input type="number" class="speedup-input" value="0" data-mins="900" data-gems="1000"><div class="gem-info"><i class="fas fa-gem"></i> 1000</div></div>
+        <div class="speedup-row"><div class="speedup-icon icon-blue">24h</div><input type="number" class="speedup-input" value="0" data-mins="1440" data-gems="1500"><div class="gem-info"><i class="fas fa-gem"></i> 1500</div></div>
 
         <!-- Day Speedups -->
-        <div class="speedup-row"><div class="speedup-icon icon-red">3d</div><input type="number" class="speedup-input" value="0" data-mins="4320"></div>
-        <div class="speedup-row"><div class="speedup-icon icon-red">7d</div><input type="number" class="speedup-input" value="0" data-mins="10080"></div>
-        <div class="speedup-row"><div class="speedup-icon icon-red">30d</div><input type="number" class="speedup-input" value="0" data-mins="43200"></div>
+        <div class="speedup-row"><div class="speedup-icon icon-red">3d</div><input type="number" class="speedup-input" value="0" data-mins="4320" data-gems="4400"><div class="gem-info"><i class="fas fa-gem"></i> 4400</div></div>
+        <div class="speedup-row"><div class="speedup-icon icon-red">7d</div><input type="number" class="speedup-input" value="0" data-mins="10080" data-gems="10000"><div class="gem-info"><i class="fas fa-gem"></i> 10000</div></div>
+        <div class="speedup-row"><div class="speedup-icon icon-red">30d</div><input type="number" class="speedup-input" value="0" data-mins="43200" data-gems="40000"><div class="gem-info"><i class="fas fa-gem"></i> 40000</div></div>
 
         <div class="calc-btn-container">
             <button class="calc-btn" onclick="calculate()">Calculate</button>
@@ -304,18 +324,28 @@
 
     function calculate() {
         let totalMinutes = 0;
+        let totalGems = 0;
         const inputs = document.querySelectorAll('.speedup-input');
         
         inputs.forEach(input => {
             const quantity = parseInt(input.value) || 0;
             const minutesPerUnit = parseInt(input.getAttribute('data-mins'));
+            const gemsPerUnit = parseInt(input.getAttribute('data-gems'));
+            
             totalMinutes += (quantity * minutesPerUnit);
+            totalGems += (quantity * gemsPerUnit);
         });
 
         const totalHours = totalMinutes / 60;
         const totalDays = totalHours / 24;
 
         document.getElementById('total-display').innerHTML = `
+            <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--light-border);">
+                <span style="color: #bc8cff; font-weight: 800; font-size: 1.4em;">
+                    <i class="fas fa-gem"></i> ${totalGems.toLocaleString()}
+                </span>
+                <div style="font-size: 0.7em; color: var(--light-muted-text); text-transform: uppercase;">Total Gems Needed</div>
+            </div>
             <div><strong>${totalMinutes.toLocaleString()}</strong> Minutes</div>
             <div><strong>${totalHours.toFixed(2)}</strong> Hours</div>
             <div><strong>${totalDays.toFixed(2)}</strong> Days</div>
