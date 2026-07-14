@@ -563,68 +563,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Player Profile Section -->
-        <div class="chart-section" style="background: var(--bg-dark); border: none; padding: 0; margin-bottom: 40px;">
-            <div class="profile-header">
-                <div class="profile-avatar">C</div>
-                <div class="profile-info">
-                    <h2>CJ2021 <span style="font-size: 0.5em; vertical-align: middle; background: rgba(77, 148, 255, 0.1); color: var(--accent-blue); padding: 4px 8px; border-radius: 4px; margin-left: 10px;">UE-70DFA</span> <span style="font-size: 0.5em; vertical-align: middle; background: rgba(63, 185, 80, 0.1); color: var(--accent-green); padding: 4px 8px; border-radius: 4px;">R4</span></h2>
-                    <p>First Seen: 2026-05-31 | Last Seen: 07-06</p>
-                </div>
-            </div>
 
-            <div class="profile-grid">
-                <div class="profile-stat-card">
-                    <span class="value">2.85B</span>
-                    <span class="label">Current Might</span>
-                    <span style="color: #ff4d4d; font-size: 0.75em;">-276.9M • Last 30 Days</span>
-                </div>
-                <div class="profile-stat-card">
-                    <span class="value">446.4M</span>
-                    <span class="label">Current Kills</span>
-                    <span style="color: var(--accent-green); font-size: 0.75em;">+86.5M • Last 30 Days</span>
-                </div>
-            </div>
-
-            <div class="summary-card" style="margin-bottom: 30px; border-color: var(--accent-green);">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h3 style="font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase;">Monthly Kill Quota (1,000,000)</h3>
-                        <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-                            <div style="width: 40px; height: 40px; background: var(--accent-green); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <div>
-                                <div style="font-weight: bold; color: var(--accent-green);">QUOTA MET</div>
-                                <div style="font-size: 0.8rem; color: var(--text-secondary);">10.5M / 1M kills this month</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div style="height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-top: 15px;">
-                    <div style="height: 100%; width: 100%; background: var(--accent-green); border-radius: 2px;"></div>
-                </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                <div class="chart-section" style="margin-bottom: 0;">
-                    <div class="section-header">
-                        <h2><i class="fas fa-chart-area"></i> Power Progress (30 Days)</h2>
-                    </div>
-                    <div class="chart-container" style="height: 250px;">
-                        <canvas id="powerChart"></canvas>
-                    </div>
-                </div>
-                <div class="chart-section" style="margin-bottom: 0;">
-                    <div class="section-header">
-                        <h2><i class="fas fa-chart-line"></i> Kills History (30 Days)</h2>
-                    </div>
-                    <div class="chart-container" style="height: 250px;">
-                        <canvas id="killsChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <header>
             <div class="header-title">
@@ -981,7 +920,7 @@
                     <td>${idx + 1}</td>
                     <td><strong>${p.NAME}</strong></td>
                     <td><span class="latest-badge" style="background: var(--accent-gold); color: #000;">${p['GUILD FEST']}</span></td>
-                    <td><button class="view-profile-btn" onclick="viewPlayerProfile('${p.NAME}')">View Profile</button></td>
+                    <td><button class="view-profile-btn" onclick="window.location.href='player.html?name=' + encodeURIComponent('${p.NAME}')">View Profile</button></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1083,7 +1022,7 @@
                             <span class="rank-badge ${rankVal.toLowerCase()}">${rankVal}</span>
                         </div>
                     </div>
-                    <button class="view-profile-btn" onclick="viewPlayerProfile('${p.NAME}')">View Profile</button>
+                    <button class="view-profile-btn" onclick="window.location.href='player.html?name=' + encodeURIComponent('${p.NAME}')">View Profile</button>
                 `;
                 resultsContainer.appendChild(card);
             });
@@ -1219,7 +1158,7 @@
                     <td><strong>${p.NAME}</strong> <span class="rank-badge ${rankVal.toLowerCase()}">${rankVal}</span></td>
                     <td>${p.MIGHT}</td>
                     <td>${p.PLAYER_KILL}</td>
-                    <td><button class="view-profile-btn" onclick="viewPlayerProfile('${p.NAME}')">View Profile</button></td>
+                    <td><button class="view-profile-btn" onclick="window.location.href='player.html?name=' + encodeURIComponent('${p.NAME}')">View Profile</button></td>
                 `;
                 tbody.appendChild(row);
             });

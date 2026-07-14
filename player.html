@@ -3,210 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player Profile - Guild Leaderboard</title>
+    <title>Player Profile | Lords Mobile Hub</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css"> <!-- Link to existing style.css for theme -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            background-color: #0f172a;
-            color: #e2e8f0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 20px;
+        :root {
+            --bg-dark: #0b0b0f;
+            --bg-card: #13131a;
+            --bg-elevated: #1c1c24;
+            --text-primary: #f3f4f6;
+            --text-secondary: #94949e;
+            --accent-blue: #4d94ff;
+            --accent-purple: #bc8cff;
+            --accent-green: #3fb950;
+            --border: rgba(255, 255, 255, 0.06);
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        body { background: var(--bg-dark); color: var(--text-primary); padding: 20px; font-family: 'Inter', sans-serif; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .profile-header { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; }
+        .profile-avatar { 
+            width: 80px; height: 80px; 
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); 
+            border-radius: 20px; display: flex; align-items: center; justify-content: center; 
+            font-size: 2rem; color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        .profile-info h2 { margin: 0; font-size: 1.8rem; }
+        .profile-info p { margin: 5px 0 0; color: var(--text-secondary); font-size: 0.9rem; }
+        .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .profile-stat-card { 
+            background: var(--bg-card); padding: 25px; border-radius: 16px; 
+            border: 1px solid var(--border); text-align: center; 
         }
-        h1 {
-            font-size: 1.8em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-        }
-        .back-btn {
-            padding: 10px 20px;
-            background: #334155;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: background 0.3s;
-        }
-        .back-btn:hover { background: #475569; }
-
-        .player-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .player-header h2 {
-            font-size: 2.5em;
-            color: #2563eb;
-            margin-bottom: 10px;
-        }
-        .player-header .rank-badge {
-            font-size: 1.2em;
-            padding: 6px 12px;
-        }
-
-        .stat-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .stat-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        .stat-card i {
-            font-size: 2.5em;
-            color: #2563eb;
-            margin-bottom: 10px;
-        }
-        .stat-card h3 {
-            font-size: 1.5em;
-            margin-bottom: 5px;
-        }
-        .stat-card p {
-            color: #94a3b8;
-            font-size: 0.9em;
-        }
-
-        .section-box {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        .section-box h2 {
-            font-size: 1.8em;
-            color: #e2e8f0;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 10px;
-        }
-
-        .quota-progress {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .progress-bar-container {
-            flex-grow: 1;
-            height: 20px;
-            background-color: #334155;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            height: 100%;
-            background-color: #10b981; /* Green for met quota */
-            width: 0%;
-            border-radius: 10px;
-            transition: width 0.5s ease-in-out;
-        }
-        .quota-text {
-            font-weight: bold;
-            color: #e2e8f0;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .rank-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            font-weight: bold;
-            color: #0f172a;
-        }
-        .rank-badge.r5 { background: #fbbf24; }
-        .rank-badge.r4 { background: #f97316; }
-        .rank-badge.r3 { background: #ef4444; }
-        .rank-badge.r2 { background: #8b5cf6; }
-        .rank-badge.r1 { background: #06b6d4; }
+        .profile-stat-card .value { display: block; font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
+        .profile-stat-card .label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+        .chart-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+        .section-header h2 { font-size: 1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .chart-container { height: 250px; position: relative; }
+        .back-btn { background: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border); padding: 8px 15px; border-radius: 8px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+        .back-btn:hover { background: var(--bg-card); }
+        .quota-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 30px; border-left: 4px solid var(--accent-green); }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1><i class="fas fa-user-circle"></i> Player Profile</h1>
-            <a href="members.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Members</a>
-        </header>
-
-        <div class="player-header">
-            <h2 id="playerName"></h2>
-            <span id="playerRankBadge" class="rank-badge"></span>
+        <a href="leaderboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to War Dashboard</a>
+        
+        <div id="loading" style="text-align:center; padding: 50px;">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p style="margin-top: 15px;">Loading Profile...</p>
         </div>
 
-        <div class="stat-cards-grid">
-            <div class="stat-card">
-                <i class="fas fa-chess-rook"></i>
-                <h3>Current Might</h3>
-                <p id="currentMight">Loading...</p>
-                <p id="mightChange"></p>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-swords"></i>
-                <h3>Current Kills</h3>
-                <p id="currentKills">Loading...</p>
-                <p id="killsChange"></p>
-            </div>
-        </div>
-
-        <div class="section-box">
-            <h2>Monthly Kill Quota</h2>
-            <div class="quota-progress">
-                <div class="progress-bar-container">
-                    <div class="progress-bar" id="killQuotaProgressBar"></div>
+        <div id="profile-content" style="display:none;">
+            <div class="profile-header">
+                <div class="profile-avatar" id="playerAvatar">?</div>
+                <div class="profile-info">
+                    <h2 id="playerName">Loading... <span id="playerGuild" style="font-size: 0.5em; vertical-align: middle; background: rgba(77, 148, 255, 0.1); color: var(--accent-blue); padding: 4px 8px; border-radius: 4px; margin-left: 10px;"></span> <span id="playerRank" style="font-size: 0.5em; vertical-align: middle; background: rgba(63, 185, 80, 0.1); color: var(--accent-green); padding: 4px 8px; border-radius: 4px;"></span></h2>
+                    <p id="playerSeen">First Seen: -- | Last Seen: --</p>
                 </div>
-                <span class="quota-text" id="killQuotaText">Loading...</span>
             </div>
-        </div>
 
-        <div class="section-box">
-            <h2>LAST 30 DAYS</h2>
-            <div class="chart-container">
-                <canvas id="powerProgressChart"></canvas>
+            <div class="profile-grid">
+                <div class="profile-stat-card">
+                    <span class="value" id="mightVal">--</span>
+                    <span class="label">Current Might</span>
+                    <span id="mightGain" style="font-size: 0.75em;">--</span>
+                </div>
+                <div class="profile-stat-card">
+                    <span class="value" id="killsVal">--</span>
+                    <span class="label">Current Kills</span>
+                    <span id="killsGain" style="font-size: 0.75em;">--</span>
+                </div>
             </div>
-        </div>
 
-        <div class="section-box">
-            <h2>ALL HISTORY — 52 WEEKS</h2>
-            <div class="chart-container">
-                <canvas id="killsHistoryChart"></canvas>
+            <div class="quota-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3 style="font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase;">Monthly Kill Quota (1,000,000)</h3>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                            <div style="width: 40px; height: 40px; background: var(--accent-green); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: bold; color: var(--accent-green);">QUOTA MET</div>
+                                <div id="quotaProgressText" style="font-size: 0.8rem; color: var(--text-secondary);">-- / 1M kills this month</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-top: 15px;">
+                    <div id="quotaBar" style="height: 100%; width: 0%; background: var(--accent-green); border-radius: 2px; transition: width 1s;"></div>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-area"></i> Power Progress (History)</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="powerChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-line"></i> Kills History (History)</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="killsChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const playerName = urlParams.get("name");
-        let allPlayers = [];
         const SHEET_ID = '1PGJ-Ad74mpx-v3RbqHku2310jiCCyYcb85eC1G3d8wM';
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
@@ -221,152 +131,132 @@
                 headers.forEach((h, idx) => {
                     obj[h] = (values[idx] || '').replace(/\"/g, '').trim();
                 });
-                // Map Google Sheet columns to expected keys
                 const mapped = {
                     NAME: obj['Player'] || obj['NAME'] || '',
                     MIGHT: obj['Might'] || obj['MIGHT'] || '',
                     PLAYER_KILL: obj['Player Kill'] || obj['PLAYER_KILL'] || '',
                     KILL: obj['Kills INCREASE '] || obj['Kills INCREASE'] || obj['KILL'] || '',
                     'MIGHT GAIN': obj['MightGain'] || obj['MIGHT GAIN'] || '',
-                    'MIGHT LOSS': obj['MightLoss'] || obj['MIGHT LOSS'] || '',
                     RANK: obj['RANK'] || '',
                     MONTH: obj['Date'] || obj['MONTH'] || '',
-                    'GUILD FEST': obj['GUILD FEST'] || ''
+                    GUILD: obj['GUILD'] || 'HEM'
                 };
                 if (mapped.NAME) data.push(mapped);
             }
             return data;
         }
 
-        async function loadPlayerData() {
+        async function loadProfile() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const playerName = urlParams.get('name');
+            if (!playerName) {
+                window.location.href = 'leaderboard.html';
+                return;
+            }
+
             try {
                 const response = await fetch(SHEET_URL);
                 const csvText = await response.text();
-                allPlayers = parseCSV(csvText);
-                const player = allPlayers.find(p => p.NAME === playerName);
+                const data = parseCSV(csvText);
 
-                if (player) {
-                    document.getElementById("playerName").textContent = player.NAME;
-                    document.getElementById("playerRankBadge").textContent = `R${player.RANK || '1'}`;
-                    document.getElementById("playerRankBadge").className = `rank-badge r${player.RANK || '1'}`;
-                    document.getElementById("currentMight").textContent = player.MIGHT || "N/A";
-                    document.getElementById("currentKills").textContent = player.PLAYER_KILL || "N/A";
-
-                    // Placeholder for change data (needs historical data)
-                    document.getElementById("mightChange").textContent = "+0 • Last 30 Days";
-                    document.getElementById("killsChange").textContent = "+0 • Last 30 Days";
-
-                    // Monthly Kill Quota (example logic)
-                    const monthlyQuota = 100000000; // Example: 100M kills quota
-                    const currentMonthKills = parseValue(player.KILL); // Using current kills as a proxy for this month
-                    const quotaPercentage = Math.min((currentMonthKills / monthlyQuota) * 100, 100);
-                    document.getElementById("killQuotaProgressBar").style.width = `${quotaPercentage}%`;
-                    if (currentMonthKills >= monthlyQuota) {
-                        document.getElementById("killQuotaText").textContent = "QUOTA MET";
-                    } else {
-                        document.getElementById("killQuotaText").textContent = `${formatValue(currentMonthKills)} / ${formatValue(monthlyQuota)} kills this month (${quotaPercentage.toFixed(1)}%)`;
-                    }
-
-                    renderCharts();
-                } else {
-                    document.getElementById("playerName").textContent = "Player Not Found";
+                const playerHistory = data.filter(p => p.NAME === playerName).sort((a, b) => new Date(a.MONTH) - new Date(b.MONTH));
+                if (playerHistory.length === 0) {
+                    document.getElementById('playerName').textContent = 'Player Not Found';
+                    return;
                 }
+
+                const latest = playerHistory[playerHistory.length - 1];
+                
+                document.getElementById('playerName').childNodes[0].textContent = latest.NAME + ' ';
+                document.getElementById('playerAvatar').textContent = latest.NAME.charAt(0).toUpperCase();
+                document.getElementById('playerGuild').textContent = latest.GUILD;
+                document.getElementById('playerRank').textContent = latest.RANK;
+                document.getElementById('playerSeen').textContent = `First Seen: ${playerHistory[0].MONTH} | Last Seen: ${latest.MONTH}`;
+                
+                document.getElementById('mightVal').textContent = latest.MIGHT;
+                const mGain = latest['MIGHT GAIN'] || '0';
+                document.getElementById('mightGain').textContent = `Gain: ${mGain}`;
+                document.getElementById('mightGain').style.color = mGain.includes('-') ? '#ff4d4d' : '#3fb950';
+
+                document.getElementById('killsVal').textContent = latest.PLAYER_KILL;
+                const kGain = latest.KILL || '0';
+                document.getElementById('killsGain').textContent = `Gain: ${kGain}`;
+                document.getElementById('killsGain').style.color = '#3fb950';
+
+                const killsNum = parseFloat(kGain.replace(/[^0-9.]/g, '')) || 0;
+                if (kGain.includes('M')) killsNum *= 1000000;
+                else if (kGain.includes('K')) killsNum *= 1000;
+                
+                const percent = Math.min(100, (killsNum / 1000000) * 100);
+                document.getElementById('quotaProgressText').textContent = `${kGain} / 1M kills this month`;
+                document.getElementById('quotaBar').style.width = percent + '%';
+
+                initCharts(playerHistory);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('profile-content').style.display = 'block';
+
             } catch (error) {
-                console.error("Error loading player data:", error);
-                document.getElementById("playerName").textContent = "Error loading data";
+                console.error('Error loading profile:', error);
+                document.getElementById('playerName').textContent = 'Error loading data';
             }
         }
 
-        function renderCharts() {
-            // Placeholder data for charts
-            const labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-            const powerData = [1.5, 1.6, 1.7, 1.8]; // Example in Billions
-            const killsData = [0.5, 0.6, 0.7, 0.8]; // Example in Billions
+        function initCharts(history) {
+            const labels = history.map(h => h.MONTH);
+            const parseVal = (v) => {
+                if (!v) return 0;
+                let s = v.toString().toUpperCase();
+                let n = parseFloat(s.replace(/[^0-9.]/g, '')) || 0;
+                if (s.includes('B')) n *= 1e9;
+                else if (s.includes('M')) n *= 1e6;
+                return n;
+            };
 
-            new Chart(document.getElementById("powerProgressChart"), {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#94949e', font: { size: 10 } } },
+                    y: { 
+                        grid: { color: 'rgba(255,255,255,0.05)' }, 
+                        ticks: { 
+                            color: '#94949e', 
+                            callback: v => v >= 1e9 ? (v/1e9).toFixed(1)+'B' : v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v 
+                        } 
+                    }
+                }
+            };
+
+            new Chart(document.getElementById('powerChart'), {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Power Progress (B)',
-                        data: powerData,
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.2)',
-                        tension: 0.3,
-                        fill: true
+                        data: history.map(h => parseVal(h.MIGHT)),
+                        borderColor: '#4d94ff',
+                        backgroundColor: 'rgba(77, 148, 255, 0.1)',
+                        fill: true, tension: 0.4
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#334155' },
-                            ticks: { color: '#e2e8f0' }
-                        },
-                        x: {
-                            grid: { color: '#334155' },
-                            ticks: { color: '#e2e8f0' }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
+                options: chartOptions
             });
 
-            new Chart(document.getElementById("killsHistoryChart"), {
+            new Chart(document.getElementById('killsChart'), {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Kills History (B)',
-                        data: killsData,
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                        tension: 0.3,
-                        fill: true
+                        data: history.map(h => parseVal(h.PLAYER_KILL)),
+                        borderColor: '#ff4d4d',
+                        backgroundColor: 'rgba(255, 77, 77, 0.1)',
+                        fill: true, tension: 0.4
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#334155' },
-                            ticks: { color: '#e2e8f0' }
-                        },
-                        x: {
-                            grid: { color: '#334155' },
-                            ticks: { color: '#e2e8f0' }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
+                options: chartOptions
             });
         }
-
-        function parseValue(value) {
-            if (!value) return 0;
-            value = value.toUpperCase().replace(/,/g, '');
-            if (value.endsWith('B')) return parseFloat(value) * 1000000000;
-            if (value.endsWith('M')) return parseFloat(value) * 1000000;
-            if (value.endsWith('K')) return parseFloat(value) * 1000;
-            return parseFloat(value);
-        }
-
-        function formatValue(num) {
-            if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
-            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-            return num.toString();
-        }
-
-        loadPlayerData();
+        loadProfile();
     </script>
 </body>
 </html>
