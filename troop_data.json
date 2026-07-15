@@ -1,0 +1,11 @@
+{
+  "T1": { "time": 15, "food": 30, "wood": 30, "stone": 30, "ore": 30, "gold": 0 },
+  "T2": { "time": 30, "food": 60, "wood": 60, "stone": 60, "ore": 60, "gold": 3 },
+  "T3": { "time": 60, "food": 105, "wood": 105, "stone": 105, "ore": 105, "gold": 7 },
+  "T4": { "time": 120, "food": 700, "wood": 700, "stone": 700, "ore": 700, "gold": 350 },
+  "T5": { "time": 0, "food": 1000, "wood": 1000, "stone": 1000, "ore": 1000, "gold": 500, "note": "T5 requires Luminous Gear" },
+  "formulas": {
+    "actual_time": "base_time / (1 + training_speed_percent / 100)",
+    "gem_cost": "based on speedup shop prices or instant finish formula"
+  }
+}
