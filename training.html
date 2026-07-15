@@ -13,6 +13,13 @@
             --card-border: #1c1c24;
             --input-bg: #0b0b0f;
             --accent-blue: #4d94ff;
+            --dark-surface: #13131a;
+            --dark-border: #1c1c24;
+            --dark-bg: #0b0b0f;
+            --dark-secondary-bg: #1c1c24;
+            --dark-accent: #4d94ff;
+            --dark-secondary-text: #8e8e93;
+            --dark-muted-text: #636366;
         }
 
         .calc-wrapper {
@@ -120,134 +127,147 @@
             gap: 5px;
         }
 
-        .troop-grid {
+        /* Unified 2x2 Grid Styling */
+        .unified-troop-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            gap: 15px;
+            background: var(--dark-bg);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid var(--dark-border);
         }
 
-        @media (max-width: 768px) {
-            .troop-grid {
+        @media (max-width: 600px) {
+            .unified-troop-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        .troop-card {
-            background: var(--dark-secondary-bg);
+        .troop-item {
+            background: var(--dark-surface);
             border: 1px solid var(--dark-border);
-            border-radius: 8px;
+            border-radius: 10px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding-bottom: 15px;
+            position: relative;
             transition: all 0.3s ease;
         }
 
-        .troop-card:hover {
+        .troop-item:hover {
             border-color: var(--dark-accent);
-            box-shadow: 0 0 15px rgba(77, 148, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
 
-        .troop-tier-label {
-            align-self: flex-start;
-            font-size: 0.65em;
-            font-weight: 900;
-            color: white;
-            text-transform: uppercase;
-            background: rgba(77, 148, 255, 0.3);
-            padding: 3px 8px;
-            margin: 8px 8px 0 8px;
-            border-radius: 3px;
-            letter-spacing: 1px;
-        }
-
-        .troop-img-container {
-            width: 100%;
-            aspect-ratio: 1/1;
-            background: #222;
+        .troop-img-box {
             position: relative;
-            margin-top: 5px;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
         }
 
-        .troop-img-container img {
+        .troop-img-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            opacity: 0.8;
         }
 
-        .troop-type-label {
+        .troop-type-overlay {
             position: absolute;
-            top: 5px;
-            left: 5px;
-            font-size: 0.7em;
-            font-weight: bold;
-            color: white;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.65em;
+            font-weight: 900;
             text-transform: uppercase;
-            background: rgba(0,0,0,0.5);
-            padding: 2px 5px;
-            border-radius: 2px;
+            letter-spacing: 1px;
+            z-index: 2;
         }
 
-        .troop-name {
-            margin: 10px 0 5px;
-            font-weight: bold;
-            color: white;
-            font-size: 1em;
+        .troop-name-overlay {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.1em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            z-index: 2;
+        }
+
+        .troop-body {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .troop-controls {
             display: flex;
             align-items: center;
-            gap: 5px;
-            margin-bottom: 10px;
+            justify-content: center;
+            gap: 10px;
         }
 
         .control-btn {
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             background: #2c2c34;
-            border: none;
+            border: 1px solid #3a3a45;
             color: white;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            font-weight: bold;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.2s;
         }
 
         .control-btn:hover {
             background: var(--dark-accent);
+            border-color: var(--dark-accent);
         }
 
         .troop-input {
-            width: 80px;
-            background: #0b0b0f;
+            width: 90px;
+            background: var(--dark-bg);
             border: 1px solid #333;
             color: white;
             text-align: center;
-            padding: 5px;
-            border-radius: 4px;
-            font-weight: bold;
+            padding: 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 1em;
+            outline: none;
         }
 
-        .quick-add-grid {
+        .troop-input:focus {
+            border-color: var(--dark-accent);
+        }
+
+        .quick-actions {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px;
-            padding: 0 10px;
-            width: 100%;
-            box-sizing: border-box;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
         }
 
         .quick-btn {
-            padding: 5px;
-            font-size: 0.75em;
+            padding: 6px 2px;
+            font-size: 0.7em;
             background: #1c1c24;
             border: 1px solid #333;
             color: #ccc;
-            border-radius: 3px;
+            border-radius: 4px;
             cursor: pointer;
+            font-weight: 700;
             transition: all 0.2s;
+            text-align: center;
         }
 
         .quick-btn:hover {
@@ -256,14 +276,36 @@
             border-color: var(--dark-accent);
         }
 
-        .quick-btn.reset {
-            background: #2a1a1a;
+        .quick-btn.reset-item {
             color: #ff4d4d;
         }
 
-        .quick-btn.reset:hover {
+        .quick-btn.reset-item:hover {
             background: #ff4d4d;
             color: white;
+        }
+
+        .tier-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tier-tab {
+            padding: 10px 20px;
+            background: var(--dark-secondary-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-secondary-text);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 800;
+            transition: all 0.3s;
+        }
+
+        .tier-tab.active {
+            background: var(--dark-accent);
+            color: white;
+            border-color: var(--dark-accent);
         }
 
         .results-panel {
@@ -384,347 +426,20 @@
                 </div>
             </div>
 
+            <div class="tier-tabs">
+                <div class="tier-tab active" onclick="switchTier(1)">T1</div>
+                <div class="tier-tab" onclick="switchTier(2)">T2</div>
+                <div class="tier-tab" onclick="switchTier(3)">T3</div>
+                <div class="tier-tab" onclick="switchTier(4)">T4</div>
+            </div>
+
             <div class="tier-header">
-                <h3 style="color: white; margin: 0; font-size: 1.1em;">T1 - T4 Troop Tiers</h3>
+                <h3 id="currentTierTitle" style="color: white; margin: 0; font-size: 1.1em;">T1 Troops</h3>
                 <button class="reset-btn-top" onclick="resetAll()"><i class="fas fa-trash-alt"></i> Reset All</button>
             </div>
 
-            <div class="troop-grid">
-                <!-- T1 Infantry -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T1</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Infantry</span>
-                        <img src="images/troops/T1/inf.jpg" alt="T1 Infantry">
-                    </div>
-                    <div class="troop-name">Grunt</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t1-inf', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t1-inf" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t1-inf', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t1-inf', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t1-inf', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t1-inf', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t1-inf')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T1 Ranged -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T1</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Ranged</span>
-                        <img src="images/troops/T1/rng.jpg" alt="T1 Ranged">
-                    </div>
-                    <div class="troop-name">Archer</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t1-rng', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t1-rng" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t1-rng', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t1-rng', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t1-rng', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t1-rng', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t1-rng')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T1 Cavalry -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T1</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Cavalry</span>
-                        <img src="images/troops/T1/cav.jpg" alt="T1 Cavalry">
-                    </div>
-                    <div class="troop-name">Cataphract</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t1-cav', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t1-cav" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t1-cav', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t1-cav', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t1-cav', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t1-cav', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t1-cav')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T1 Siege -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T1</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Siege</span>
-                        <img src="images/troops/T1/siege.jpg" alt="T1 Siege">
-                    </div>
-                    <div class="troop-name">Ballista</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t1-siege', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t1-siege" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t1-siege', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t1-siege', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t1-siege', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t1-siege', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t1-siege')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T2 Infantry -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T2</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Infantry</span>
-                        <img src="images/troops/T2/inf.jpg" alt="T2 Infantry">
-                    </div>
-                    <div class="troop-name">Gladiator</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t2-inf', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t2-inf" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t2-inf', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t2-inf', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t2-inf', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t2-inf', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t2-inf')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T2 Ranged -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T2</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Ranged</span>
-                        <img src="images/troops/T2/rng.jpg" alt="T2 Ranged">
-                    </div>
-                    <div class="troop-name">Sharpshooter</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t2-rng', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t2-rng" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t2-rng', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t2-rng', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t2-rng', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t2-rng', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t2-rng')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T2 Cavalry -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T2</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Cavalry</span>
-                        <img src="images/troops/T2/cav.jpg" alt="T2 Cavalry">
-                    </div>
-                    <div class="troop-name">Reptilian Rider</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t2-cav', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t2-cav" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t2-cav', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t2-cav', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t2-cav', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t2-cav', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t2-cav')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T2 Siege -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T2</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Siege</span>
-                        <img src="images/troops/T2/siege.jpg" alt="T2 Siege">
-                    </div>
-                    <div class="troop-name">Catapult</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t2-siege', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t2-siege" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t2-siege', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t2-siege', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t2-siege', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t2-siege', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t2-siege')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T3 Infantry -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T3</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Infantry</span>
-                        <img src="images/troops/T3/inf.jpg" alt="T3 Infantry">
-                    </div>
-                    <div class="troop-name">Royal Guard</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t3-inf', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t3-inf" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t3-inf', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t3-inf', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t3-inf', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t3-inf', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t3-inf')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T3 Ranged -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T3</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Ranged</span>
-                        <img src="images/troops/T3/rng.jpg" alt="T3 Ranged">
-                    </div>
-                    <div class="troop-name">Stealth Sniper</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t3-rng', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t3-rng" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t3-rng', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t3-rng', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t3-rng', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t3-rng', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t3-rng')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T3 Cavalry -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T3</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Cavalry</span>
-                        <img src="images/troops/T3/cav.jpg" alt="T3 Cavalry">
-                    </div>
-                    <div class="troop-name">Royal Cavalry</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t3-cav', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t3-cav" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t3-cav', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t3-cav', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t3-cav', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t3-cav', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t3-cav')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T3 Siege -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T3</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Siege</span>
-                        <img src="images/troops/T3/siege.jpg" alt="T3 Siege">
-                    </div>
-                    <div class="troop-name">Trebuchet</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t3-siege', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t3-siege" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t3-siege', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t3-siege', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t3-siege', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t3-siege', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t3-siege')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T4 Infantry -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T4</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Infantry</span>
-                        <img src="images/troops/T4/inf.jpg" alt="T4 Infantry">
-                    </div>
-                    <div class="troop-name">Heroic Fighter</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t4-inf', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t4-inf" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t4-inf', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t4-inf', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t4-inf', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t4-inf', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t4-inf')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T4 Ranged -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T4</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Ranged</span>
-                        <img src="images/troops/T4/rng.jpg" alt="T4 Ranged">
-                    </div>
-                    <div class="troop-name">Heroic Cannoneer</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t4-rng', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t4-rng" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t4-rng', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t4-rng', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t4-rng', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t4-rng', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t4-rng')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T4 Cavalry -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T4</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Cavalry</span>
-                        <img src="images/troops/T4/cav.jpg" alt="T4 Cavalry">
-                    </div>
-                    <div class="troop-name">Ancient Drake Rider</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t4-cav', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t4-cav" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t4-cav', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t4-cav', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t4-cav', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t4-cav', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t4-cav')">✕</button>
-                    </div>
-                </div>
-
-                <!-- T4 Siege -->
-                <div class="troop-card">
-                    <div class="troop-tier-label">T4</div>
-                    <div class="troop-img-container">
-                        <span class="troop-type-label">Siege</span>
-                        <img src="images/troops/T4/siege.jpg" alt="T4 Siege">
-                    </div>
-                    <div class="troop-name">Destroyer</div>
-                    <div class="troop-controls">
-                        <button class="control-btn" onclick="adjustTroop('t4-siege', -1000)">−</button>
-                        <input type="number" class="troop-input" id="inp-t4-siege" value="0" oninput="calculate()">
-                        <button class="control-btn" onclick="adjustTroop('t4-siege', 1000)">+</button>
-                    </div>
-                    <div class="quick-add-grid">
-                        <button class="quick-btn" onclick="adjustTroop('t4-siege', 100000)">+100K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t4-siege', 500000)">+500K</button>
-                        <button class="quick-btn" onclick="adjustTroop('t4-siege', 1000000)">+1M</button>
-                        <button class="quick-btn reset" onclick="resetTroop('t4-siege')">✕</button>
-                    </div>
-                </div>
+            <div class="unified-troop-grid" id="troopGrid">
+                <!-- Grid items will be generated by JavaScript -->
             </div>
         </div>
 
@@ -764,24 +479,87 @@
         }
     };
 
-    function adjustTroop(type, amount) {
-        const input = document.getElementById(`inp-${type}`);
-        let val = parseInt(input.value) || 0;
-        val = Math.max(0, val + amount);
-        input.value = val;
+    let currentTier = 1;
+    const inputs = {}; // Store all inputs across tiers
+
+    function initInputs() {
+        for (let t = 1; t <= 4; t++) {
+            ['inf', 'rng', 'cav', 'siege'].forEach(type => {
+                inputs[`t${t}-${type}`] = 0;
+            });
+        }
+    }
+
+    function switchTier(tier) {
+        currentTier = tier;
+        document.querySelectorAll('.tier-tab').forEach((tab, idx) => {
+            tab.classList.toggle('active', idx + 1 === tier);
+        });
+        document.getElementById('currentTierTitle').innerText = `T${tier} Troops`;
+        renderGrid();
+    }
+
+    function renderGrid() {
+        const grid = document.getElementById('troopGrid');
+        const types = [
+            { id: 'inf', label: 'Infantry' },
+            { id: 'rng', label: 'Ranged' },
+            { id: 'cav', label: 'Cavalry' },
+            { id: 'siege', label: 'Siege' }
+        ];
+
+        grid.innerHTML = types.map(type => {
+            const inputId = `t${currentTier}-${type.id}`;
+            const name = troopData[currentTier].names[type.id];
+            const imgPath = `images/troops/T${currentTier}/${type.id}.jpg`;
+            
+            return `
+                <div class="troop-item">
+                    <div class="troop-img-box">
+                        <div class="troop-type-overlay">${type.label}</div>
+                        <img src="${imgPath}" alt="${name}" onerror="this.src='https://via.placeholder.com/300x168?text=${name}'">
+                        <div class="troop-name-overlay">${name}</div>
+                    </div>
+                    <div class="troop-body">
+                        <div class="troop-controls">
+                            <button class="control-btn" onclick="adjustTroop('${inputId}', -1000)">−</button>
+                            <input type="number" class="troop-input" id="inp-${inputId}" value="${inputs[inputId]}" oninput="updateInput('${inputId}', this.value)">
+                            <button class="control-btn" onclick="adjustTroop('${inputId}', 1000)">+</button>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="quick-btn" onclick="adjustTroop('${inputId}', 100000)">+100K</button>
+                            <button class="quick-btn" onclick="adjustTroop('${inputId}', 500000)">+500K</button>
+                            <button class="quick-btn" onclick="adjustTroop('${inputId}', 1000000)">+1M</button>
+                            <button class="quick-btn reset-item" onclick="resetTroop('${inputId}')">✕</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function updateInput(id, value) {
+        inputs[id] = parseInt(value) || 0;
         calculate();
     }
 
-    function resetTroop(type) {
-        document.getElementById(`inp-${type}`).value = 0;
+    function adjustTroop(id, amount) {
+        inputs[id] = Math.max(0, (inputs[id] || 0) + amount);
+        const el = document.getElementById(`inp-${id}`);
+        if (el) el.value = inputs[id];
+        calculate();
+    }
+
+    function resetTroop(id) {
+        inputs[id] = 0;
+        const el = document.getElementById(`inp-${id}`);
+        if (el) el.value = 0;
         calculate();
     }
 
     function resetAll() {
-        const allInputs = document.querySelectorAll('.troop-input');
-        allInputs.forEach(input => {
-            input.value = 0;
-        });
+        initInputs();
+        renderGrid();
         calculate();
     }
 
@@ -795,7 +573,6 @@
         const d = Math.floor(seconds / (24 * 3600));
         const h = Math.floor((seconds % (24 * 3600)) / 3600);
         const m = Math.floor((seconds % 3600) / 60);
-        const s = Math.floor(seconds % 60);
         
         let res = '';
         if (d > 0) res += d + 'd ';
@@ -811,47 +588,34 @@
         let totalFood = 0, totalWood = 0, totalStone = 0, totalOre = 0, totalGold = 0, totalTime = 0, totalTroops = 0;
         const subsidyMultiplier = (1 - subsidy / 100);
 
-        // Process all tiers and troop types
         for (let tier = 1; tier <= 4; tier++) {
             const costs = troopData[tier].costs;
-            
-            const types = ['inf', 'rng', 'cav', 'siege'];
-            types.forEach(type => {
-                const inputId = `inp-t${tier}-${type}`;
-                const input = document.getElementById(inputId);
-                const troops = parseInt(input.value) || 0;
+            ['inf', 'rng', 'cav', 'siege'].forEach(type => {
+                const troops = inputs[`t${tier}-${type}`] || 0;
                 totalTroops += troops;
 
-                // Infantry: Food, Wood, Ore, Gold (No Stone)
                 if (type === 'inf') {
                     totalFood += troops * costs.food * subsidyMultiplier;
                     totalWood += troops * costs.wood * subsidyMultiplier;
                     totalOre += troops * costs.ore * subsidyMultiplier;
                     totalGold += troops * costs.gold * subsidyMultiplier;
-                }
-                // Ranged: Food, Wood, Stone, Gold (No Ore)
-                else if (type === 'rng') {
+                } else if (type === 'rng') {
                     totalFood += troops * costs.food * subsidyMultiplier;
                     totalWood += troops * costs.wood * subsidyMultiplier;
                     totalStone += troops * costs.stone * subsidyMultiplier;
                     totalGold += troops * costs.gold * subsidyMultiplier;
-                }
-                // Cavalry: Food, Stone, Ore, Gold (No Wood)
-                else if (type === 'cav') {
+                } else if (type === 'cav') {
                     totalFood += troops * costs.food * subsidyMultiplier;
                     totalStone += troops * costs.stone * subsidyMultiplier;
                     totalOre += troops * costs.ore * subsidyMultiplier;
                     totalGold += troops * costs.gold * subsidyMultiplier;
-                }
-                // Siege: Food, Wood, Stone, Ore, Gold (All resources)
-                else if (type === 'siege') {
+                } else if (type === 'siege') {
                     totalFood += troops * costs.food * subsidyMultiplier;
                     totalWood += troops * costs.wood * subsidyMultiplier;
                     totalStone += troops * costs.stone * subsidyMultiplier;
                     totalOre += troops * costs.ore * subsidyMultiplier;
                     totalGold += troops * costs.gold * subsidyMultiplier;
                 }
-
                 totalTime += troops * costs.time;
             });
         }
@@ -867,7 +631,6 @@
 
         const actualTimeSeconds = totalTime / (1 + speed / 100);
         
-        // Gem Calculation Formula (Approximation based on shop values)
         function calculateGems(seconds) {
             const minutes = seconds / 60;
             if (minutes <= 1) return 5;
@@ -913,6 +676,10 @@
     function toggleMenu() {
         document.getElementById('navLinks').classList.toggle('active');
     }
+
+    // Initialize
+    initInputs();
+    renderGrid();
 </script>
 <script src="translations.js"></script>
 <script src="features.js"></script>
