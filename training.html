@@ -567,28 +567,28 @@
         // Apply subsidy to resource costs
         const subsidyMultiplier = (1 - subsidy / 100);
 
-        // Infantry: No Wood
+        // Infantry: Food, Wood, Ore, Gold (No Stone)
         totalFood += troops.inf * costs.food * subsidyMultiplier;
-        totalStone += troops.inf * costs.stone * subsidyMultiplier;
+        totalWood += troops.inf * costs.wood * subsidyMultiplier;
         totalOre += troops.inf * costs.ore * subsidyMultiplier;
         totalGold += troops.inf * costs.gold * subsidyMultiplier;
         totalTime += troops.inf * costs.time;
 
-        // Ranged: No Ore
+        // Ranged: Food, Wood, Stone, Gold (No Ore)
         totalFood += troops.rng * costs.food * subsidyMultiplier;
         totalWood += troops.rng * costs.wood * subsidyMultiplier;
         totalStone += troops.rng * costs.stone * subsidyMultiplier;
         totalGold += troops.rng * costs.gold * subsidyMultiplier;
         totalTime += troops.rng * costs.time;
 
-        // Cavalry: No Wood
+        // Cavalry: Food, Stone, Ore, Gold (No Wood)
         totalFood += troops.cav * costs.food * subsidyMultiplier;
         totalStone += troops.cav * costs.stone * subsidyMultiplier;
         totalOre += troops.cav * costs.ore * subsidyMultiplier;
         totalGold += troops.cav * costs.gold * subsidyMultiplier;
         totalTime += troops.cav * costs.time;
 
-        // Siege: All resources
+        // Siege: Food, Wood, Stone, Ore, Gold (All resources)
         totalFood += troops.siege * costs.food * subsidyMultiplier;
         totalWood += troops.siege * costs.wood * subsidyMultiplier;
         totalStone += troops.siege * costs.stone * subsidyMultiplier;
