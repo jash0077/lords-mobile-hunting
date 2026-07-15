@@ -140,7 +140,45 @@
 
         @media (max-width: 600px) {
             .unified-troop-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                padding: 8px;
+            }
+            .troop-body {
+                padding: 8px;
+                gap: 8px;
+            }
+            .troop-controls {
+                gap: 5px;
+            }
+            .control-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 1em;
+            }
+            .troop-input {
+                width: 60px;
+                padding: 5px;
+                font-size: 0.9em;
+            }
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 4px;
+            }
+            .quick-btn {
+                padding: 4px 2px;
+                font-size: 0.6em;
+            }
+            .troop-name-overlay {
+                font-size: 0.9em;
+                bottom: 5px;
+                left: 5px;
+            }
+            .troop-type-overlay {
+                font-size: 0.55em;
+                top: 5px;
+                left: 5px;
+                padding: 2px 4px;
             }
         }
 
