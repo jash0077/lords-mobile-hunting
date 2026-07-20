@@ -52,10 +52,18 @@
         .cyber-btn.hype { background: #ff00ff; color: white; box-shadow: 0 0 15px rgba(255, 0, 255, 0.4); }
         .cyber-btn.secondary { background: transparent; border: 1px solid var(--cyber-border); color: var(--cyber-gold); }
 
-        /* Hype Modal */
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 4000; align-items: center; justify-content: center; }
-        .modal-content { background: var(--cyber-surface); border: 1px solid var(--cyber-gold); padding: 30px; border-radius: 15px; width: 90%; max-width: 500px; text-align: center; }
-        #hypeReport { background: #000; color: #00ff00; padding: 20px; border-radius: 8px; text-align: left; font-family: monospace; white-space: pre-wrap; margin: 20px 0; max-height: 300px; overflow-y: auto; }
+        .modal-content { background: var(--cyber-surface); border: 1px solid var(--cyber-gold); padding: 25px; border-radius: 15px; width: 90%; max-width: 550px; text-align: center; max-height: 90vh; overflow-y: auto; }
+        
+        /* Player Selection List */
+        .player-list-container { text-align: left; margin: 20px 0; max-height: 300px; overflow-y: auto; background: #000; border: 1px solid #333; border-radius: 8px; padding: 10px; }
+        .player-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid #222; cursor: pointer; transition: 0.2s; }
+        .player-item:hover { background: rgba(245, 166, 35, 0.1); }
+        .player-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--cyber-gold); }
+        
+        #hypeReport { background: #000; color: #00ff00; padding: 20px; border-radius: 8px; text-align: left; font-family: monospace; white-space: pre-wrap; margin: 20px 0; max-height: 300px; overflow-y: auto; border: 1px solid #00ff00; }
+        .search-box { width: 100%; padding: 10px; background: #111; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 10px; }
     </style>
 </head>
 <body class="admin-body">
@@ -70,17 +78,17 @@
 
 <div class="cyber-container" id="adminContent" style="display:none;">
     <div class="admin-header">
-        <h2>GUILD_DASHBOARD_v3.0</h2>
+        <h2>GUILD_DASHBOARD_v3.1</h2>
         <div style="display: flex; gap: 10px;">
             <button class="cyber-btn secondary" onclick="window.location.href='index.html'">EXIT</button>
         </div>
     </div>
 
-    <!-- Battle Clock Section -->
+    <!-- Battle Clock -->
     <div class="battle-clock-card">
         <div class="clock-label">NEXT GUILD EVENT COUNTDOWN</div>
         <div class="clock-display" id="timer">00:00:00:00</div>
-        <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px;">
+        <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
             <input type="datetime-local" id="eventTime" class="num-input" style="width: 200px;">
             <button class="cyber-btn" onclick="setEvent()">SET_EVENT</button>
             <button class="cyber-btn secondary" onclick="deleteEvent()" style="border-color: #ff3232; color: #ff3232;">DELETE_CLOCK</button>
@@ -88,9 +96,9 @@
     </div>
 
     <div class="cyber-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h3 style="font-family: 'Orbitron'; color: var(--cyber-gold); margin: 0;">MANUAL_UPDATE_SECTOR</h3>
-            <button class="cyber-btn hype" onclick="generateHype()"><i class="fas fa-fire"></i> HYPE_BUTTON</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+            <h3 style="font-family: 'Orbitron'; color: var(--cyber-gold); margin: 0;">DATA_ENTRY_SECTOR</h3>
+            <button class="cyber-btn hype" onclick="openHypeSelector()"><i class="fas fa-fire"></i> HYPE_SELECTOR</button>
         </div>
         
         <div style="overflow-x: auto;">
@@ -105,7 +113,6 @@
                     </tr>
                 </thead>
                 <tbody id="resultsBody">
-                    <!-- Row 1 (Always visible for entry) -->
                     <tr>
                         <td>
                             <select class="player-select" id="pSelect" onchange="updateCalc()">
@@ -125,28 +132,46 @@
         </div>
     </div>
 
-    <!-- Confirmed List -->
+    <!-- Pending List -->
     <div class="cyber-card" id="confirmedSection" style="display:none;">
-        <h3 style="font-family: 'Orbitron'; color: var(--cyber-gold); font-size: 0.9rem;">PENDING_SYNC_LIST</h3>
-        <table class="data-table">
-            <thead>
-                <tr><th>Player</th><th>Might</th><th>Delta</th><th>Kills</th><th>Gain</th></tr>
-            </thead>
-            <tbody id="confirmedBody"></tbody>
-        </table>
+        <h3 style="font-family: 'Orbitron'; color: var(--cyber-gold); font-size: 0.9rem;">PENDING_RECORDS</h3>
+        <div style="overflow-x: auto;">
+            <table class="data-table">
+                <thead>
+                    <tr><th>Player</th><th>Might</th><th>Delta</th><th>Kills</th><th>Gain</th></tr>
+                </thead>
+                <tbody id="confirmedBody"></tbody>
+            </table>
+        </div>
         <div style="margin-top: 20px; text-align: right;">
-            <button class="cyber-btn" onclick="syncAll()">SYNC_TO_MAINFRAME</button>
+            <button class="cyber-btn secondary" onclick="resetAll()">CLEAR_ALL</button>
+            <button class="cyber-btn" onclick="syncAll()">SYNC_MAINFRAME</button>
         </div>
     </div>
 </div>
 
-<!-- Hype Modal -->
-<div id="hypeModal" class="modal">
+<!-- Hype Selector Modal -->
+<div id="hypeSelectorModal" class="modal">
+    <div class="modal-content">
+        <h2 style="font-family: 'Orbitron'; color: var(--cyber-gold);">SELECT PLAYERS TO HYPE</h2>
+        <input type="text" class="search-box" id="playerSearch" placeholder="Search player name..." oninput="filterPlayers()">
+        <div class="player-list-container" id="playerList"></div>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+            <button class="cyber-btn hype" onclick="generateHype()">GENERATE_REPORT</button>
+            <button class="cyber-btn secondary" onclick="closeHypeSelector()">CANCEL</button>
+        </div>
+    </div>
+</div>
+
+<!-- Hype Result Modal -->
+<div id="hypeResultModal" class="modal">
     <div class="modal-content">
         <h2 style="font-family: 'Orbitron'; color: #ff00ff;">🔥 GUILD HYPE REPORT 🔥</h2>
         <div id="hypeReport"></div>
-        <button class="cyber-btn" onclick="copyHype()">COPY_TO_CLIPBOARD</button>
-        <button class="cyber-btn secondary" onclick="closeHype()">CLOSE</button>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="cyber-btn" onclick="copyHype()">COPY_TO_CLIPBOARD</button>
+            <button class="cyber-btn secondary" onclick="closeHypeResult()">BACK</button>
+        </div>
     </div>
 </div>
 
@@ -172,6 +197,8 @@
         const res = await fetch(SHEET_URL + '&cb=' + Date.now());
         const csv = await res.text();
         oldData = parseCSV(csv);
+        
+        // Populate entry select
         const select = document.getElementById('pSelect');
         oldData.forEach(p => {
             const opt = document.createElement('option');
@@ -179,6 +206,9 @@
             opt.textContent = p.Player;
             select.appendChild(opt);
         });
+        
+        // Populate Hype Selector
+        renderHypeList();
     }
 
     function parseCSV(csv) {
@@ -196,7 +226,6 @@
         const name = document.getElementById('pSelect').value;
         const might = parseV(document.getElementById('pMight').value);
         const kills = parseV(document.getElementById('pKills').value);
-        
         const p = oldData.find(u => u.Player === name);
         if (p) {
             const dm = might - parseV(p.Might);
@@ -210,17 +239,12 @@
         const name = document.getElementById('pSelect').value;
         const might = parseV(document.getElementById('pMight').value);
         const kills = parseV(document.getElementById('pKills').value);
-        
-        if (!name || !might) return alert("Please select a player and enter might.");
-        
+        if (!name || isNaN(might)) return alert("Please select a player and enter might.");
         const p = oldData.find(u => u.Player === name);
         const dm = might - parseV(p.Might);
         const dk = kills - parseV(p['Player Kill']);
-
         pendingList.push({ name, might, dm, kills, dk });
         renderPending();
-        
-        // Reset inputs
         document.getElementById('pSelect').value = "";
         document.getElementById('pMight').value = "";
         document.getElementById('pKills').value = "";
@@ -237,36 +261,71 @@
         });
     }
 
-    // Hype Button Logic
-    function generateHype() {
-        if (pendingList.length === 0) return alert("Add some players to the list first!");
-        
-        let report = `🔥 **HEM GUILD WAR REPORT** 🔥\n\n`;
-        report += `🏆 **TOP PERFORMERS THIS WEEK** 🏆\n\n`;
-        
-        // Sort by Might Gain
-        const sorted = [...pendingList].sort((a,b) => b.dm - a.dm);
-        
-        sorted.forEach((p, i) => {
-            const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '⚔️';
-            report += `${medal} **${p.name}**\n   └ Might: +${fmt(p.dm)} | Kills: +${fmt(p.dk)}\n\n`;
-        });
-        
-        report += `💪 Great job everyone! Keep pushing! 💪`;
-        
-        document.getElementById('hypeReport').textContent = report;
-        document.getElementById('hypeModal').style.display = 'flex';
+    // Hype Selector Logic
+    function openHypeSelector() {
+        document.getElementById('hypeSelectorModal').style.display = 'flex';
+        renderHypeList();
     }
 
+    function closeHypeSelector() { document.getElementById('hypeSelectorModal').style.display = 'none'; }
+
+    function renderHypeList(filter = "") {
+        const container = document.getElementById('playerList');
+        container.innerHTML = '';
+        oldData.filter(p => p.Player.toLowerCase().includes(filter.toLowerCase())).forEach(p => {
+            const item = document.createElement('div');
+            item.className = 'player-item';
+            const isPending = pendingList.find(pr => pr.name === p.Player);
+            item.innerHTML = `
+                <input type="checkbox" id="check-${p.Player}" value="${p.Player}" ${isPending ? 'checked' : ''}>
+                <label for="check-${p.Player}">${p.Player} ${isPending ? '<span style="color:var(--cyber-gold); font-size:0.7rem;">(With Stats)</span>' : ''}</label>
+            `;
+            item.onclick = (e) => { if(e.target.tagName !== 'INPUT') { const cb = item.querySelector('input'); cb.checked = !cb.checked; } };
+            container.appendChild(item);
+        });
+    }
+
+    function filterPlayers() { renderHypeList(document.getElementById('playerSearch').value); }
+
+    function generateHype() {
+        const selected = Array.from(document.querySelectorAll('#playerList input:checked')).map(cb => cb.value);
+        if (selected.length === 0) return alert("Please select at least one player!");
+
+        let report = `🔥 **HEM GUILD WAR REPORT** 🔥\n\n`;
+        report += `🏆 **TOP PERFORMERS THIS WEEK** 🏆\n\n`;
+
+        // Create list with stats if available
+        const listWithStats = selected.map(name => {
+            const pending = pendingList.find(p => p.name === name);
+            if (pending) return pending;
+            const old = oldData.find(p => p.Player === name);
+            return { name, dm: 0, dk: 0, isShoutout: true };
+        }).sort((a,b) => b.dm - a.dm);
+
+        listWithStats.forEach((p, i) => {
+            const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '⚔️';
+            report += `${medal} **${p.name}**\n`;
+            if (!p.isShoutout) {
+                report += `   └ Might: +${fmt(p.dm)} | Kills: +${fmt(p.dk)}\n\n`;
+            } else {
+                report += `   └ Massive effort this week! 💪\n\n`;
+            }
+        });
+
+        report += `💪 Great job everyone! Keep pushing! 💪`;
+        document.getElementById('hypeReport').textContent = report;
+        closeHypeSelector();
+        document.getElementById('hypeResultModal').style.display = 'flex';
+    }
+
+    function closeHypeResult() { document.getElementById('hypeResultModal').style.display = 'none'; openHypeSelector(); }
     function copyHype() {
         const text = document.getElementById('hypeReport').textContent;
         navigator.clipboard.writeText(text);
         alert("Report copied! Paste it in Discord/Telegram.");
     }
 
-    function closeHype() { document.getElementById('hypeModal').style.display = 'none'; }
-
-    // Battle Clock Logic
+    // Battle Clock
     function startTimer() {
         const saved = localStorage.getItem('guild_event_time');
         if (saved) {
@@ -274,7 +333,6 @@
             updateTimer(new Date(saved).getTime());
         }
     }
-
     function setEvent() {
         const time = document.getElementById('eventTime').value;
         if (!time) return;
@@ -282,7 +340,6 @@
         updateTimer(new Date(time).getTime());
         alert("Battle Clock Set!");
     }
-
     function deleteEvent() {
         localStorage.removeItem('guild_event_time');
         if (countdownInterval) clearInterval(countdownInterval);
@@ -290,23 +347,16 @@
         document.getElementById('eventTime').value = "";
         alert("Battle Clock Deleted!");
     }
-
     function updateTimer(target) {
         if (countdownInterval) clearInterval(countdownInterval);
         countdownInterval = setInterval(() => {
             const now = new Date().getTime();
             const dist = target - now;
-            
-            if (dist < 0) {
-                document.getElementById('timer').textContent = "EVENT LIVE!";
-                return clearInterval(countdownInterval);
-            }
-            
+            if (dist < 0) { document.getElementById('timer').textContent = "EVENT LIVE!"; return clearInterval(countdownInterval); }
             const d = Math.floor(dist / (1000 * 60 * 60 * 24));
             const h = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((dist % (1000 * 60)) / 1000);
-            
             document.getElementById('timer').textContent = `${d}d ${h}h ${m}m ${s}s`;
         }, 1000);
     }
@@ -319,7 +369,6 @@
         if(v.endsWith('K')) return parseFloat(v)*1e3;
         return parseFloat(v);
     }
-
     function fmt(n) {
         const a = Math.abs(n);
         if(a>=1e9) return (n/1e9).toFixed(2)+'B';
@@ -327,7 +376,6 @@
         if(a>=1e3) return (n/1e3).toFixed(1)+'K';
         return n.toLocaleString();
     }
-
     function syncAll() { alert("SYNC_INITIATED: Sending data to Mainframe."); }
     function resetAll() { pendingList = []; renderPending(); document.getElementById('confirmedSection').style.display = 'none'; }
 </script>
