@@ -87,8 +87,9 @@
                     <tr>
                         <th>Assign Player</th>
                         <th>Scanned Might</th>
-                        <th>Delta</th>
+                        <th>Might Delta</th>
                         <th>Scanned Kills</th>
+                        <th>Kills Incr.</th>
                     </tr>
                 </thead>
                 <tbody id="resultsBody"></tbody>
@@ -215,7 +216,9 @@
         scannedRows.forEach((row, index) => {
             const player = oldData.find(p => p.Player === row.assignedPlayer);
             const oldMight = player ? parseV(player.Might) : 0;
+            const oldKills = player ? parseV(player['Player Kill']) : 0;
             const delta = row.might - oldMight;
+            const kDelta = row.kills - oldKills;
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -229,6 +232,7 @@
                 <td style="font-family:Orbitron;">${fmt(row.might)}</td>
                 <td><span class="badge ${delta >= 0 ? 'badge-gain' : 'badge-loss'}">${delta >= 0 ? '+' : ''}${fmt(delta)}</span></td>
                 <td style="font-family:Orbitron;">${fmt(row.kills)}</td>
+                <td><span class="badge badge-gain">+${fmt(kDelta)}</span></td>
             `;
             body.appendChild(tr);
         });
