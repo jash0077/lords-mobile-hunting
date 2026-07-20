@@ -1147,3 +1147,36 @@ body.dark-mode tbody tr:hover {
     background: var(--dark-elevated);
 }
 /* Updated: Tue Jul 14 02:30:34 UTC 2026 */
+/* Gold/Orange Accent Color Enhancement - MINIMAL CHANGE ONLY */
+
+/* Event boxes and special announcements */
+.event-box, .announcement {
+    border-color: var(--accent-gold) !important;
+    color: var(--accent-gold) !important;
+}
+
+body.dark-mode .event-box, 
+body.dark-mode .announcement {
+    border-color: #f5a623 !important;
+    color: #f5a623 !important;
+}
+
+/* Gold accents for headings */
+h1::after, h2::after {
+    background: var(--accent-gold) !important;
+}
+
+/* Gold borders for special sections */
+.special-section, .highlight-box {
+    border-color: var(--accent-gold) !important;
+}
+
+/* Gold text for important labels */
+.gold-text, .accent-gold {
+    color: var(--accent-gold) !important;
+}
+
+/* Gold borders */
+.gold-border {
+    border-color: var(--accent-gold) !important;
+}
