@@ -257,7 +257,6 @@
             const lines = csv.split('\n').filter(l => l.trim());
             if (lines.length < 2) return [];
             
-            // Handle CSV parsing with quotes and commas
             const parseLine = (line) => {
                 const result = [];
                 let cur = '';
@@ -274,29 +273,116 @@
                 return result;
             };
 
-            const headers = parseLine(lines[0]);
+            const firstRow = parseLine(lines[0]);
+            // Detect if first row is "bulk/transposed" format
+            const dateCol = firstRow[0] || '';
+            const dateParts = dateCol.split(/\s+/);
+            const isBulkFormat = dateParts.length > 10;
+
             const data = [];
-            for (let i = 1; i < lines.length; i++) {
-                const values = parseLine(lines[i]);
-                const obj = {};
-                headers.forEach((h, idx) => {
-                    obj[h] = values[idx] || '';
-                });
-                
-                // Map Google Sheet columns to consistent internal keys
-                const mapped = {
-                    date: obj['Date'] || '',
-                    player: obj['Player'] || '',
-                    might: obj['Might'] || '0',
-                    kills: obj['Player Kill'] || '0',
-                    killsIncrease: obj['Kills INCREASE '] || obj['Kills INCREASE'] || '0',
-                    mightGain: obj['MightGain'] || '0',
-                    mightLoss: obj['MightLoss'] || '0',
-                    rank: obj['RANK'] || 'R1',
-                    guildFest: obj['GUILD FEST'] || '0',
-                    guild: obj['GUILD'] || 'HEM'
+
+            if (isBulkFormat) {
+                const extractValues = (rawCell, headerWords) => {
+                    const parts = rawCell.trim().split(/\s+/);
+                    return parts.slice(headerWords);
                 };
-                if (mapped.player) data.push(mapped);
+
+                const dates = extractValues(firstRow[0], 1);
+                const mights = extractValues(firstRow[2], 1);
+                const pkills = extractValues(firstRow[3], 2);
+                const kinc = extractValues(firstRow[4], 2);
+                const mloss = extractValues(firstRow[5], 1);
+                const mgain = extractValues(firstRow[6], 1);
+                const ranks = extractValues(firstRow[7], 1);
+                const gf = extractValues(firstRow[8], 2);
+
+                const playerCount = dates.length;
+                const playerRaw = firstRow[1] || '';
+                const playerText = playerRaw.replace(/^Player\s+/, '').trim();
+                const allPlayerWords = playerText.split(/\s+/);
+
+                const names = [];
+                let wordIdx = 0;
+                let merged = 0;
+
+                for (let p = 0; p < playerCount; p++) {
+                    let name = allPlayerWords[wordIdx];
+                    wordIdx++;
+                    const remaining = allPlayerWords.length - wordIdx;
+                    const remainingPlayers = playerCount - p - 1;
+                    while (remaining - remainingPlayers > merged && wordIdx < allPlayerWords.length) {
+                        const nextWord = allPlayerWords[wordIdx];
+                        const isFirstCharUpper = nextWord && /^[A-Z]/.test(nextWord);
+                        const isAllLower = nextWord && /^[a-z0-9]+$/.test(nextWord);
+                        const isNumber = nextWord && /^\d/.test(nextWord);
+                        const needsMerge = remaining - remainingPlayers > merged;
+                        if (needsMerge && (isAllLower || isNumber || !isFirstCharUpper)) {
+                            name += ' ' + nextWord;
+                            wordIdx++;
+                            merged++;
+                        } else {
+                            break;
+                        }
+                    }
+                    names.push(name);
+                }
+
+                for (let i = 0; i < playerCount; i++) {
+                    data.push({
+                        date: dates[i] || '',
+                        player: names[i] || '',
+                        might: mights[i] || '0',
+                        kills: pkills[i] || '0',
+                        killsIncrease: kinc[i] || '0',
+                        mightLoss: mloss[i] || '0',
+                        mightGain: mgain[i] || '0',
+                        rank: ranks[i] || 'R1',
+                        guildFest: gf[i] || '0',
+                        guild: 'HEM'
+                    });
+                }
+
+                // Parse additional individual rows
+                for (let i = 1; i < lines.length; i++) {
+                    const v = parseLine(lines[i]);
+                    if (v.length >= 7 && v[1] && v[1].trim()) {
+                        data.push({
+                            date: (v[0] || '').trim(),
+                            player: (v[1] || '').trim(),
+                            might: (v[2] || '').trim(),
+                            kills: (v[3] || '').trim(),
+                            killsIncrease: (v[4] || '').trim(),
+                            mightLoss: (v[5] || '').trim(),
+                            mightGain: (v[6] || '').trim(),
+                            rank: (v[7] || '').trim(),
+                            guildFest: (v[8] || '').trim(),
+                            guild: 'HEM'
+                        });
+                    }
+                }
+            } else {
+                const headers = firstRow;
+                for (let i = 1; i < lines.length; i++) {
+                    const values = parseLine(lines[i]);
+                    const obj = {};
+                    headers.forEach((h, idx) => {
+                        obj[h] = values[idx] || '';
+                    });
+                    
+                    const mapped = {
+                        date: obj['Date'] || obj['MONTH'] || '',
+                        player: obj['Player'] || obj['NAME'] || '',
+                        might: obj['Might'] || obj['MIGHT'] || '0',
+                        kills: obj['Player Kill'] || obj['PLAYER_KILL'] || '0',
+                        killsIncrease: obj['Kills INCREASE '] || obj['Kills INCREASE'] || obj['KILL'] || '0',
+                        mightGain: obj['MightGain'] || obj['MIGHT GAIN'] || '0',
+                        mightLoss: obj['MightLoss'] || obj['MIGHT LOSS'] || '0',
+                        rank: obj['RANK'] || 'R1',
+                        guildFest: obj['GUILD FEST'] || '0',
+                        guild: obj['GUILD'] || 'HEM'
+                    };
+                    if (mapped.player) data.push(mapped);
+                }
             }
             return data;
         }
@@ -341,11 +427,8 @@
                     return;
                 }
 
-                // Sort by date if possible (assuming Date is a string that can be sorted or needs mapping)
-                // For simplicity, we use the order in the sheet
                 const latest = playerData[playerData.length - 1];
                 
-                // Update UI
                 document.getElementById('breadcrumbPlayer').textContent = latest.player;
                 document.getElementById('playerName').childNodes[0].textContent = latest.player + ' ';
                 document.getElementById('playerAvatar').textContent = latest.player.charAt(0).toUpperCase();
@@ -354,7 +437,6 @@
                 document.getElementById('firstSeen').textContent = playerData[0].date;
                 document.getElementById('lastSeen').textContent = latest.date;
 
-                // War Stats
                 document.getElementById('mightVal').textContent = latest.might;
                 const mGain = parseNumeric(latest.mightGain);
                 document.getElementById('mightGain').textContent = (mGain >= 0 ? '+' : '') + formatValue(mGain);
@@ -365,7 +447,6 @@
                 document.getElementById('killsGain').textContent = '+' + formatValue(kGain);
                 document.getElementById('killsGain').className = 'stat-delta positive';
 
-                // Quota Logic (1M kills)
                 const quota = 1000000;
                 const progress = Math.min(100, (kGain / quota) * 100);
                 const quotaBar = document.getElementById('quotaBar');
@@ -388,13 +469,11 @@
                     quotaCard.style.borderTop = '3px solid var(--accent-red)';
                 }
 
-                // Festival Stats
                 document.getElementById('festVal').textContent = latest.guildFest;
                 const festPoints = parseNumeric(latest.guildFest);
                 document.getElementById('festRank').textContent = festPoints > 1500 ? 'Top Performer' : 'Active';
                 document.getElementById('festRank').className = 'stat-delta positive';
 
-                // History Table
                 const tableBody = document.getElementById('historyTableBody');
                 playerData.slice().reverse().forEach(row => {
                     const tr = document.createElement('tr');
@@ -446,7 +525,6 @@
                 }
             };
 
-            // Might Chart
             new Chart(document.getElementById('mightChart'), {
                 type: 'line',
                 data: {
@@ -461,7 +539,6 @@
                 options: commonOptions
             });
 
-            // Kills Chart
             new Chart(document.getElementById('killsChart'), {
                 type: 'line',
                 data: {
@@ -476,7 +553,6 @@
                 options: commonOptions
             });
 
-            // Festival Chart
             new Chart(document.getElementById('festChart'), {
                 type: 'bar',
                 data: {
