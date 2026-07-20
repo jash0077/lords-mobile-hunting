@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control - Lords Mobile Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+    <style>
+        .admin-container { max-width: 1000px; margin: 40px auto; padding: 20px; }
+        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark-bg); display: flex; align-items: center; justify-content: center; z-index: 2000; }
+        .login-box { background: var(--dark-surface); padding: 40px; border-radius: 16px; border: 1px solid var(--dark-border); text-align: center; width: 90%; max-width: 400px; }
+        .login-box input { width: 100%; padding: 12px; margin: 20px 0; background: #000; border: 1px solid var(--dark-border); color: white; border-radius: 8px; }
+        
+        .ocr-section { background: var(--dark-surface); border-radius: 16px; padding: 30px; border: 1px solid var(--dark-border); margin-top: 20px; }
+        .upload-area { border: 2px dashed var(--dark-border); border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 20px; }
+        .upload-area:hover { border-color: var(--accent-blue); background: rgba(77, 148, 255, 0.05); }
+        .upload-area i { font-size: 3em; color: var(--accent-blue); margin-bottom: 15px; }
+        
+        .results-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #000; border-radius: 8px; overflow: hidden; }
+        .results-table th, .results-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--dark-border); }
+        .results-table th { background: var(--dark-elevated); color: var(--accent-blue); }
+        
+        .comparison-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold; }
+        .gain { background: rgba(63, 185, 80, 0.2); color: var(--accent-green); }
+        .loss { background: rgba(248, 81, 73, 0.2); color: #f85149; }
+        
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-primary { background: var(--accent-blue); color: white; }
+        .btn-success { background: var(--accent-green); color: white; }
+        .btn-secondary { background: var(--dark-elevated); color: white; }
+        
+        #preview-img { max-width: 100%; border-radius: 8px; margin-top: 20px; display: none; }
+        .loading-spinner { display: none; margin: 20px 0; text-align: center; color: var(--accent-blue); }
+    </style>
+</head>
+<body class="dark-mode">
+
+<div id="loginOverlay" class="login-overlay">
+    <div class="login-box">
+        <i class="fas fa-user-shield fa-3x" style="color: var(--accent-blue); margin-bottom: 20px;"></i>
+        <h2>Admin Control</h2>
+        <p>Please enter your password to continue</p>
+        <input type="password" id="adminPassword" placeholder="Password" onkeypress="if(event.key==='Enter')checkLogin()">
+        <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="checkLogin()">Login</button>
+        <p id="loginError" style="color: #f85149; margin-top: 15px; display: none;">Invalid Password</p>
+    </div>
+</div>
+
+<div class="container admin-container" id="adminContent" style="display:none;">
+    <header style="background: none; box-shadow: none; padding: 0; margin-bottom: 30px;">
+        <div class="logo">Admin Control Panel</div>
+        <a href="index.html" class="btn btn-secondary"><i class="fas fa-home"></i> Back Home</a>
+    </header>
+
+    <div class="ocr-section">
+        <h2><i class="fas fa-camera"></i> Screenshot OCR & Comparison</h2>
+        <p style="color: var(--dark-secondary-text); margin-bottom: 20px;">Upload a screenshot of your guild members list to automatically extract Might and Kills data.</p>
+        
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Click to upload or drag & drop guild screenshot</p>
+            <input type="file" id="fileInput" hidden accept="image/*" onchange="handleImage(event)">
+        </div>
+
+        <img id="preview-img" alt="Preview">
+
+        <div class="loading-spinner" id="loader">
+            <i class="fas fa-circle-notch fa-spin fa-2x"></i>
+            <p id="loaderText" style="margin-top: 10px;">Reading image data...</p>
+        </div>
+
+        <div id="resultsArea" style="display:none;">
+            <h3><i class="fas fa-list-ul"></i> Extracted Data (Comparison Mode)</h3>
+            <div style="overflow-x: auto;">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Player Name</th>
+                            <th>New Might</th>
+                            <th>Difference</th>
+                            <th>New Kills</th>
+                            <th>Kills Incr.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody"></tbody>
+                </table>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="syncToSheet()"><i class="fas fa-sync"></i> Auto-Write to Sheet</button>
+                <button class="btn btn-secondary" onclick="resetOCR()">Clear</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ADMIN_PASS = '523890';
+    const SHEET_ID = '1U32usFizcgYfiN2URc9s4tteVXDBZoSDS2AK-KoBfjI';
+    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+    
+    let oldData = [];
+    let extractedData = [];
+
+    function checkLogin() {
+        if (document.getElementById('adminPassword').value === ADMIN_PASS) {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+            fetchOldData();
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+        }
+    }
+
+    async function fetchOldData() {
+        try {
+            const response = await fetch(SHEET_URL);
+            const csv = await response.text();
+            oldData = parseCSV(csv);
+        } catch (e) { console.error("Error fetching old data", e); }
+    }
+
+    function parseCSV(csv) {
+        const lines = csv.split('\n').filter(l => l.trim());
+        if (lines.length < 2) return [];
+        const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+        return lines.slice(1).map(line => {
+            const values = line.match(/("[^"]*"|[^,]*)/g) || [];
+            const obj = {};
+            headers.forEach((h, i) => obj[h] = (values[i] || '').replace(/"/g, '').trim());
+            return obj;
+        });
+    }
+
+    async function handleImage(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const img = document.getElementById('preview-img');
+            img.src = e.target.result;
+            img.style.display = 'block';
+            
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('resultsArea').style.display = 'none';
+            
+            await performOCR(e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    async function performOCR(image) {
+        const { data: { text } } = await Tesseract.recognize(image, 'eng', {
+            logger: m => {
+                if (m.status === 'recognizing text') {
+                    document.getElementById('loaderText').textContent = `Scanning: ${Math.round(m.progress * 100)}%`;
+                }
+            }
+        });
+
+        processText(text);
+    }
+
+    function processText(text) {
+        const lines = text.split('\n').filter(l => l.trim().length > 3);
+        extractedData = [];
+        
+        // Optimized parsing for Lords Mobile Screenshot Layout
+        // Expected pattern: Name followed by Might and Kills numbers
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const numbers = line.match(/[\d,]+/g);
+            
+            if (numbers && numbers.length >= 2) {
+                const name = line.replace(/[\d,]+/g, '').trim();
+                if (name.length > 2) {
+                    const mightStr = numbers[0].replace(/,/g, '');
+                    const killsStr = numbers[1].replace(/,/g, '');
+                    
+                    const playerOld = oldData.find(p => p.Player.toLowerCase() === name.toLowerCase());
+                    const oldMight = playerOld ? parseValue(playerOld.Might) : 0;
+                    const oldKills = playerOld ? parseValue(playerOld['Player Kill']) : 0;
+                    
+                    extractedData.push({
+                        name: name,
+                        newMight: parseInt(mightStr),
+                        oldMight: oldMight,
+                        newKills: parseInt(killsStr),
+                        oldKills: oldKills
+                    });
+                }
+            }
+        }
+
+        renderResults();
+    }
+
+    function renderResults() {
+        const body = document.getElementById('resultsBody');
+        body.innerHTML = '';
+        
+        extractedData.forEach(p => {
+            const mightDiff = p.newMight - p.oldMight;
+            const killsDiff = p.newKills - p.oldKills;
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${p.name}</td>
+                <td>${formatNumber(p.newMight)}</td>
+                <td><span class="comparison-badge ${mightDiff >= 0 ? 'gain' : 'loss'}">${mightDiff >= 0 ? '+' : ''}${formatNumber(mightDiff)}</span></td>
+                <td>${formatNumber(p.newKills)}</td>
+                <td><span class="comparison-badge gain">+${formatNumber(killsDiff)}</span></td>
+            `;
+            body.appendChild(row);
+        });
+
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('resultsArea').style.display = 'block';
+    }
+
+    function parseValue(val) {
+        if (!val) return 0;
+        val = val.toUpperCase().replace(/,/g, '');
+        if (val.endsWith('B')) return parseFloat(val) * 1e9;
+        if (val.endsWith('M')) return parseFloat(val) * 1e6;
+        if (val.endsWith('K')) return parseFloat(val) * 1e3;
+        return parseFloat(val);
+    }
+
+    function formatNumber(num) {
+        if (Math.abs(num) >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+        if (Math.abs(num) >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+        if (Math.abs(num) >= 1e3) return (num / 1e3).toFixed(1) + 'K';
+        return num.toLocaleString();
+    }
+
+    function syncToSheet() {
+        alert("Auto-Writing feature is being integrated with your GitHub Token. This will update your sheet in one click!");
+    }
+
+    function resetOCR() {
+        document.getElementById('fileInput').value = '';
+        document.getElementById('preview-img').style.display = 'none';
+        document.getElementById('resultsArea').style.display = 'none';
+    }
+</script>
+</body>
+</html>
