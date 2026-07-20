@@ -165,44 +165,114 @@ class WorldClock {
     }
 
     /**
-     * Render the timezone search dropdown
+     * Render the timezone search dropdown with enhanced search
      */
     renderTimeZoneDropdown() {
         const container = document.getElementById('worldClockDropdownContainer');
         if (!container) return;
 
         container.innerHTML = `
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
-                <input 
-                    type="text" 
-                    id="timezoneSearch" 
-                    class="search-box" 
-                    placeholder="Search timezone (e.g., New_York, Tokyo, London)..."
-                    style="flex: 1; min-width: 200px;"
-                >
-                <select id="timezoneSelect" class="player-select" style="flex: 1; min-width: 200px;">
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                    <input 
+                        type="text" 
+                        id="timezoneSearch" 
+                        class="search-box" 
+                        placeholder="Search timezone (e.g., New_York, Tokyo, London)..."
+                        style="flex: 1; min-width: 200px;"
+                    >
+                    <button class="cyber-btn" onclick="worldClock.performSearch()" style="white-space: nowrap;">🔍 SEARCH</button>
+                </div>
+                <select id="timezoneSelect" class="player-select" style="width: 100%; margin-bottom: 10px;">
                     <option value="">-- Select Timezone --</option>
                     ${this.allTimeZones.map(tz => `<option value="${tz}">${tz}</option>`).join('')}
                 </select>
-                <button class="cyber-btn" onclick="worldClock.addTimeZone()">ADD_CLOCK</button>
+                <button class="cyber-btn" onclick="worldClock.addTimeZone()" style="width: 100%;">ADD_CLOCK</button>
+            </div>
+            <div id="searchResults" style="display: none; margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--cyber-border); border-radius: 8px;">
+                <div style="color: var(--cyber-gold); font-family: 'Orbitron'; font-size: 0.9rem; margin-bottom: 10px;">SEARCH_RESULTS:</div>
+                <div id="searchResultsList" style="max-height: 300px; overflow-y: auto;"></div>
             </div>
         `;
 
-        // Add search functionality
+        // Add real-time search functionality
         const searchInput = document.getElementById('timezoneSearch');
         const selectInput = document.getElementById('timezoneSelect');
 
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
-            const filtered = this.allTimeZones.filter(tz => tz.toLowerCase().includes(query));
-            selectInput.innerHTML = `<option value="">-- Select Timezone --</option>`;
-            filtered.forEach(tz => {
-                const option = document.createElement('option');
-                option.value = tz;
-                option.textContent = tz;
-                selectInput.appendChild(option);
-            });
+            if (query.length === 0) {
+                selectInput.innerHTML = `<option value="">-- Select Timezone --</option>`;
+                this.allTimeZones.forEach(tz => {
+                    const option = document.createElement('option');
+                    option.value = tz;
+                    option.textContent = tz;
+                    selectInput.appendChild(option);
+                });
+            } else {
+                const filtered = this.allTimeZones.filter(tz => tz.toLowerCase().includes(query));
+                selectInput.innerHTML = `<option value="">-- Select Timezone (${filtered.length} found) --</option>`;
+                filtered.forEach(tz => {
+                    const option = document.createElement('option');
+                    option.value = tz;
+                    option.textContent = tz;
+                    selectInput.appendChild(option);
+                });
+            }
         });
+
+        // Add Enter key support
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.performSearch();
+            }
+        });
+    }
+
+    /**
+     * Perform search and display results
+     */
+    performSearch() {
+        const searchInput = document.getElementById('timezoneSearch');
+        const query = searchInput.value.toLowerCase().trim();
+
+        if (!query) {
+            alert('Please enter a search term');
+            return;
+        }
+
+        const filtered = this.allTimeZones.filter(tz => tz.toLowerCase().includes(query));
+        const resultsContainer = document.getElementById('searchResults');
+        const resultsList = document.getElementById('searchResultsList');
+
+        if (filtered.length === 0) {
+            resultsList.innerHTML = '<p style="color: #ff3232;">No timezones found matching "' + query + '"</p>';
+        } else {
+            resultsList.innerHTML = filtered.map(tz => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid rgba(245, 166, 35, 0.2); cursor: pointer;" onmouseover="this.style.background='rgba(245, 166, 35, 0.1)'" onmouseout="this.style.background='transparent'">
+                    <span style="color: #e0e0e0;">${tz}</span>
+                    <button class="cyber-btn" onclick="worldClock.selectAndAdd('${tz}')" style="padding: 6px 12px; font-size: 0.75rem;">ADD</button>
+                </div>
+            `).join('');
+        }
+
+        resultsContainer.style.display = 'block';
+    }
+
+    /**
+     * Select timezone from search results and add it
+     */
+    selectAndAdd(timezone) {
+        if (this.selectedTimeZones.includes(timezone)) {
+            alert('This timezone is already added');
+            return;
+        }
+        this.selectedTimeZones.push(timezone);
+        this.saveToLocalStorage();
+        this.renderClocks();
+        document.getElementById('timezoneSearch').value = '';
+        document.getElementById('searchResults').style.display = 'none';
+        document.getElementById('timezoneSelect').value = '';
     }
 
     /**
