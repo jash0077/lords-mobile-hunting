@@ -780,27 +780,143 @@
                 result.push(current.trim());
                 return result;
             }
-            
-            const headers = parseLine(lines[0]);
+
+            const firstRow = parseLine(lines[0]);
+            // Detect if first row is "bulk/transposed" format (one big concatenated row)
+            // In bulk format, column 0 (Date) will have many repeated month values
+            const dateCol = firstRow[0] || '';
+            const dateParts = dateCol.split(/\s+/);
+            const isBulkFormat = dateParts.length > 10; // if Date has >10 values, it's bulk
+
             const data = [];
-            for (let i = 1; i < lines.length; i++) {
-                const values = parseLine(lines[i]);
-                const obj = {};
-                headers.forEach((h, idx) => {
-                    obj[h] = values[idx] || '';
-                });
-                const mapped = {
-                    NAME: obj['Player'] || obj['NAME'] || '',
-                    MIGHT: obj['Might'] || obj['MIGHT'] || '',
-                    PLAYER_KILL: obj['Player Kill'] || obj['PLAYER_KILL'] || '',
-                    KILL: obj['Kills INCREASE '] || obj['Kills INCREASE'] || obj['KILL'] || '',
-                    'MIGHT GAIN': obj['MightGain'] || obj['MIGHT GAIN'] || '',
-                    'MIGHT LOSS': obj['MightLoss'] || obj['MIGHT LOSS'] || '',
-                    RANK: obj['RANK'] || '',
-                    MONTH: obj['Date'] || obj['MONTH'] || '',
-                    'GUILD FEST': obj['GUILD FEST'] || ''
-                };
-                if (mapped.NAME) data.push(mapped);
+
+            if (isBulkFormat) {
+                // Bulk format: each cell = "Header value1 value2 value3..."
+                // Columns: 0=Date, 1=Player, 2=Might, 3=Player Kill, 4=Kills INCREASE,
+                //          5=MightLoss, 6=MightGain, 7=RANK, 8=GUILD FEST
+
+                function extractValues(rawCell, headerWords) {
+                    const parts = rawCell.trim().split(/\s+/);
+                    return parts.slice(headerWords);
+                }
+
+                const dates = extractValues(firstRow[0], 1);
+                const mights = extractValues(firstRow[2], 1);
+                const pkills = extractValues(firstRow[3], 2);
+                const kinc = extractValues(firstRow[4], 2);
+                const mloss = extractValues(firstRow[5], 1);
+                const mgain = extractValues(firstRow[6], 1);
+                const ranks = extractValues(firstRow[7], 1);
+                const gf = extractValues(firstRow[8], 2);
+
+                const playerCount = dates.length; // use Date column count as truth
+
+                // Reconstruct player names from the Player column
+                const playerRaw = firstRow[1] || '';
+                // Remove "Player " prefix (could be "Player " = 7 chars)
+                const playerText = playerRaw.replace(/^Player\s+/, '').trim();
+                const allPlayerWords = playerText.split(/\s+/);
+
+                // We need to merge allPlayerWords into exactly playerCount names
+                // Use a greedy approach: a new name starts when the word looks like a new entry
+                // Heuristic: if previous word ended a name, next word starts new one
+                // Most names are 1 word; multi-word names are the exception
+                // Strategy: distribute words to make exactly playerCount names
+                const extraWords = allPlayerWords.length - playerCount;
+
+                // Build names array
+                const names = [];
+                let wordIdx = 0;
+                let merged = 0;
+
+                for (let p = 0; p < playerCount; p++) {
+                    let name = allPlayerWords[wordIdx];
+                    wordIdx++;
+                    // Check if we need to merge more words for this name
+                    // Merge if: remaining words minus remaining players > 0
+                    const remaining = allPlayerWords.length - wordIdx;
+                    const remainingPlayers = playerCount - p - 1;
+                    while (remaining - remainingPlayers > merged && wordIdx < allPlayerWords.length) {
+                        // Check if next word is part of a multi-word name
+                        // Heuristic: merge if the next word is lowercase or a number
+                        // (suggesting it's part of the same name like "ooO", "dahen40", "Fire", "sy")
+                        const nextWord = allPlayerWords[wordIdx];
+                        const isFirstCharUpper = nextWord && /^[A-Z]/.test(nextWord);
+                        const isAllUpper = nextWord && /^[A-Z]+$/.test(nextWord);
+                        const isMixed = nextWord && /[a-z]/.test(nextWord) && /[A-Z]/.test(nextWord);
+                        const isAllLower = nextWord && /^[a-z0-9]+$/.test(nextWord);
+                        const isNumber = nextWord && /^\d/.test(nextWord);
+
+                        // For multi-word names, the continuation word typically:
+                        // - starts with lowercase ("ooO", "dahen40", "sy", "salebi")
+                        // - is all lowercase ("Fire" after "Am on" -> actually uppercase)
+                        // - is a number ("1234", "178")
+                        // We merge if: remaining words needed for this name
+                        const needsMerge = remaining - remainingPlayers > merged;
+                        if (needsMerge && (isAllLower || isNumber || !isFirstCharUpper)) {
+                            name += ' ' + nextWord;
+                            wordIdx++;
+                            merged++;
+                        } else {
+                            break;
+                        }
+                    }
+                    names.push(name);
+                }
+
+                for (let i = 0; i < playerCount; i++) {
+                    data.push({
+                        MONTH: dates[i] || '',
+                        NAME: names[i] || '',
+                        MIGHT: mights[i] || '',
+                        PLAYER_KILL: pkills[i] || '',
+                        KILL: kinc[i] || '',
+                        'MIGHT LOSS': mloss[i] || '',
+                        'MIGHT GAIN': mgain[i] || '',
+                        RANK: ranks[i] || '',
+                        'GUILD FEST': gf[i] || ''
+                    });
+                }
+
+                // Also parse any additional individual rows (rows after the bulk row)
+                for (let i = 1; i < lines.length; i++) {
+                    const values = parseLine(lines[i]);
+                    if (values.length >= 7 && values[1] && values[1].trim()) {
+                        data.push({
+                            MONTH: (values[0] || '').trim(),
+                            NAME: (values[1] || '').trim(),
+                            MIGHT: (values[2] || '').trim(),
+                            PLAYER_KILL: (values[3] || '').trim(),
+                            KILL: (values[4] || '').trim(),
+                            'MIGHT LOSS': (values[5] || '').trim(),
+                            'MIGHT GAIN': (values[6] || '').trim(),
+                            RANK: (values[7] || '').trim(),
+                            'GUILD FEST': (values[8] || '').trim()
+                        });
+                    }
+                }
+            } else {
+                // Standard row-based format (original behavior)
+                const headers = firstRow;
+                for (let i = 1; i < lines.length; i++) {
+                    const values = parseLine(lines[i]);
+                    const obj = {};
+                    headers.forEach((h, idx) => {
+                        obj[h] = values[idx] || '';
+                    });
+                    const mapped = {
+                        NAME: obj['Player'] || obj['NAME'] || '',
+                        MIGHT: obj['Might'] || obj['MIGHT'] || '',
+                        PLAYER_KILL: obj['Player Kill'] || obj['PLAYER_KILL'] || '',
+                        KILL: obj['Kills INCREASE '] || obj['Kills INCREASE'] || obj['KILL'] || '',
+                        'MIGHT GAIN': obj['MightGain'] || obj['MIGHT GAIN'] || '',
+                        'MIGHT LOSS': obj['MightLoss'] || obj['MIGHT LOSS'] || '',
+                        RANK: obj['RANK'] || '',
+                        MONTH: obj['Date'] || obj['MONTH'] || '',
+                        'GUILD FEST': obj['GUILD FEST'] || ''
+                    };
+                    if (mapped.NAME) data.push(mapped);
+                }
             }
             return data;
         }
