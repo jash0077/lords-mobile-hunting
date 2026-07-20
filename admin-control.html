@@ -3,109 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Control - Lords Mobile Hub</title>
+    <title>Command Center - Lords Mobile Hub</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
     <style>
-        .admin-container { max-width: 1000px; margin: 20px auto; padding: 15px; }
-        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark-bg); display: flex; align-items: center; justify-content: center; z-index: 2000; }
-        .login-box { background: var(--dark-surface); padding: 30px; border-radius: 16px; border: 1px solid var(--dark-border); text-align: center; width: 90%; max-width: 400px; }
-        .login-box input { width: 100%; padding: 12px; margin: 20px 0; background: #000; border: 1px solid var(--dark-border); color: white; border-radius: 8px; }
-        
-        .ocr-section { background: var(--dark-surface); border-radius: 16px; padding: 20px; border: 1px solid var(--dark-border); margin-top: 10px; }
-        .upload-area { border: 2px dashed var(--dark-border); border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 20px; }
-        .upload-area:hover { border-color: var(--accent-blue); background: rgba(77, 148, 255, 0.05); }
-        .upload-area i { font-size: 2.5em; color: var(--accent-blue); margin-bottom: 10px; }
-        
-        .queue-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-bottom: 20px; }
-        .queue-item { position: relative; border-radius: 8px; overflow: hidden; border: 1px solid var(--dark-border); aspect-ratio: 1; }
-        .queue-item img { width: 100%; height: 100%; object-fit: cover; }
-        .queue-item.done { border-color: var(--accent-green); }
-        .queue-item.processing { border-color: var(--accent-blue); animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        :root {
+            --cyber-gold: #f5a623;
+            --cyber-blue: #00d2ff;
+            --cyber-bg: #050508;
+            --cyber-surface: rgba(20, 20, 30, 0.8);
+            --cyber-border: rgba(245, 166, 35, 0.2);
+            --cyber-glow: 0 0 15px rgba(245, 166, 35, 0.3);
+        }
 
-        .results-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #000; border-radius: 8px; font-size: 0.85em; }
-        .results-table th, .results-table td { padding: 10px; text-align: left; border-bottom: 1px solid var(--dark-border); }
-        .results-table th { background: var(--dark-elevated); color: var(--accent-blue); position: sticky; top: 0; }
-        
-        .comparison-badge { padding: 3px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
-        .gain { background: rgba(63, 185, 80, 0.2); color: var(--accent-green); }
-        .loss { background: rgba(248, 81, 73, 0.2); color: #f85149; }
-        
-        .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-        .btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; font-size: 0.9em; }
-        .btn-primary { background: var(--accent-blue); color: white; }
-        .btn-success { background: var(--accent-green); color: white; }
-        .btn-secondary { background: var(--dark-elevated); color: white; }
-        
-        .loading-spinner { display: none; margin: 20px 0; text-align: center; color: var(--accent-blue); }
-        
-        /* Mobile adjustments */
-        @media (max-width: 600px) {
-            .results-table th:nth-child(4), .results-table td:nth-child(4) { display: none; }
-            .admin-container { padding: 10px; }
+        body.admin-body {
+            background: var(--cyber-bg);
+            color: #e0e0e0;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .cyber-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Login Styling */
+        .login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #050508 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+        }
+
+        .login-card {
+            background: var(--cyber-surface);
+            backdrop-filter: blur(10px);
+            padding: 50px;
+            border-radius: 20px;
+            border: 1px solid var(--cyber-border);
+            box-shadow: var(--cyber-glow);
+            text-align: center;
+            width: 90%;
+            max-width: 450px;
+        }
+
+        .login-card h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--cyber-gold);
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(245, 166, 35, 0.5);
+        }
+
+        .cyber-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--cyber-border);
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        /* Dashboard Styling */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            border-bottom: 1px solid var(--cyber-border);
+        }
+
+        .admin-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--cyber-gold);
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .cyber-card {
+            background: var(--cyber-surface);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            border: 1px solid var(--cyber-border);
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyber-gold), transparent);
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--cyber-border);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: rgba(245, 166, 35, 0.02);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--cyber-gold);
+            background: rgba(245, 166, 35, 0.05);
+            box-shadow: inset 0 0 20px rgba(245, 166, 35, 0.1);
+        }
+
+        .upload-zone i {
+            font-size: 3.5rem;
+            color: var(--cyber-gold);
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(245, 166, 35, 0.3));
+        }
+
+        /* Results Styling */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-item {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+        }
+
+        .status-item .label { font-size: 0.8rem; color: #888; text-transform: uppercase; }
+        .status-item .value { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; color: var(--cyber-gold); margin-top: 5px; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 15px;
+            background: rgba(245, 166, 35, 0.1);
+            color: var(--cyber-gold);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        .badge-gain { background: rgba(0, 255, 100, 0.1); color: #00ff64; border: 1px solid rgba(0, 255, 100, 0.2); }
+        .badge-loss { background: rgba(255, 50, 50, 0.1); color: #ff3232; border: 1px solid rgba(255, 50, 50, 0.2); }
+
+        .non-matched-box {
+            background: rgba(255, 50, 50, 0.05);
+            border: 1px solid rgba(255, 50, 50, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .non-matched-box h4 { color: #ff3232; margin-top: 0; }
+
+        .cyber-btn {
+            padding: 12px 25px;
+            background: var(--cyber-gold);
+            color: black;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .cyber-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(245, 166, 35, 0.4);
+        }
+
+        .cyber-btn.secondary { background: transparent; border: 1px solid var(--cyber-border); color: var(--cyber-gold); }
+
+        /* Loader */
+        .cyber-loader { display: none; text-align: center; margin: 40px 0; }
+        .cyber-loader i { font-size: 3rem; color: var(--cyber-gold); animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .admin-header { flex-direction: column; gap: 20px; text-align: center; }
+            .status-grid { grid-template-columns: 1fr 1fr; }
+            .data-table th:nth-child(4), .data-table td:nth-child(4) { display: none; }
         }
     </style>
 </head>
-<body class="dark-mode">
+<body class="admin-body">
 
 <div id="loginOverlay" class="login-overlay">
-    <div class="login-box">
-        <i class="fas fa-user-shield fa-3x" style="color: var(--accent-blue); margin-bottom: 20px;"></i>
-        <h2>Admin Control</h2>
-        <input type="password" id="adminPassword" placeholder="Password" onkeypress="if(event.key==='Enter')checkLogin()">
-        <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="checkLogin()">Login</button>
-        <p id="loginError" style="color: #f85149; margin-top: 15px; display: none;">Invalid Password</p>
+    <div class="login-card">
+        <h1>COMMAND CENTER</h1>
+        <input type="password" id="adminPassword" class="cyber-input" placeholder="ENTER ACCESS KEY" onkeypress="if(event.key==='Enter')checkLogin()">
+        <button class="cyber-btn" style="width: 100%; justify-content: center;" onclick="checkLogin()">INITIATE ACCESS</button>
+        <p id="loginError" style="color: #ff3232; margin-top: 20px; display: none; font-size: 0.8rem;">ACCESS DENIED: INVALID KEY</p>
     </div>
 </div>
 
-<div class="container admin-container" id="adminContent" style="display:none;">
-    <header style="background: none; box-shadow: none; padding: 0; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-        <div class="logo" style="font-size: 1.2em;">Admin Panel</div>
-        <a href="index.html" class="btn btn-secondary" style="padding: 8px 15px;"><i class="fas fa-home"></i> Home</a>
-    </header>
-
-    <div class="ocr-section">
-        <h3><i class="fas fa-camera"></i> Multi-Screenshot Scan</h3>
-        <p style="color: var(--dark-secondary-text); font-size: 0.9em; margin-bottom: 15px;">Upload up to 12 screenshots. The tool will auto-correct names and calculate differences.</p>
-        
-        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-            <i class="fas fa-images"></i>
-            <p>Select Screenshots (Max 12)</p>
-            <input type="file" id="fileInput" hidden accept="image/*" multiple onchange="handleImages(event)">
+<div class="cyber-container" id="adminContent" style="display:none;">
+    <div class="admin-header">
+        <h2>GUILD_COMMAND_v1.0</h2>
+        <div style="display: flex; gap: 15px;">
+            <button class="cyber-btn secondary" onclick="window.location.href='index.html'"><i class="fas fa-home"></i> RETURN</button>
+            <button class="cyber-btn" onclick="resetAll()"><i class="fas fa-trash"></i> CLEAR_SYSTEM</button>
         </div>
+    </div>
 
-        <div class="queue-list" id="queueList"></div>
-
-        <div class="loading-spinner" id="loader">
-            <i class="fas fa-circle-notch fa-spin fa-2x"></i>
-            <p id="loaderText" style="margin-top: 10px; font-size: 0.9em;">Ready to scan...</p>
+    <div class="cyber-card">
+        <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+            <i class="fas fa-microchip"></i>
+            <h3>SYSTEM_SCAN_INITIATOR</h3>
+            <p>Select up to 12 screenshots for multi-sector data extraction</p>
+            <input type="file" id="fileInput" hidden multiple accept="image/*" onchange="handleUpload(event)">
         </div>
+        <div id="queueDisplay" style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;"></div>
+    </div>
 
-        <div id="resultsArea" style="display:none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h4><i class="fas fa-check-circle"></i> Results</h4>
-                <span id="matchStats" style="font-size: 0.8em; color: var(--accent-green);"></span>
+    <div class="cyber-loader" id="loader">
+        <i class="fas fa-atom"></i>
+        <p id="loaderText" style="margin-top: 15px; font-family: 'Orbitron'; font-size: 0.8rem; color: var(--cyber-gold);">SCANNING_SECTOR_DATA...</p>
+    </div>
+
+    <div id="resultsArea" style="display:none;">
+        <div class="status-grid">
+            <div class="status-item">
+                <div class="label">Matched Units</div>
+                <div class="value" id="statMatched">0</div>
             </div>
-            <div style="overflow-x: auto; max-height: 400px; border: 1px solid var(--dark-border); border-radius: 8px;">
-                <table class="results-table">
+            <div class="status-item">
+                <div class="label">Anomalies Detected</div>
+                <div class="value" id="statAnomalies" style="color: #ff3232;">0</div>
+            </div>
+            <div class="status-item">
+                <div class="label">Total Might Change</div>
+                <div class="value" id="statTotalMight">0</div>
+            </div>
+        </div>
+
+        <div class="cyber-card">
+            <h3 style="font-family: 'Orbitron'; color: var(--cyber-gold); margin-bottom: 20px; font-size: 1rem;">SECTOR_DATA_REPORT</h3>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Player</th>
-                            <th>New Might</th>
-                            <th>Diff</th>
-                            <th>New Kills</th>
-                            <th>Kills+</th>
+                            <th>Unit Name</th>
+                            <th>Current Might</th>
+                            <th>Might Delta</th>
+                            <th>Current Kills</th>
+                            <th>Kill Increase</th>
                         </tr>
                     </thead>
                     <tbody id="resultsBody"></tbody>
                 </table>
             </div>
-            <div class="btn-group">
-                <button class="btn btn-success" onclick="syncToSheet()"><i class="fas fa-sync"></i> Sync to Google Sheet</button>
-                <button class="btn btn-secondary" onclick="resetOCR()">Reset All</button>
+            <div style="margin-top: 30px; text-align: right;">
+                <button class="cyber-btn" onclick="syncData()"><i class="fas fa-cloud-upload-alt"></i> SYNC_TO_MAINFRAME</button>
             </div>
+        </div>
+
+        <div id="anomalyBox" class="non-matched-box" style="display:none;">
+            <h4><i class="fas fa-exclamation-triangle"></i> ANOMALIES_REPORT</h4>
+            <p style="font-size: 0.85rem; color: #ff3232;" id="anomalyText"></p>
         </div>
     </div>
 </div>
@@ -116,27 +315,25 @@
     const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
     
     let oldData = [];
-    let masterData = new Map(); // Using Map to handle unique players across multiple screenshots
-    let imageQueue = [];
-    let isProcessing = false;
+    let masterMap = new Map();
+    let anomalies = [];
 
     function checkLogin() {
         if (document.getElementById('adminPassword').value === ADMIN_PASS) {
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
-            fetchOldData();
+            fetchSheetData();
         } else {
             document.getElementById('loginError').style.display = 'block';
         }
     }
 
-    async function fetchOldData() {
+    async function fetchSheetData() {
         try {
             const response = await fetch(SHEET_URL);
             const csv = await response.text();
             oldData = parseCSV(csv);
-            console.log("Old data loaded:", oldData.length, "players");
-        } catch (e) { console.error("Error fetching old data", e); }
+        } catch (e) { console.error("System Error: Failed to fetch mainframe data", e); }
     }
 
     function parseCSV(csv) {
@@ -151,41 +348,17 @@
         });
     }
 
-    async function handleImages(event) {
+    async function handleUpload(event) {
         const files = Array.from(event.target.files).slice(0, 12);
         if (files.length === 0) return;
 
-        resetOCR();
-        const queueList = document.getElementById('queueList');
-        
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const div = document.createElement('div');
-                div.className = 'queue-item';
-                div.id = `queue-${i}`;
-                div.innerHTML = `<img src="${e.target.result}">`;
-                queueList.appendChild(div);
-                imageQueue.push({ id: i, data: e.target.result });
-                if (i === files.length - 1) startProcessing();
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    async function startProcessing() {
-        if (isProcessing || imageQueue.length === 0) return;
-        isProcessing = true;
+        resetAll();
         document.getElementById('loader').style.display = 'block';
-        document.getElementById('resultsArea').style.display = 'none';
-
+        
         const worker = await Tesseract.createWorker({
             logger: m => {
                 if (m.status === 'recognizing text') {
-                    const current = imageQueue[0].id + 1;
-                    const total = imageQueue.length + masterData.size/8; // rough estimate
-                    document.getElementById('loaderText').textContent = `Processing Image ${current}... ${Math.round(m.progress * 100)}%`;
+                    document.getElementById('loaderText').textContent = `SCANNING_SECTOR: ${Math.round(m.progress * 100)}%`;
                 }
             }
         });
@@ -193,150 +366,143 @@
         await worker.loadLanguage('eng');
         await worker.initialize('eng');
 
-        while (imageQueue.length > 0) {
-            const img = imageQueue.shift();
-            const item = document.getElementById(`queue-${img.id}`);
-            item.className = 'queue-item processing';
-            
-            const { data: { text } } = await worker.recognize(img.data);
-            processText(text);
-            
-            item.className = 'queue-item done';
+        for (const file of files) {
+            const { data: { text } } = await worker.recognize(file);
+            processOCR(text);
         }
 
         await worker.terminate();
-        isProcessing = false;
-        renderResults();
+        renderDashboard();
     }
 
-    function processText(text) {
+    function processOCR(text) {
         const lines = text.split('\n').filter(l => l.trim().length > 3);
         
         lines.forEach(line => {
-            // Clean noise like "Casualties", "What A Bloodbath", "Mail"
+            // Noise filtering
             if (line.match(/Casualties|Bloodbath|Mail|Members|relocate|chaos/i)) return;
 
             const numbers = line.match(/[\d,.]+/g);
             if (numbers && numbers.length >= 2) {
-                let name = line.replace(/[\d,.]+/g, '').replace(/[|#]/g, '').trim();
-                if (name.length < 3) return;
+                let rawName = line.replace(/[\d,.]+/g, '').replace(/[|#]/g, '').trim();
+                if (rawName.length < 3) return;
 
-                // Fuzzy Match Name with Old Data
-                const matchedPlayer = findBestMatch(name);
-                if (matchedPlayer) {
-                    const finalName = matchedPlayer.Player;
-                    const mightStr = numbers[0].replace(/,/g, '');
-                    const killsStr = numbers[1].replace(/,/g, '');
-                    
-                    const newMight = parseInt(mightStr);
-                    const newKills = parseInt(killsStr);
+                const match = strictMatch(rawName);
+                if (match) {
+                    const name = match.Player;
+                    const newMight = parseInt(numbers[0].replace(/,/g, ''));
+                    const newKills = parseInt(numbers[1].replace(/,/g, ''));
 
                     if (!isNaN(newMight) && !isNaN(newKills)) {
-                        masterData.set(finalName, {
-                            name: finalName,
+                        masterMap.set(name, {
+                            name: name,
                             newMight: newMight,
-                            oldMight: parseValue(matchedPlayer.Might),
+                            oldMight: parseVal(match.Might),
                             newKills: newKills,
-                            oldKills: parseValue(matchedPlayer['Player Kill'])
+                            oldKills: parseVal(match['Player Kill'])
                         });
                     }
+                } else {
+                    if (!anomalies.includes(rawName)) anomalies.push(rawName);
                 }
             }
         });
     }
 
-    // Fuzzy matching logic to fix OCR errors
-    function findBestMatch(scannedName) {
-        let bestMatch = null;
-        let maxSimilarity = 0;
-
-        oldData.forEach(p => {
-            const sim = similarity(scannedName.toLowerCase(), p.Player.toLowerCase());
-            if (sim > maxSimilarity) {
-                maxSimilarity = sim;
-                bestMatch = p;
-            }
+    function strictMatch(name) {
+        // High confidence matching
+        return oldData.find(p => {
+            const sim = getSimilarity(name.toLowerCase(), p.Player.toLowerCase());
+            return sim > 0.8; // Strict threshold
         });
-
-        return maxSimilarity > 0.6 ? bestMatch : null;
     }
 
-    function similarity(s1, s2) {
+    function getSimilarity(s1, s2) {
         let longer = s1, shorter = s2;
         if (s1.length < s2.length) { longer = s2; shorter = s1; }
-        const longerLength = longer.length;
-        if (longerLength === 0) return 1.0;
-        return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+        if (longer.length === 0) return 1.0;
+        return (longer.length - editDist(longer, shorter)) / parseFloat(longer.length);
     }
 
-    function editDistance(s1, s2) {
+    function editDist(s1, s2) {
         const costs = [];
         for (let i = 0; i <= s1.length; i++) {
-            let lastValue = i;
+            let last = i;
             for (let j = 0; j <= s2.length; j++) {
                 if (i === 0) costs[j] = j;
                 else if (j > 0) {
-                    let newValue = costs[j - 1];
+                    let newVal = costs[j - 1];
                     if (s1.charAt(i - 1) !== s2.charAt(j - 1))
-                        newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
-                    costs[j - 1] = lastValue;
-                    lastValue = newValue;
+                        newVal = Math.min(Math.min(newVal, last), costs[j]) + 1;
+                    costs[j - 1] = last;
+                    last = newVal;
                 }
             }
-            if (i > 0) costs[s2.length] = lastValue;
+            if (i > 0) costs[s2.length] = last;
         }
         return costs[s2.length];
     }
 
-    function renderResults() {
+    function renderDashboard() {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('resultsArea').style.display = 'block';
+
         const body = document.getElementById('resultsBody');
         body.innerHTML = '';
         
-        masterData.forEach(p => {
-            const mightDiff = p.newMight - p.oldMight;
-            const killsDiff = p.newKills - p.oldKills;
-            
+        let totalDelta = 0;
+        masterMap.forEach(p => {
+            const mDelta = p.newMight - p.oldMight;
+            const kDelta = p.newKills - p.oldKills;
+            totalDelta += mDelta;
+
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${p.name}</td>
-                <td>${formatNumber(p.newMight)}</td>
-                <td><span class="comparison-badge ${mightDiff >= 0 ? 'gain' : 'loss'}">${mightDiff >= 0 ? '+' : ''}${formatNumber(mightDiff)}</span></td>
-                <td>${formatNumber(p.newKills)}</td>
-                <td><span class="comparison-badge gain">+${formatNumber(killsDiff)}</span></td>
+                <td style="font-weight:600;">${p.name}</td>
+                <td style="font-family:Orbitron;">${fmt(p.newMight)}</td>
+                <td><span class="badge ${mDelta >= 0 ? 'badge-gain' : 'badge-loss'}">${mDelta >= 0 ? '+' : ''}${fmt(mDelta)}</span></td>
+                <td style="font-family:Orbitron;">${fmt(p.newKills)}</td>
+                <td><span class="badge badge-gain">+${fmt(kDelta)}</span></td>
             `;
             body.appendChild(row);
         });
 
-        document.getElementById('loader').style.display = 'none';
-        document.getElementById('resultsArea').style.display = 'block';
-        document.getElementById('matchStats').textContent = `Successfully matched ${masterData.size} players.`;
+        document.getElementById('statMatched').textContent = masterMap.size;
+        document.getElementById('statAnomalies').textContent = anomalies.length;
+        document.getElementById('statTotalMight').textContent = (totalDelta >= 0 ? '+' : '') + fmt(totalDelta);
+
+        if (anomalies.length > 0) {
+            document.getElementById('anomalyBox').style.display = 'block';
+            document.getElementById('anomalyText').textContent = `SYSTEM_ERROR: ${anomalies.length} UNITS_UNRECOGNIZED. DATA_SKIPPED.`;
+        }
     }
 
-    function parseValue(val) {
-        if (!val) return 0;
-        val = val.toString().toUpperCase().replace(/,/g, '');
-        if (val.endsWith('B')) return parseFloat(val) * 1e9;
-        if (val.endsWith('M')) return parseFloat(val) * 1e6;
-        if (val.endsWith('K')) return parseFloat(val) * 1e3;
-        return parseFloat(val);
+    function parseVal(v) {
+        if (!v) return 0;
+        v = v.toString().toUpperCase().replace(/,/g, '');
+        if (v.endsWith('B')) return parseFloat(v) * 1e9;
+        if (v.endsWith('M')) return parseFloat(v) * 1e6;
+        if (v.endsWith('K')) return parseFloat(v) * 1e3;
+        return parseFloat(v);
     }
 
-    function formatNumber(num) {
-        if (Math.abs(num) >= 1e9) return (num / 1e9).toFixed(2) + 'B';
-        if (Math.abs(num) >= 1e6) return (num / 1e6).toFixed(2) + 'M';
-        if (Math.abs(num) >= 1e3) return (num / 1e3).toFixed(1) + 'K';
-        return num.toLocaleString();
+    function fmt(n) {
+        const abs = Math.abs(n);
+        if (abs >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+        if (abs >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+        if (abs >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+        return n.toLocaleString();
     }
 
-    function syncToSheet() {
-        alert("Syncing " + masterData.size + " records to Google Sheet... This feature will use your GitHub token to push updates!");
-    }
-
-    function resetOCR() {
-        document.getElementById('queueList').innerHTML = '';
+    function resetAll() {
+        masterMap.clear();
+        anomalies = [];
         document.getElementById('resultsArea').style.display = 'none';
-        masterData.clear();
-        imageQueue = [];
+        document.getElementById('anomalyBox').style.display = 'none';
+    }
+
+    function syncData() {
+        alert(`SYNC_INITIATED: Sending ${masterMap.size} unit reports to Mainframe.`);
     }
 </script>
 </body>
