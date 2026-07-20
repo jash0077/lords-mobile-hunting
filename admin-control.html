@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fail-Proof Command Center - Lords Mobile Hub</title>
+    <title>Command Center Ultra - Lords Mobile Hub</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -12,8 +12,8 @@
         :root {
             --cyber-gold: #f5a623;
             --cyber-bg: #050508;
-            --cyber-surface: rgba(20, 20, 30, 0.95);
-            --cyber-border: rgba(245, 166, 35, 0.4);
+            --cyber-surface: rgba(20, 20, 30, 0.98);
+            --cyber-border: rgba(245, 166, 35, 0.5);
         }
 
         body.admin-body { background: var(--cyber-bg); color: #e0e0e0; font-family: 'Poppins', sans-serif; margin: 0; padding: 0; }
@@ -21,21 +21,32 @@
 
         /* Login */
         .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; z-index: 3000; }
-        .login-card { background: var(--cyber-surface); padding: 40px; border-radius: 20px; border: 1px solid var(--cyber-border); text-align: center; width: 90%; max-width: 400px; }
-        .cyber-input { width: 100%; padding: 12px; background: #000; border: 1px solid var(--cyber-border); color: white; border-radius: 8px; margin-bottom: 20px; text-align: center; }
+        .login-card { background: var(--cyber-surface); padding: 40px; border-radius: 20px; border: 1px solid var(--cyber-border); text-align: center; width: 90%; max-width: 400px; box-shadow: 0 0 30px rgba(245, 166, 35, 0.2); }
+        .cyber-input { width: 100%; padding: 12px; background: #000; border: 1px solid var(--cyber-border); color: white; border-radius: 8px; margin-bottom: 20px; text-align: center; font-family: 'Orbitron'; }
 
         /* Header */
         .admin-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--cyber-border); margin-bottom: 20px; }
-        .admin-header h2 { font-family: 'Orbitron'; color: var(--cyber-gold); margin: 0; font-size: 1.2rem; }
+        .admin-header h2 { font-family: 'Orbitron'; color: var(--cyber-gold); margin: 0; font-size: 1.1rem; letter-spacing: 2px; }
+
+        /* Summary Dashboard */
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .summary-item { background: rgba(245, 166, 35, 0.05); border: 1px solid var(--cyber-border); padding: 15px; border-radius: 12px; text-align: center; }
+        .summary-item .label { font-size: 0.7rem; color: #888; text-transform: uppercase; }
+        .summary-item .value { font-family: 'Orbitron'; font-size: 1.2rem; color: var(--cyber-gold); margin-top: 5px; }
 
         /* Cards */
         .cyber-card { background: var(--cyber-surface); border-radius: 15px; border: 1px solid var(--cyber-border); padding: 20px; margin-bottom: 20px; }
-        .upload-zone { border: 2px dashed var(--cyber-border); border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; }
+        .upload-zone { border: 2px dashed var(--cyber-border); border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; background: rgba(245, 166, 35, 0.02); transition: 0.3s; }
+        .upload-zone:hover { background: rgba(245, 166, 35, 0.08); }
         .upload-zone i { font-size: 3rem; color: var(--cyber-gold); margin-bottom: 10px; }
+
+        /* Vision Sliders */
+        .vision-controls { display: flex; gap: 20px; margin-top: 15px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; font-size: 0.8rem; }
+        .vision-controls label { color: var(--cyber-gold); font-family: 'Orbitron'; }
 
         /* Results Table */
         .data-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-        .data-table th { text-align: left; padding: 10px; background: rgba(245, 166, 35, 0.1); color: var(--cyber-gold); font-family: 'Orbitron'; }
+        .data-table th { text-align: left; padding: 10px; background: rgba(245, 166, 35, 0.1); color: var(--cyber-gold); font-family: 'Orbitron'; font-size: 0.7rem; }
         .data-table td { padding: 10px; border-bottom: 1px solid #333; }
         
         .player-select { background: #000; color: var(--cyber-gold); border: 1px solid var(--cyber-border); padding: 5px; border-radius: 4px; width: 100%; font-size: 0.8rem; }
@@ -45,17 +56,19 @@
         .badge-gain { background: rgba(0, 255, 100, 0.1); color: #00ff64; }
         .badge-loss { background: rgba(255, 50, 50, 0.1); color: #ff3232; }
 
-        .cyber-btn { padding: 10px 20px; background: var(--cyber-gold); color: black; border: none; border-radius: 5px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
+        .cyber-btn { padding: 10px 20px; background: var(--cyber-gold); color: black; border: none; border-radius: 5px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
+        .cyber-btn:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--cyber-gold); }
         .cyber-btn.secondary { background: transparent; border: 1px solid var(--cyber-border); color: var(--cyber-gold); }
         
         .loader { display: none; text-align: center; margin: 20px 0; color: var(--cyber-gold); }
+        #canvas-proc { display: none; }
     </style>
 </head>
 <body class="admin-body">
 
 <div id="loginOverlay" class="login-overlay">
     <div class="login-card">
-        <h1 style="color: var(--cyber-gold); font-family: 'Orbitron';">COMMAND CENTER</h1>
+        <h1 style="color: var(--cyber-gold); font-family: 'Orbitron'; letter-spacing: 5px;">COMMAND CENTER</h1>
         <input type="password" id="adminPassword" class="cyber-input" placeholder="ACCESS KEY" onkeypress="if(event.key==='Enter')checkLogin()">
         <button class="cyber-btn" style="width: 100%;" onclick="checkLogin()">INITIATE ACCESS</button>
     </div>
@@ -63,21 +76,34 @@
 
 <div class="cyber-container" id="adminContent" style="display:none;">
     <div class="admin-header">
-        <h2>FAIL_PROOF_SCANNER</h2>
-        <button class="cyber-btn secondary" onclick="window.location.href='index.html'">EXIT</button>
+        <h2>ULTRA_COMMAND_v2.0</h2>
+        <div style="display: flex; gap: 10px;">
+            <button class="cyber-btn secondary" onclick="resetAll()">RESET</button>
+            <button class="cyber-btn secondary" onclick="window.location.href='index.html'">EXIT</button>
+        </div>
+    </div>
+
+    <div class="summary-grid" id="summaryGrid" style="display:none;">
+        <div class="summary-item"><div class="label">Units Scanned</div><div class="value" id="sumUnits">0</div></div>
+        <div class="summary-item"><div class="label">Total Might Delta</div><div class="value" id="sumMight">0</div></div>
+        <div class="summary-item"><div class="label">Total Kills Gain</div><div class="value" id="sumKills">0</div></div>
     </div>
 
     <div class="cyber-card">
         <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
-            <i class="fas fa-upload"></i>
+            <i class="fas fa-microchip"></i>
             <p>UPLOAD SCREENSHOTS (MAX 12)</p>
             <input type="file" id="fileInput" hidden multiple accept="image/*" onchange="handleFiles(event)">
+        </div>
+        <div class="vision-controls">
+            <div><label>Contrast:</label> <input type="range" id="vContrast" min="1" max="3" step="0.1" value="1.8"></div>
+            <div><label>Brightness:</label> <input type="range" id="vBright" min="0.5" max="2" step="0.1" value="1.1"></div>
         </div>
     </div>
 
     <div class="loader" id="loader">
-        <i class="fas fa-spinner fa-spin fa-2x"></i>
-        <p id="loaderText" style="margin-top: 10px;">SCANNING_SECTORS...</p>
+        <i class="fas fa-atom fa-spin fa-3x"></i>
+        <p id="loaderText" style="margin-top: 15px; font-family: 'Orbitron';">SCANNING_DATA_SECTORS...</p>
     </div>
 
     <div id="resultsArea" style="display:none;">
@@ -85,10 +111,10 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Assign Player</th>
-                        <th>Scanned Might</th>
+                        <th>Assigned Unit</th>
+                        <th>New Might</th>
                         <th>Might Delta</th>
-                        <th>Scanned Kills</th>
+                        <th>New Kills</th>
                         <th>Kills Incr.</th>
                     </tr>
                 </thead>
@@ -96,14 +122,13 @@
             </table>
         </div>
         
-        <div style="text-align: right; margin-top: 20px; display: flex; justify-content: space-between;">
-            <button class="cyber-btn secondary" onclick="resetAll()">RESET_SYSTEM</button>
-            <button class="cyber-btn" onclick="syncToSheet()">SYNC_TO_MAINFRAME</button>
+        <div style="text-align: right; margin-top: 20px;">
+            <button class="cyber-btn" onclick="syncToSheet()"><i class="fas fa-cloud-upload-alt"></i> SYNC_TO_MAINFRAME</button>
         </div>
     </div>
 </div>
 
-<canvas id="canvas-proc" style="display:none;"></canvas>
+<canvas id="canvas-proc"></canvas>
 
 <script>
     const ADMIN_PASS = '523890';
@@ -112,22 +137,23 @@
     
     let oldData = [];
     let scannedRows = [];
+    let aiMemory = JSON.parse(localStorage.getItem('ai_memory') || '{}');
 
     function checkLogin() {
         if (document.getElementById('adminPassword').value === ADMIN_PASS) {
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
-            fetchLatestData();
+            fetchMainframe();
+            loadSavedData();
         }
     }
 
-    async function fetchLatestData() {
+    async function fetchMainframe() {
         try {
-            const res = await fetch(SHEET_URL + '&cache=' + Date.now());
+            const res = await fetch(SHEET_URL + '&cb=' + Date.now());
             const csv = await res.text();
             oldData = parseCSV(csv);
-            console.log("Mainframe Data Updated:", oldData.length, "units.");
-        } catch (e) { alert("ERROR: Mainframe Connection Failed."); }
+        } catch (e) { console.error("Mainframe Link Offline"); }
     }
 
     function parseCSV(csv) {
@@ -141,11 +167,18 @@
         });
     }
 
+    function loadSavedData() {
+        const saved = localStorage.getItem('last_scan_data');
+        if (saved) {
+            scannedRows = JSON.parse(saved);
+            render();
+        }
+    }
+
     async function handleFiles(event) {
         const files = Array.from(event.target.files).slice(0, 12);
         if (files.length === 0) return;
 
-        scannedRows = [];
         document.getElementById('loader').style.display = 'block';
         document.getElementById('resultsArea').style.display = 'none';
 
@@ -154,13 +187,13 @@
         await worker.initialize('eng');
 
         for (const file of files) {
-            const imgData = await preProcess(file);
-            const { data: { text } } = await worker.recognize(imgData);
-            extractRows(text);
+            const img = await preProcess(file);
+            const { data: { text } } = await worker.recognize(img);
+            extract(text);
         }
 
         await worker.terminate();
-        renderRows();
+        render();
     }
 
     function preProcess(file) {
@@ -175,7 +208,11 @@
                     const cropH = img.height * 0.70;
                     canvas.width = img.width;
                     canvas.height = cropH;
-                    ctx.filter = 'grayscale(1) contrast(1.8) brightness(1.1)';
+                    
+                    const contrast = document.getElementById('vContrast').value;
+                    const brightness = document.getElementById('vBright').value;
+                    
+                    ctx.filter = `grayscale(1) contrast(${contrast}) brightness(${brightness})`;
                     ctx.drawImage(img, 0, cropY, img.width, cropH, 0, 0, img.width, cropH);
                     resolve(canvas.toDataURL());
                 };
@@ -185,72 +222,97 @@
         });
     }
 
-    function extractRows(text) {
+    function extract(text) {
         const lines = text.split('\n');
         lines.forEach(line => {
             if (line.match(/Casualties|Bloodbath|Mail|Members|relocate|chaos/i)) return;
-            const numbers = line.match(/[\d,.]+/g);
-            if (numbers && numbers.length >= 2) {
-                let rawName = line.replace(/[\d,.]+/g, '').replace(/[|#]/g, '').trim();
-                if (rawName.length < 2) return;
+            const nums = line.match(/[\d,.]+/g);
+            if (nums && nums.length >= 2) {
+                let raw = line.replace(/[\d,.]+/g, '').replace(/[|#]/g, '').trim();
+                if (raw.length < 2) return;
                 
-                // Smart Match
-                const match = oldData.find(p => similarity(rawName.toLowerCase(), p.Player.toLowerCase()) > 0.7);
-                
+                // AI Memory Check
+                let assigned = aiMemory[raw] || "";
+                if (!assigned) {
+                    const match = oldData.find(p => similarity(raw.toLowerCase(), p.Player.toLowerCase()) > 0.75);
+                    if (match) assigned = match.Player;
+                }
+
                 scannedRows.push({
-                    rawName: rawName,
-                    assignedPlayer: match ? match.Player : "",
-                    might: parseInt(numbers[0].replace(/,/g, '')),
-                    kills: parseInt(numbers[1].replace(/,/g, ''))
+                    raw: raw,
+                    assigned: assigned,
+                    might: parseInt(nums[0].replace(/,/g, '')),
+                    kills: parseInt(nums[1].replace(/,/g, ''))
                 });
             }
         });
     }
 
-    function renderRows() {
+    function render() {
         document.getElementById('loader').style.display = 'none';
         document.getElementById('resultsArea').style.display = 'block';
+        document.getElementById('summaryGrid').style.display = 'grid';
+        
         const body = document.getElementById('resultsBody');
         body.innerHTML = '';
+        
+        let tUnits = 0, tMight = 0, tKills = 0;
 
-        scannedRows.forEach((row, index) => {
-            const player = oldData.find(p => p.Player === row.assignedPlayer);
-            const oldMight = player ? parseV(player.Might) : 0;
-            const oldKills = player ? parseV(player['Player Kill']) : 0;
-            const delta = row.might - oldMight;
-            const kDelta = row.kills - oldKills;
+        scannedRows.forEach((row, i) => {
+            const p = oldData.find(u => u.Player === row.assigned);
+            const om = p ? parseV(p.Might) : 0;
+            const ok = p ? parseV(p['Player Kill']) : 0;
+            const dm = row.might - om;
+            const dk = row.kills - ok;
+
+            if (row.assigned) {
+                tUnits++;
+                tMight += dm;
+                tKills += dk;
+            }
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>
-                    <select class="player-select" onchange="updateRow(${index}, this.value)">
-                        <option value="">-- Select Player --</option>
-                        ${oldData.map(p => `<option value="${p.Player}" ${p.Player === row.assignedPlayer ? 'selected' : ''}>${p.Player}</option>`).join('')}
+                    <select class="player-select" onchange="updateUnit(${i}, this.value)">
+                        <option value="">-- ASSIGN UNIT --</option>
+                        ${oldData.map(u => `<option value="${u.Player}" ${u.Player === row.assigned ? 'selected' : ''}>${u.Player}</option>`).join('')}
                     </select>
-                    <span class="ocr-hint">AI read: "${row.rawName}"</span>
+                    <span class="ocr-hint">RAW: "${row.raw}"</span>
                 </td>
                 <td style="font-family:Orbitron;">${fmt(row.might)}</td>
-                <td><span class="badge ${delta >= 0 ? 'badge-gain' : 'badge-loss'}">${delta >= 0 ? '+' : ''}${fmt(delta)}</span></td>
+                <td><span class="badge ${dm >= 0 ? 'badge-gain' : 'badge-loss'}">${dm >= 0 ? '+' : ''}${fmt(dm)}</span></td>
                 <td style="font-family:Orbitron;">${fmt(row.kills)}</td>
-                <td><span class="badge badge-gain">+${fmt(kDelta)}</span></td>
+                <td><span class="badge badge-gain">+${fmt(dk)}</span></td>
             `;
             body.appendChild(tr);
         });
+
+        document.getElementById('sumUnits').textContent = tUnits;
+        document.getElementById('sumMight').textContent = (tMight >= 0 ? '+' : '') + fmt(tMight);
+        document.getElementById('sumKills').textContent = '+' + fmt(tKills);
+        
+        localStorage.setItem('last_scan_data', JSON.stringify(scannedRows));
     }
 
-    function updateRow(index, playerName) {
-        scannedRows[index].assignedPlayer = playerName;
-        renderRows();
+    function updateUnit(i, name) {
+        scannedRows[i].assigned = name;
+        // Save to AI Memory
+        if (name) {
+            aiMemory[scannedRows[i].raw] = name;
+            localStorage.setItem('ai_memory', JSON.stringify(aiMemory));
+        }
+        render();
     }
 
     function similarity(s1, s2) {
         let longer = s1.length > s2.length ? s1 : s2;
         let shorter = s1.length > s2.length ? s2 : s1;
         if (longer.length === 0) return 1.0;
-        return (longer.length - editDistance(longer, shorter)) / parseFloat(longer.length);
+        return (longer.length - editDist(longer, shorter)) / parseFloat(longer.length);
     }
 
-    function editDistance(s1, s2) {
+    function editDist(s1, s2) {
         const costs = [];
         for (let i = 0; i <= s1.length; i++) {
             let last = i;
@@ -286,13 +348,12 @@
 
     function resetAll() {
         scannedRows = [];
-        document.getElementById('resultsArea').style.display = 'none';
-        document.getElementById('fileInput').value = '';
+        localStorage.removeItem('last_scan_data');
+        render();
     }
 
     function syncToSheet() {
-        const ready = scannedRows.filter(r => r.assignedPlayer !== "").length;
-        alert(`SYNC_READY: Sending ${ready} confirmed records to Mainframe.`);
+        alert(`SYNC_MAINFRAME: Uploading ${scannedRows.filter(r=>r.assigned).length} unit records.`);
     }
 </script>
 </body>
