@@ -66,6 +66,12 @@
 </header>
 
 <div class="container">
+    <!-- Battle Clock Section -->
+    <div id="homeBattleClock" class="hero-section" style="display:none; padding: 20px; background: linear-gradient(135deg, rgba(245, 166, 35, 0.1) 0%, rgba(0,0,0,0.5) 100%); border: 2px solid var(--accent-gold); margin-bottom: 20px;">
+        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; color: var(--accent-gold); font-family: 'Orbitron', sans-serif;">NEXT GUILD EVENT</div>
+        <div id="homeTimer" style="font-family: 'Orbitron', sans-serif; font-size: 2rem; color: var(--accent-gold); text-shadow: 0 0 10px var(--accent-gold); margin: 10px 0;">00:00:00:00</div>
+    </div>
+
     <div class="hero-section">
         <div class="hero-content">
             <h1 data-translate-key="welcome_title">WELCOME TO HEM GUILD</h1>
@@ -158,6 +164,34 @@
 <script src="translations.js"></script>
 <script src="features.js"></script>
 <script>
+    // Battle Clock Logic for Home Page
+    function startHomeTimer() {
+        const targetTime = localStorage.getItem('guild_event_time');
+        if (targetTime) {
+            document.getElementById('homeBattleClock').style.display = 'block';
+            const target = new Date(targetTime).getTime();
+            
+            const interval = setInterval(() => {
+                const now = new Date().getTime();
+                const dist = target - now;
+                
+                if (dist < 0) {
+                    document.getElementById('homeTimer').textContent = "EVENT LIVE!";
+                    clearInterval(interval);
+                    return;
+                }
+                
+                const d = Math.floor(dist / (1000 * 60 * 60 * 24));
+                const h = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((dist % (1000 * 60)) / 1000);
+                
+                document.getElementById('homeTimer').textContent = `${d}d ${h}h ${m}m ${s}s`;
+            }, 1000);
+        }
+    }
+    window.addEventListener('load', startHomeTimer);
+
   // Register Service Worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js')

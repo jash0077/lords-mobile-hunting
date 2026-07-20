@@ -83,6 +83,7 @@
         <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px;">
             <input type="datetime-local" id="eventTime" class="num-input" style="width: 200px;">
             <button class="cyber-btn" onclick="setEvent()">SET_EVENT</button>
+            <button class="cyber-btn secondary" onclick="deleteEvent()" style="border-color: #ff3232; color: #ff3232;">DELETE_CLOCK</button>
         </div>
     </div>
 
@@ -280,6 +281,14 @@
         localStorage.setItem('guild_event_time', time);
         updateTimer(new Date(time).getTime());
         alert("Battle Clock Set!");
+    }
+
+    function deleteEvent() {
+        localStorage.removeItem('guild_event_time');
+        if (countdownInterval) clearInterval(countdownInterval);
+        document.getElementById('timer').textContent = "00:00:00:00";
+        document.getElementById('eventTime').value = "";
+        alert("Battle Clock Deleted!");
     }
 
     function updateTimer(target) {
