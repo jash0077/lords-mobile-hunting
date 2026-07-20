@@ -93,6 +93,17 @@
             <button class="cyber-btn" onclick="setEvent()">SET_EVENT</button>
             <button class="cyber-btn secondary" onclick="deleteEvent()" style="border-color: #ff3232; color: #ff3232;">DELETE_CLOCK</button>
         </div>
+
+    <!-- WORLD CLOCK SECTION -->
+    <div class="cyber-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+            <h3 style="font-family: 'Orbitron'; color: var(--cyber-gold); margin: 0;">⏰ WORLD_CLOCK_SYSTEM</h3>
+        </div>
+        
+        <div id="worldClockDropdownContainer"></div>
+        <div id="worldClockContainer"></div>
+    </div>
+
     </div>
 
     <div class="cyber-card">
@@ -379,5 +390,7 @@
     function syncAll() { alert("SYNC_INITIATED: Sending data to Mainframe."); }
     function resetAll() { pendingList = []; renderPending(); document.getElementById('confirmedSection').style.display = 'none'; }
 </script>
+
+<script src="world_clock.js"></script>
 </body>
 </html>
