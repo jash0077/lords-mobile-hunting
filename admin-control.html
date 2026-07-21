@@ -102,6 +102,9 @@
         
         <div id="worldClockDropdownContainer"></div>
         <div id="worldClockContainer"></div>
+        <div style="margin-top: 20px; text-align: right;">
+            <button class="cyber-btn" onclick="saveClocksToGitHub()"><i class="fas fa-save"></i> SYNC_CLOCKS_TO_GITHUB</button>
+        </div>
     </div>
 
     <!-- EVENT SCHEDULES SECTION -->
@@ -258,8 +261,11 @@
     const REPO_NAME = 'lords-mobile-hunting';
     const EVENTS_FILE_PATH = 'data/events.json';
     const EVENTS_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}`;
+    const CLOCKS_FILE_PATH = 'data/clocks.json';
+    const CLOCKS_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CLOCKS_FILE_PATH}`;
 
     let oldData = [];
+    let clocksFileSHA = '';
     let pendingList = [];
     let countdownInterval;
     let events = [];
@@ -367,12 +373,12 @@
     async function saveEventsToGitHub() {
         const status = document.getElementById('statusMsg');
         status.style.display = 'block';
-        status.textContent = 'SYNCING_TO_GITHUB...';
+        status.textContent = 'SYNCING_EVENTS...';
         status.style.background = 'rgba(245, 166, 35, 0.1)';
         status.style.color = 'var(--cyber-gold)';
 
         try {
-            const content = btoa(JSON.stringify(events, null, 2));
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(events, null, 2))));
             const response = await fetch(EVENTS_API_URL, {
                 method: 'PUT',
                 headers: {
@@ -388,13 +394,56 @@
             if (response.ok) {
                 const data = await response.json();
                 eventsFileSHA = data.content.sha;
-                status.textContent = 'SYNC_SUCCESSFUL!';
+                status.textContent = 'EVENTS_SYNC_SUCCESS!';
                 status.style.background = 'rgba(0, 255, 100, 0.1)';
                 status.style.color = '#00ff64';
                 setTimeout(() => { status.style.display = 'none'; }, 3000);
-            } else { throw new Error('Failed to save'); }
+            } else { throw new Error('Failed to save events'); }
         } catch (e) {
             status.textContent = 'SYNC_FAILED: ' + e.message;
+            status.style.background = 'rgba(255, 50, 50, 0.1)';
+            status.style.color = '#ff3232';
+        }
+    }
+
+    async function saveClocksToGitHub() {
+        const status = document.getElementById('statusMsg');
+        status.style.display = 'block';
+        status.textContent = 'SYNCING_CLOCKS...';
+        
+        try {
+            // Get SHA first
+            const getRes = await fetch(CLOCKS_API_URL, {
+                headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+            });
+            if (getRes.ok) {
+                const getData = await getRes.json();
+                clocksFileSHA = getData.sha;
+            }
+
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(window.worldClock.selectedTimeZones, null, 2))));
+            const response = await fetch(CLOCKS_API_URL, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Update world clocks',
+                    content: content,
+                    sha: clocksFileSHA
+                })
+            });
+            if (response.ok) {
+                const data = await response.json();
+                clocksFileSHA = data.content.sha;
+                status.textContent = 'CLOCKS_SYNC_SUCCESS!';
+                status.style.background = 'rgba(0, 255, 100, 0.1)';
+                status.style.color = '#00ff64';
+                setTimeout(() => { status.style.display = 'none'; }, 3000);
+            } else { throw new Error('Failed to save clocks'); }
+        } catch (e) {
+            status.textContent = 'CLOCK_SYNC_FAILED: ' + e.message;
             status.style.background = 'rgba(255, 50, 50, 0.1)';
             status.style.color = '#ff3232';
         }

@@ -1,0 +1,22 @@
+[
+    {
+        "zone": "Asia/Kolkata",
+        "name": "India",
+        "flag": "🇮🇳"
+    },
+    {
+        "zone": "Asia/Tokyo",
+        "name": "Japan",
+        "flag": "🇯🇵"
+    },
+    {
+        "zone": "Asia/Shanghai",
+        "name": "China",
+        "flag": "🇨🇳"
+    },
+    {
+        "zone": "Australia/Sydney",
+        "name": "Australia",
+        "flag": "🇦🇺"
+    }
+]
