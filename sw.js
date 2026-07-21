@@ -11,6 +11,8 @@ const urlsToCache = [
   '/lords-mobile-hunting/composition.html',
   '/lords-mobile-hunting/migration.html',
   '/lords-mobile-hunting/research.html',
+  '/lords-mobile-hunting/events.html',
+  '/lords-mobile-hunting/data/events.json',
   '/lords-mobile-hunting/admin.html',
   '/lords-mobile-hunting/icons/icon-192x192.png',
   '/lords-mobile-hunting/icons/icon-512x512.png',

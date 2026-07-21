@@ -81,7 +81,9 @@ const translations = {
         "war": "War",
         "war_card_description": "Track guild kills, might loss, and war rankings.",
         "guild_festival": "Guild Festival",
-        "festival_card_description": "Plan your missions and track your points to reach your target with our advanced calculator."
+        "festival_card_description": "Plan your missions and track your points to reach your target with our advanced calculator.",
+        "event_schedules": "Event Schedules",
+        "events_card_description": "View upcoming guild events, live countdowns, and global timezones in real-time."
     },
     "es": {
         "app_title": "Lords Mobile Hub",

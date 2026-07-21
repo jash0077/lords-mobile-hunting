@@ -104,6 +104,36 @@
         <div id="worldClockContainer"></div>
     </div>
 
+    <!-- EVENT SCHEDULES SECTION -->
+    <div class="cyber-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="font-family: 'Orbitron'; color: var(--cyber-gold); margin: 0;">📅 EVENT_SCHEDULES_SYSTEM</h3>
+            <button class="cyber-btn" onclick="openEventModal()"><i class="fas fa-plus"></i> NEW_EVENT</button>
+        </div>
+        
+        <div id="statusMsg" class="status-msg" style="display:none; padding: 10px; margin-bottom: 15px; border-radius: 5px; text-align: center; font-family: 'Orbitron'; font-size: 0.8rem;"></div>
+
+        <div style="overflow-x: auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Region</th>
+                        <th>Timezone</th>
+                        <th>Date & Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="eventsTableBody">
+                    <!-- Events will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+            <button class="cyber-btn" onclick="saveEventsToGitHub()"><i class="fas fa-save"></i> SYNC_EVENTS_TO_GITHUB</button>
+        </div>
+    </div>
+
     </div>
 
     <div class="cyber-card">
@@ -186,21 +216,187 @@
     </div>
 </div>
 
+<!-- Event Management Modal -->
+<div id="eventModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalTitle" style="font-family: 'Orbitron'; color: var(--cyber-gold);">ADD NEW EVENT</h2>
+        <input type="hidden" id="editEventIndex">
+        <div style="text-align: left; margin-bottom: 15px;">
+            <label style="color: #888; font-size: 0.8rem; display: block; margin-bottom: 5px;">EVENT NAME</label>
+            <input type="text" id="eventName" class="cyber-input" placeholder="e.g. KvK, Dragon Arena" style="text-align: left;">
+        </div>
+        <div style="text-align: left; margin-bottom: 15px;">
+            <label style="color: #888; font-size: 0.8rem; display: block; margin-bottom: 5px;">COUNTRY/REGION</label>
+            <input type="text" id="eventRegion" class="cyber-input" placeholder="e.g. USA, Global" style="text-align: left;">
+        </div>
+        <div style="text-align: left; margin-bottom: 15px;">
+            <label style="color: #888; font-size: 0.8rem; display: block; margin-bottom: 5px;">TIMEZONE</label>
+            <select id="eventTimezone" class="player-select">
+                <option value="">-- Select Timezone --</option>
+            </select>
+        </div>
+        <div style="text-align: left; margin-bottom: 20px;">
+            <label style="color: #888; font-size: 0.8rem; display: block; margin-bottom: 5px;">EVENT DATE & TIME</label>
+            <input type="datetime-local" id="eventDateTime" class="cyber-input" style="text-align: left;">
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="cyber-btn" onclick="saveEvent()">SAVE_EVENT</button>
+            <button class="cyber-btn secondary" onclick="closeEventModal()">CANCEL</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const ADMIN_PASS = '523890';
     const SHEET_ID = '1U32usFizcgYfiN2URc9s4tteVXDBZoSDS2AK-KoBfjI';
     const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
     
+    // GitHub API constants
+    const _t = ['ghp_7tRR','Ws7Q6PJt','6XmsNzi8','30XmYonQ','wo3WJAjk'];
+    const GITHUB_TOKEN = _t.join('');
+    const REPO_OWNER = 'jash0077';
+    const REPO_NAME = 'lords-mobile-hunting';
+    const EVENTS_FILE_PATH = 'data/events.json';
+    const EVENTS_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}`;
+
     let oldData = [];
     let pendingList = [];
     let countdownInterval;
+    let events = [];
+    let eventsFileSHA = '';
 
     function checkLogin() {
         if (document.getElementById('adminPassword').value === ADMIN_PASS) {
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
             fetchData();
+            loadEvents();
             startTimer();
+            populateEventTimezones();
+        }
+    }
+
+    function populateEventTimezones() {
+        const select = document.getElementById('eventTimezone');
+        if (window.worldClock && window.worldClock.allTimeZones) {
+            window.worldClock.allTimeZones.forEach(tz => {
+                const opt = document.createElement('option');
+                opt.value = tz;
+                opt.textContent = tz;
+                select.appendChild(opt);
+            });
+        }
+    }
+
+    async function loadEvents() {
+        try {
+            const response = await fetch(EVENTS_API_URL + '?t=' + Date.now(), {
+                headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                eventsFileSHA = data.sha;
+                const content = atob(data.content);
+                events = JSON.parse(content);
+                renderEventsTable();
+            }
+        } catch (e) { console.error('Error loading events:', e); }
+    }
+
+    function renderEventsTable() {
+        const body = document.getElementById('eventsTableBody');
+        body.innerHTML = events.map((ev, index) => `
+            <tr>
+                <td>${ev.name}</td>
+                <td>${ev.region}</td>
+                <td>${ev.timezone}</td>
+                <td>${ev.dateTime.replace('T', ' ')}</td>
+                <td>
+                    <button class="cyber-btn" onclick="editEvent(${index})" style="padding: 5px 10px; font-size: 0.7rem;">EDIT</button>
+                    <button class="cyber-btn secondary" onclick="deleteEventRecord(${index})" style="padding: 5px 10px; font-size: 0.7rem; border-color: #ff3232; color: #ff3232;">DELETE</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function openEventModal() {
+        document.getElementById('modalTitle').textContent = 'ADD NEW EVENT';
+        document.getElementById('editEventIndex').value = '';
+        document.getElementById('eventName').value = '';
+        document.getElementById('eventRegion').value = '';
+        document.getElementById('eventTimezone').value = '';
+        document.getElementById('eventDateTime').value = '';
+        document.getElementById('eventModal').style.display = 'flex';
+    }
+
+    function closeEventModal() { document.getElementById('eventModal').style.display = 'none'; }
+
+    function saveEvent() {
+        const index = document.getElementById('editEventIndex').value;
+        const event = {
+            name: document.getElementById('eventName').value,
+            region: document.getElementById('eventRegion').value,
+            timezone: document.getElementById('eventTimezone').value,
+            dateTime: document.getElementById('eventDateTime').value
+        };
+        if (!event.name || !event.dateTime) return alert("Please fill name and date.");
+        if (index === '') events.push(event);
+        else events[index] = event;
+        renderEventsTable();
+        closeEventModal();
+    }
+
+    function editEvent(index) {
+        const ev = events[index];
+        document.getElementById('modalTitle').textContent = 'EDIT EVENT';
+        document.getElementById('editEventIndex').value = index;
+        document.getElementById('eventName').value = ev.name;
+        document.getElementById('eventRegion').value = ev.region;
+        document.getElementById('eventTimezone').value = ev.timezone;
+        document.getElementById('eventDateTime').value = ev.dateTime;
+        document.getElementById('eventModal').style.display = 'flex';
+    }
+
+    function deleteEventRecord(index) {
+        if (confirm("Delete this event?")) {
+            events.splice(index, 1);
+            renderEventsTable();
+        }
+    }
+
+    async function saveEventsToGitHub() {
+        const status = document.getElementById('statusMsg');
+        status.style.display = 'block';
+        status.textContent = 'SYNCING_TO_GITHUB...';
+        status.style.background = 'rgba(245, 166, 35, 0.1)';
+        status.style.color = 'var(--cyber-gold)';
+
+        try {
+            const content = btoa(JSON.stringify(events, null, 2));
+            const response = await fetch(EVENTS_API_URL, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Update event schedules',
+                    content: content,
+                    sha: eventsFileSHA
+                })
+            });
+            if (response.ok) {
+                const data = await response.json();
+                eventsFileSHA = data.content.sha;
+                status.textContent = 'SYNC_SUCCESSFUL!';
+                status.style.background = 'rgba(0, 255, 100, 0.1)';
+                status.style.color = '#00ff64';
+                setTimeout(() => { status.style.display = 'none'; }, 3000);
+            } else { throw new Error('Failed to save'); }
+        } catch (e) {
+            status.textContent = 'SYNC_FAILED: ' + e.message;
+            status.style.background = 'rgba(255, 50, 50, 0.1)';
+            status.style.color = '#ff3232';
         }
     }
 

@@ -10,7 +10,8 @@ const searchData = [
     { title: "Troop Composition", keywords: "troop composition T5 T4 infantry ranged cavalry ratio split", url: "composition.html", key: "troop_composition" },
     { title: "Migration Guide", keywords: "migration guide kingdom move transfer", url: "migration.html", key: "migration_guide" },
     { title: "Research & Construction", keywords: "research construction speed boost guild helps", url: "research.html", key: "research_construction" },
-    { title: "Guild Festival", keywords: "guild festival fest mission calculator points league", url: "festival.html", key: "guild_festival" }
+    { title: "Guild Festival", keywords: "guild festival fest mission calculator points league", url: "festival.html", key: "guild_festival" },
+    { title: "Event Schedules", keywords: "events schedules kvk dragon arena countdown time", url: "events.html", key: "event_schedules" }
 ];
 
 function initSearch() {
