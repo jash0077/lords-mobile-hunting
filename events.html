@@ -90,7 +90,7 @@
 <div class="container">
     <div class="hero-section">
         <h1 style="font-family: 'Orbitron';">EVENT_SCHEDULES</h1>
-        <p>Stay ahead of the competition with real-time tracking of global guild events. Click on any event to see world clocks.</p>
+        <p>Stay ahead of the competition with real-time tracking of global guild events. All times are stored in UTC and converted to your local time automatically.</p>
     </div>
 
     <div id="eventsLoading" style="text-align: center; padding: 50px;">
@@ -105,7 +105,8 @@
 <div id="clockModal" class="modal" onclick="closeClockModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
         <h2 id="modalEventName" style="font-family: 'Orbitron'; color: var(--accent-gold); margin-bottom: 5px;">EVENT_NAME</h2>
-        <p id="modalEventTime" style="font-size: 0.9rem; color: #888; margin-bottom: 20px;">Event Local Time: ...</p>
+        <p id="modalEventTimeUTC" style="font-size: 0.8rem; color: #888; margin-bottom: 5px;">UTC: ...</p>
+        <p id="modalEventTimeLocal" style="font-size: 0.9rem; color: #00ff64; margin-bottom: 20px;">Your Local Time: ...</p>
         <div id="modalClocksGrid" class="clock-modal-grid">
             <!-- World clocks will be loaded here -->
         </div>
@@ -145,48 +146,59 @@
             return;
         }
 
-        grid.innerHTML = events.map((ev, index) => `
-            <div class="event-card" id="event-${index}" onclick="openClockModal(${index})">
-                <div class="event-status" id="status-${index}">Checking...</div>
-                <div class="event-name">${ev.name}</div>
-                <div class="event-region">${ev.region || 'Global'}</div>
-                
-                <div class="event-info-row">
-                    <i class="fas fa-clock"></i>
-                    <span>${ev.dateTime.replace('T', ' ')}</span>
-                </div>
-                <div class="event-info-row">
-                    <i class="fas fa-globe"></i>
-                    <span>${ev.timezone}</span>
-                </div>
-                <div class="event-info-row">
-                    <i class="fas fa-history"></i>
-                    <span class="local-time-display" id="local-${index}">Calculating local time...</span>
-                </div>
+        grid.innerHTML = events.map((ev, index) => {
+            // Treat ev.dateTime as UTC
+            const utcDate = new Date(ev.dateTime + 'Z');
+            const localTimeStr = new Intl.DateTimeFormat('en-US', {
+                year: 'numeric', month: 'short', day: '2-digit',
+                hour: '2-digit', minute: '2-digit',
+                hour12: true
+            }).format(utcDate);
 
-                <div class="countdown-container">
-                    <div class="countdown-label">COUNTDOWN</div>
-                    <div class="countdown-timer" id="timer-${index}">00:00:00:00</div>
+            return `
+                <div class="event-card" id="event-${index}" onclick="openClockModal(${index})">
+                    <div class="event-status" id="status-${index}">Checking...</div>
+                    <div class="event-name">${ev.name}</div>
+                    <div class="event-region">${ev.region || 'Global'}</div>
+                    
+                    <div class="event-info-row">
+                        <i class="fas fa-clock"></i>
+                        <span style="color: #00ff64;">${localTimeStr}</span>
+                    </div>
+                    <div class="event-info-row">
+                        <i class="fas fa-globe"></i>
+                        <span style="font-size: 0.7rem; color: #888;">UTC: ${ev.dateTime.replace('T', ' ')}</span>
+                    </div>
+                    <div class="event-info-row">
+                        <i class="fas fa-history"></i>
+                        <span class="local-time-display" id="local-${index}">Calculating...</span>
+                    </div>
+
+                    <div class="countdown-container">
+                        <div class="countdown-label">COUNTDOWN</div>
+                        <div class="countdown-timer" id="timer-${index}">00:00:00:00</div>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     function updateLiveInfo() {
         events.forEach((ev, index) => {
             try {
-                const nowInTZ = new Date(new Date().toLocaleString("en-US", {timeZone: ev.timezone}));
-                const targetInTZ = new Date(ev.dateTime);
-                const diff = targetInTZ - nowInTZ;
+                const now = new Date();
+                const targetDate = new Date(ev.dateTime + 'Z');
+                const diff = targetDate - now;
                 
-                const options = { 
-                    timeZone: ev.timezone, 
-                    hour: '2-digit', minute: '2-digit', second: '2-digit',
-                    hour12: false 
-                };
-                const tzTimeStr = new Intl.DateTimeFormat('en-US', options).format(new Date());
                 const localEl = document.getElementById(`local-${index}`);
-                if (localEl) localEl.textContent = `Current TZ Time: ${tzTimeStr}`;
+                if (localEl) {
+                    const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    const timeStr = new Intl.DateTimeFormat('en-US', {
+                        hour: '2-digit', minute: '2-digit', second: '2-digit',
+                        hour12: false
+                    }).format(now);
+                    localEl.textContent = `Your Time: ${timeStr}`;
+                }
 
                 const statusEl = document.getElementById(`status-${index}`);
                 const timerEl = document.getElementById(`timer-${index}`);
@@ -226,8 +238,18 @@
     function openClockModal(index) {
         currentEventIndex = index;
         const ev = events[index];
+        const utcDate = new Date(ev.dateTime + 'Z');
+        
         document.getElementById('modalEventName').textContent = ev.name;
-        document.getElementById('modalEventTime').textContent = `Event Time (${ev.timezone}): ${ev.dateTime.replace('T', ' ')}`;
+        document.getElementById('modalEventTimeUTC').textContent = `UTC Time: ${ev.dateTime.replace('T', ' ')}`;
+        
+        const localTimeStr = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric', month: 'long', day: '2-digit',
+            hour: '2-digit', minute: '2-digit',
+            hour12: true
+        }).format(utcDate);
+        document.getElementById('modalEventTimeLocal').textContent = `Your Local Time: ${localTimeStr}`;
+        
         updateModalClocks();
         document.getElementById('clockModal').style.display = 'flex';
     }
@@ -240,6 +262,7 @@
         if (currentEventIndex === -1) return;
         const ev = events[currentEventIndex];
         const grid = document.getElementById('modalClocksGrid');
+        const utcDate = new Date(ev.dateTime + 'Z');
         
         if (worldClocks.length === 0) {
             grid.innerHTML = '<p style="grid-column: 1/-1; color: #888;">No world clocks configured.</p>';
@@ -249,26 +272,26 @@
         grid.innerHTML = worldClocks.map(clock => {
             try {
                 const now = new Date();
-                const timeStr = new Intl.DateTimeFormat('en-US', {
+                const currentTimeInZone = new Intl.DateTimeFormat('en-US', {
                     timeZone: clock.zone,
                     hour: '2-digit', minute: '2-digit', second: '2-digit',
                     hour12: false
                 }).format(now);
 
-                // Calculate event time in this specific timezone
-                const eventInTargetTZ = new Intl.DateTimeFormat('en-US', {
+                // Calculate event time in this specific timezone using Intl.DateTimeFormat
+                const eventTimeInZone = new Intl.DateTimeFormat('en-US', {
                     timeZone: clock.zone,
-                    year: 'numeric', month: '2-digit', day: '2-digit',
+                    month: 'short', day: '2-digit',
                     hour: '2-digit', minute: '2-digit',
                     hour12: false
-                }).format(new Date(new Date(ev.dateTime).toLocaleString("en-US", {timeZone: ev.timezone})));
+                }).format(utcDate);
 
                 return `
                     <div class="modal-clock-card">
                         <div style="font-size: 1.5rem;">${clock.flag}</div>
                         <div class="modal-clock-label">${clock.name}</div>
-                        <div class="modal-clock-time">${timeStr}</div>
-                        <div class="modal-clock-event-time">Event: ${eventInTargetTZ.split(', ')[1]}</div>
+                        <div class="modal-clock-time">${currentTimeInZone}</div>
+                        <div class="modal-clock-event-time">Event: ${eventTimeInZone}</div>
                         <div class="modal-clock-label" style="font-size: 0.6rem;">${clock.zone}</div>
                     </div>
                 `;

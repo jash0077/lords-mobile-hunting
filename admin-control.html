@@ -93,6 +93,7 @@
             <button class="cyber-btn" onclick="setEvent()">SET_EVENT</button>
             <button class="cyber-btn secondary" onclick="deleteEvent()" style="border-color: #ff3232; color: #ff3232;">DELETE_CLOCK</button>
         </div>
+    </div>
 
     <!-- WORLD CLOCK SECTION -->
     <div class="cyber-card">
@@ -122,8 +123,9 @@
                     <tr>
                         <th>Event Name</th>
                         <th>Region</th>
-                        <th>Timezone</th>
-                        <th>Date & Time</th>
+                        <th>Admin Timezone</th>
+                        <th>Stored UTC</th>
+                        <th>Local Preview</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -135,8 +137,6 @@
         <div style="margin-top: 20px; text-align: right;">
             <button class="cyber-btn" onclick="saveEventsToGitHub()"><i class="fas fa-save"></i> SYNC_EVENTS_TO_GITHUB</button>
         </div>
-    </div>
-
     </div>
 
     <div class="cyber-card">
@@ -233,13 +233,13 @@
             <input type="text" id="eventRegion" class="cyber-input" placeholder="e.g. USA, Global" style="text-align: left;">
         </div>
         <div style="text-align: left; margin-bottom: 15px;">
-            <label style="color: #888; font-size: 0.8rem; display: block; margin-bottom: 5px;">TIMEZONE</label>
+            <label style="color: #888; font-size: 0.8rem; display: block; margin-bottom: 5px;">ADMIN TIMEZONE (Your Local)</label>
             <select id="eventTimezone" class="player-select">
                 <option value="">-- Select Timezone --</option>
             </select>
         </div>
         <div style="text-align: left; margin-bottom: 20px;">
-            <label style="color: #888; font-size: 0.8rem; display: block; margin-bottom: 5px;">EVENT DATE & TIME</label>
+            <label style="color: #888; font-size: 0.8rem; display: block; margin-bottom: 5px;">EVENT DATE & TIME (Local to selected timezone)</label>
             <input type="datetime-local" id="eventDateTime" class="cyber-input" style="text-align: left;">
         </div>
         <div style="display: flex; gap: 10px; justify-content: center;">
@@ -249,6 +249,7 @@
     </div>
 </div>
 
+<script src="world_clock.js"></script>
 <script>
     const ADMIN_PASS = '523890';
     const SHEET_ID = '1U32usFizcgYfiN2URc9s4tteVXDBZoSDS2AK-KoBfjI';
@@ -291,6 +292,11 @@
                 opt.textContent = tz;
                 select.appendChild(opt);
             });
+            // Default to browser timezone
+            select.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        } else {
+            // Retry if worldClock is not yet initialized
+            setTimeout(populateEventTimezones, 500);
         }
     }
 
@@ -311,18 +317,29 @@
 
     function renderEventsTable() {
         const body = document.getElementById('eventsTableBody');
-        body.innerHTML = events.map((ev, index) => `
-            <tr>
-                <td>${ev.name}</td>
-                <td>${ev.region}</td>
-                <td>${ev.timezone}</td>
-                <td>${ev.dateTime.replace('T', ' ')}</td>
-                <td>
-                    <button class="cyber-btn" onclick="editEvent(${index})" style="padding: 5px 10px; font-size: 0.7rem;">EDIT</button>
-                    <button class="cyber-btn secondary" onclick="deleteEventRecord(${index})" style="padding: 5px 10px; font-size: 0.7rem; border-color: #ff3232; color: #ff3232;">DELETE</button>
-                </td>
-            </tr>
-        `).join('');
+        body.innerHTML = events.map((ev, index) => {
+            const utcTime = ev.dateTime.replace('T', ' ');
+            const localPreview = new Intl.DateTimeFormat('en-US', {
+                timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit',
+                hour12: false
+            }).format(new Date(ev.dateTime + 'Z'));
+
+            return `
+                <tr>
+                    <td>${ev.name}</td>
+                    <td>${ev.region}</td>
+                    <td>${ev.timezone || 'UTC'}</td>
+                    <td>${utcTime}</td>
+                    <td style="color: #00ff64; font-size: 0.7rem;">${localPreview} (You)</td>
+                    <td>
+                        <button class="cyber-btn" onclick="editEvent(${index})" style="padding: 5px 10px; font-size: 0.7rem;">EDIT</button>
+                        <button class="cyber-btn secondary" onclick="deleteEventRecord(${index})" style="padding: 5px 10px; font-size: 0.7rem; border-color: #ff3232; color: #ff3232;">DELETE</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     }
 
     function openEventModal() {
@@ -330,7 +347,7 @@
         document.getElementById('editEventIndex').value = '';
         document.getElementById('eventName').value = '';
         document.getElementById('eventRegion').value = '';
-        document.getElementById('eventTimezone').value = '';
+        document.getElementById('eventTimezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
         document.getElementById('eventDateTime').value = '';
         document.getElementById('eventModal').style.display = 'flex';
     }
@@ -339,15 +356,66 @@
 
     function saveEvent() {
         const index = document.getElementById('editEventIndex').value;
+        const name = document.getElementById('eventName').value;
+        const region = document.getElementById('eventRegion').value;
+        const selectedTZ = document.getElementById('eventTimezone').value;
+        const localDateTimeStr = document.getElementById('eventDateTime').value;
+
+        if (!name || !localDateTimeStr || !selectedTZ) return alert("Please fill name, date and timezone.");
+
+        // Conversion logic: Local Time in Selected TZ -> UTC
+        // 1. Parse the input as a naive date object (it's local to the user's browser right now)
+        // 2. We need to treat it as being in 'selectedTZ'
+        // We use Intl.DateTimeFormat to find the offset for that specific time in that timezone
+        const dateObj = new Date(localDateTimeStr);
+        
+        // Accurate way to convert a specific local time in a specific TZ to UTC:
+        // We use the fact that new Date(string) in JS is problematic for specific TZs.
+        // Instead, we use the Intl API to get the UTC equivalent.
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: selectedTZ,
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+            hour12: false
+        });
+
+        // We find the UTC time that, when formatted in selectedTZ, matches our input.
+        // Since we can't easily go backwards, we'll use a simpler approach:
+        // Create a date string with the timezone offset.
+        const tempDate = new Date(localDateTimeStr);
+        const tzOffsetStr = new Intl.DateTimeFormat('en-US', {
+            timeZone: selectedTZ,
+            timeZoneName: 'shortOffset'
+        }).format(tempDate).split('GMT')[1] || '+0';
+        
+        // Convert "+5:30" to "+05:30" for standard parsing if needed
+        let formattedOffset = tzOffsetStr;
+        if (tzOffsetStr.includes(':')) {
+            const [h, m] = tzOffsetStr.split(':');
+            const hAbs = h.replace(/[+-]/, '');
+            const sign = h.startsWith('-') ? '-' : '+';
+            formattedOffset = `${sign}${hAbs.padStart(2, '0')}:${m}`;
+        } else if (tzOffsetStr !== '+0') {
+             const sign = tzOffsetStr.startsWith('-') ? '-' : '+';
+             const hAbs = tzOffsetStr.replace(/[+-]/, '');
+             formattedOffset = `${sign}${hAbs.padStart(2, '0')}:00`;
+        } else {
+            formattedOffset = '+00:00';
+        }
+
+        const utcDate = new Date(localDateTimeStr + ':00' + formattedOffset);
+        const utcIso = utcDate.toISOString().slice(0, 16); // YYYY-MM-DDTHH:mm
+
         const event = {
-            name: document.getElementById('eventName').value,
-            region: document.getElementById('eventRegion').value,
-            timezone: document.getElementById('eventTimezone').value,
-            dateTime: document.getElementById('eventDateTime').value
+            name: name,
+            region: region,
+            timezone: selectedTZ,
+            dateTime: utcIso
         };
-        if (!event.name || !event.dateTime) return alert("Please fill name and date.");
+
         if (index === '') events.push(event);
         else events[index] = event;
+        
         renderEventsTable();
         closeEventModal();
     }
@@ -358,8 +426,27 @@
         document.getElementById('editEventIndex').value = index;
         document.getElementById('eventName').value = ev.name;
         document.getElementById('eventRegion').value = ev.region;
-        document.getElementById('eventTimezone').value = ev.timezone;
-        document.getElementById('eventDateTime').value = ev.dateTime;
+        
+        // Convert stored UTC back to the timezone it was saved with for editing
+        const utcDate = new Date(ev.dateTime + 'Z');
+        const tz = ev.timezone || 'UTC';
+        
+        // Format to YYYY-MM-DDTHH:mm in that timezone
+        const options = {
+            timeZone: tz,
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit',
+            hour12: false
+        };
+        const parts = new Intl.DateTimeFormat('en-US', options).formatToParts(utcDate);
+        const y = parts.find(p => p.type === 'year').value;
+        const m = parts.find(p => p.type === 'month').value;
+        const d = parts.find(p => p.type === 'day').value;
+        const hr = parts.find(p => p.type === 'hour').value;
+        const min = parts.find(p => p.type === 'minute').value;
+        
+        document.getElementById('eventTimezone').value = tz;
+        document.getElementById('eventDateTime').value = `${y}-${m}-${d}T${hr}:${min}`;
         document.getElementById('eventModal').style.display = 'flex';
     }
 
@@ -386,7 +473,7 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: 'Update event schedules',
+                    message: 'Update event schedules (UTC storage)',
                     content: content,
                     sha: eventsFileSHA
                 })
@@ -608,34 +695,38 @@
         countdownInterval = setInterval(() => {
             const now = new Date().getTime();
             const dist = target - now;
-            if (dist < 0) { document.getElementById('timer').textContent = "EVENT LIVE!"; return clearInterval(countdownInterval); }
+            if (dist < 0) {
+                document.getElementById('timer').textContent = "00:00:00:00";
+                clearInterval(countdownInterval);
+                return;
+            }
             const d = Math.floor(dist / (1000 * 60 * 60 * 24));
             const h = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((dist % (1000 * 60)) / 1000);
-            document.getElementById('timer').textContent = `${d}d ${h}h ${m}m ${s}s`;
+            document.getElementById('timer').textContent = `${d.toString().padStart(2,'0')}:${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
         }, 1000);
     }
 
-    function parseV(v) {
-        if(!v) return 0;
-        v = v.toString().toUpperCase().replace(/,/g, '');
-        if(v.endsWith('B')) return parseFloat(v)*1e9;
-        if(v.endsWith('M')) return parseFloat(v)*1e6;
-        if(v.endsWith('K')) return parseFloat(v)*1e3;
-        return parseFloat(v);
+    function fmt(v) {
+        if (Math.abs(v) >= 1e9) return (v / 1e9).toFixed(2) + 'B';
+        if (Math.abs(v) >= 1e6) return (v / 1e6).toFixed(2) + 'M';
+        if (Math.abs(v) >= 1e3) return (v / 1e3).toFixed(1) + 'K';
+        return v.toString();
     }
-    function fmt(n) {
-        const a = Math.abs(n);
-        if(a>=1e9) return (n/1e9).toFixed(2)+'B';
-        if(a>=1e6) return (n/1e6).toFixed(2)+'M';
-        if(a>=1e3) return (n/1e3).toFixed(1)+'K';
-        return n.toLocaleString();
-    }
-    function syncAll() { alert("SYNC_INITIATED: Sending data to Mainframe."); }
-    function resetAll() { pendingList = []; renderPending(); document.getElementById('confirmedSection').style.display = 'none'; }
-</script>
 
-<script src="world_clock.js"></script>
+    function parseV(s) {
+        if (!s) return 0;
+        s = s.toString().toUpperCase().replace(/,/g, '');
+        let m = 1;
+        if (s.endsWith('B')) m = 1e9;
+        else if (s.endsWith('M')) m = 1e6;
+        else if (s.endsWith('K')) m = 1e3;
+        return parseFloat(s) * m;
+    }
+
+    function resetAll() { if(confirm("Clear pending records?")) { pendingList = []; renderPending(); document.getElementById('confirmedSection').style.display = 'none'; } }
+    async function syncAll() { alert("Sheet sync is currently read-only. Data is saved in pending list."); }
+</script>
 </body>
 </html>
