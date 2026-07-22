@@ -351,8 +351,10 @@ class WorldClock {
         if (window.location.pathname.includes('admin-control.html') && typeof saveClocksToGitHub === 'function') {
             saveClocksToGitHub();
         }
-        document.getElementById('timezoneSearch').value = '';
-        document.getElementById('searchResults').style.display = 'none';
+        const searchInput = document.getElementById('timezoneSearch');
+        const resultsContainer = document.getElementById('searchResults');
+        if (searchInput) searchInput.value = '';
+        if (resultsContainer) resultsContainer.style.display = 'none';
     }
 
     addTimeZone() {

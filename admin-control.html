@@ -112,7 +112,10 @@
     <div class="cyber-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h3 style="font-family: 'Orbitron'; color: var(--cyber-gold); margin: 0;">📅 EVENT_SCHEDULES_SYSTEM</h3>
-            <button class="cyber-btn" onclick="openEventModal()"><i class="fas fa-plus"></i> NEW_EVENT</button>
+            <div style="display: flex; gap: 10px;">
+                <button class="cyber-btn hype" onclick="openQuickAddClockModal()"><i class="fas fa-globe"></i> ADD_COUNTRY_TIME</button>
+                <button class="cyber-btn" onclick="openEventModal()"><i class="fas fa-plus"></i> NEW_EVENT</button>
+            </div>
         </div>
         
         <div id="statusMsg" class="status-msg" style="display:none; padding: 10px; margin-bottom: 15px; border-radius: 5px; text-align: center; font-family: 'Orbitron'; font-size: 0.8rem;"></div>
@@ -228,6 +231,22 @@
             <!-- Country times will be loaded here -->
         </div>
         <button class="cyber-btn" onclick="closeCountryTimesModal()" style="width: 100%;">CLOSE</button>
+    </div>
+</div>
+
+<!-- Quick Add World Clock Modal -->
+<div id="quickAddClockModal" class="modal">
+    <div class="modal-content">
+        <h2 style="font-family: 'Orbitron'; color: var(--cyber-gold);">ADD COUNTRY TIME</h2>
+        <p style="color: #888; font-size: 0.8rem; margin-bottom: 20px;">Search and add any country time to be displayed in the schedule's country times view.</p>
+        
+        <div id="quickAddClockContainer">
+            <!-- Search and Dropdown will be rendered here by worldClock -->
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button class="cyber-btn secondary" onclick="closeQuickAddClockModal()" style="width: 100%;">CLOSE</button>
+        </div>
     </div>
 </div>
 
@@ -467,6 +486,95 @@
         if (confirm("Delete this event?")) {
             events.splice(index, 1);
             renderEventsTable();
+        }
+    }
+
+    // Quick Add Clock Modal Functions
+    function openQuickAddClockModal() {
+        document.getElementById('quickAddClockModal').style.display = 'flex';
+        if (window.worldClock) {
+            // We'll temporarily hijack the dropdown container or use a specific one
+            const container = document.getElementById('quickAddClockContainer');
+            
+            // Create a search and select UI specifically for the modal
+            container.innerHTML = `
+                <div style="margin-bottom: 20px; text-align: left;">
+                    <label style="color: #888; font-size: 0.8rem; display: block; margin-bottom: 5px;">SEARCH COUNTRY/CITY</label>
+                    <input type="text" id="modalTimezoneSearch" class="search-box" placeholder="e.g. India, New York, London..." style="width: 100%; box-sizing: border-box;">
+                    
+                    <label style="color: #888; font-size: 0.8rem; display: block; margin-top: 15px; margin-bottom: 5px;">SELECT FROM LIST</label>
+                    <select id="modalTimezoneSelect" class="player-select" style="width: 100%; margin-bottom: 15px;">
+                        <option value="">-- Select Timezone --</option>
+                    </select>
+                    
+                    <button class="cyber-btn" onclick="addClockFromModal()" style="width: 100%; justify-content: center;">
+                        <i class="fas fa-plus-circle"></i> CONFIRM_ADD_CLOCK
+                    </button>
+                </div>
+                <div id="modalSearchResults" style="display: none; margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--cyber-border); border-radius: 8px; text-align: left;">
+                    <div style="color: var(--cyber-gold); font-family: 'Orbitron'; font-size: 0.8rem; margin-bottom: 10px;">SEARCH_RESULTS:</div>
+                    <div id="modalSearchResultsList" style="max-height: 200px; overflow-y: auto;"></div>
+                </div>
+            `;
+
+            const searchInput = document.getElementById('modalTimezoneSearch');
+            const selectInput = document.getElementById('modalTimezoneSelect');
+
+            // Populate select
+            window.worldClock.allTimeZones.forEach(tz => {
+                const opt = document.createElement('option');
+                opt.value = tz;
+                opt.textContent = tz;
+                selectInput.appendChild(opt);
+            });
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const filtered = window.worldClock.allTimeZones.filter(tz => tz.toLowerCase().includes(query));
+                
+                const resultsContainer = document.getElementById('modalSearchResults');
+                const resultsList = document.getElementById('modalSearchResultsList');
+
+                if (query.length > 0) {
+                    resultsContainer.style.display = 'block';
+                    if (filtered.length === 0) {
+                        resultsList.innerHTML = '<p style="color: #ff3232; font-size: 0.8rem;">No matches found.</p>';
+                    } else {
+                        resultsList.innerHTML = filtered.map(tz => {
+                            const flag = window.worldClock.timeZoneFlags[tz] || '🌍';
+                            return `
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid rgba(245, 166, 35, 0.2); cursor: pointer;" 
+                                     onclick="selectTzFromModal('${tz}')">
+                                    <span style="font-size: 0.8rem;"><span style="font-size: 1.1rem; margin-right: 8px;">${flag}</span>${tz}</span>
+                                    <i class="fas fa-plus-circle" style="color: var(--cyber-gold);"></i>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+                } else {
+                    resultsContainer.style.display = 'none';
+                }
+            });
+        }
+    }
+
+    function closeQuickAddClockModal() {
+        document.getElementById('quickAddClockModal').style.display = 'none';
+    }
+
+    function selectTzFromModal(tz) {
+        if (window.worldClock) {
+            window.worldClock.selectAndAdd(tz);
+            closeQuickAddClockModal();
+        }
+    }
+
+    function addClockFromModal() {
+        const tz = document.getElementById('modalTimezoneSelect').value;
+        if (tz) {
+            selectTzFromModal(tz);
+        } else {
+            alert("Please select a timezone first.");
         }
     }
 
