@@ -1232,7 +1232,12 @@ h1::after, h2::after {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 40px;
+    gap: 30px;
+}
+
+/* Search container spacing fix */
+.search-container {
+    max-width: 600px;
 }
 
 .hero-text {
@@ -1258,8 +1263,8 @@ h1::after, h2::after {
 }
 
 .hero-main h1::after {
-    left: 0 !important;
-    transform: none !important;
+    left: 0;
+    transform: none;
 }
 
 .hero-main p {
@@ -1303,7 +1308,7 @@ h1::after, h2::after {
         text-align: center;
     }
     .hero-main h1 {
-        font-size: 2.2em !important;
+        font-size: 2em !important;
         text-align: center !important;
     }
     .hero-main h1::after {
@@ -1314,23 +1319,46 @@ h1::after, h2::after {
         justify-content: center;
     }
     .guild-logo {
-        width: 120px;
-        height: 120px;
+        width: 100px;
+        height: 100px;
+    }
+    .hero-main {
+        padding: 30px 15px;
     }
 }
 
 /* ===== CARD ICON IMAGES ===== */
 .card-icon-img {
-    width: 64px;
-    height: 64px;
+    width: 90px;
+    height: 90px;
     object-fit: contain;
-    border-radius: 12px;
+    border-radius: 16px;
     transition: all 0.3s ease;
 }
 
 .tool-card:hover .card-icon-img {
     transform: scale(1.15);
-    filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.3));
+    filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.4));
+}
+
+/* Override the base card-icon box when it contains an image */
+.tool-card .card-icon img {
+    width: auto;
+    height: auto;
+}
+
+.tool-card .card-icon:has(img),
+.tool-card .card-icon.has-img {
+    width: auto;
+    height: auto;
+    background: transparent;
+    border: none;
+    margin-bottom: 10px;
+}
+
+.tool-card:hover .card-icon.has-img {
+    background: transparent;
+    border: none;
 }
 
 /* ===== ADMIN CARD SPECIAL STYLE ===== */
@@ -1377,11 +1405,11 @@ h1::after, h2::after {
 }
 
 .feature-icon {
-    width: 48px;
-    height: 48px;
+    width: 36px;
+    height: 36px;
     object-fit: contain;
     flex-shrink: 0;
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
 .feature-title {
@@ -1406,13 +1434,21 @@ h1::after, h2::after {
         padding: 10px;
     }
     .feature-icon {
-        width: 40px;
-        height: 40px;
+        width: 32px;
+        height: 32px;
+    }
+    .card-icon-img {
+        width: 70px;
+        height: 70px;
     }
 }
 
 @media (max-width: 480px) {
     .feature-badges {
         grid-template-columns: 1fr;
+    }
+    .card-icon-img {
+        width: 64px;
+        height: 64px;
     }
 }
