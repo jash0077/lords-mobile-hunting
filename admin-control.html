@@ -219,6 +219,18 @@
     </div>
 </div>
 
+<!-- Country Times Modal -->
+<div id="countryTimesModal" class="modal">
+    <div class="modal-content" style="max-width: 700px;">
+        <h2 id="countryTimesEventName" style="font-family: 'Orbitron'; color: var(--cyber-gold); margin-bottom: 10px;">EVENT_NAME</h2>
+        <p id="countryTimesEventUTC" style="font-size: 0.8rem; color: #888; margin-bottom: 20px;">UTC: ...</p>
+        <div id="countryTimesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <!-- Country times will be loaded here -->
+        </div>
+        <button class="cyber-btn" onclick="closeCountryTimesModal()" style="width: 100%;">CLOSE</button>
+    </div>
+</div>
+
 <!-- Event Management Modal -->
 <div id="eventModal" class="modal">
     <div class="modal-content">
@@ -334,6 +346,7 @@
                     <td>${utcTime}</td>
                     <td style="color: #00ff64; font-size: 0.7rem;">${localPreview} (You)</td>
                     <td>
+                        <button class="cyber-btn" onclick="openCountryTimesModal(${index})" style="padding: 5px 10px; font-size: 0.7rem;">🌍 COUNTRY_TIMES</button>
                         <button class="cyber-btn" onclick="editEvent(${index})" style="padding: 5px 10px; font-size: 0.7rem;">EDIT</button>
                         <button class="cyber-btn secondary" onclick="deleteEventRecord(${index})" style="padding: 5px 10px; font-size: 0.7rem; border-color: #ff3232; color: #ff3232;">DELETE</button>
                     </td>
@@ -727,6 +740,81 @@
 
     function resetAll() { if(confirm("Clear pending records?")) { pendingList = []; renderPending(); document.getElementById('confirmedSection').style.display = 'none'; } }
     async function syncAll() { alert("Sheet sync is currently read-only. Data is saved in pending list."); }
+
+    // Country Times Modal Functions
+    let currentCountryTimesEventIndex = -1;
+
+    async function openCountryTimesModal(index) {
+        currentCountryTimesEventIndex = index;
+        const ev = events[index];
+        const utcDate = new Date(ev.dateTime + 'Z');
+        
+        document.getElementById('countryTimesEventName').textContent = ev.name;
+        document.getElementById('countryTimesEventUTC').textContent = `UTC: ${ev.dateTime.replace('T', ' ')}`;
+        
+        // Load clocks from data/clocks.json
+        try {
+            const clocksRes = await fetch('data/clocks.json?t=' + Date.now());
+            if (clocksRes.ok) {
+                const clocks = await clocksRes.json();
+                renderCountryTimesGrid(clocks, utcDate);
+            } else {
+                document.getElementById('countryTimesGrid').innerHTML = '<p style="grid-column: 1/-1; color: #888;">Failed to load countries.</p>';
+            }
+        } catch (e) {
+            console.error('Error loading clocks:', e);
+            document.getElementById('countryTimesGrid').innerHTML = '<p style="grid-column: 1/-1; color: #ff3232;">Error loading countries.</p>';
+        }
+        
+        document.getElementById('countryTimesModal').style.display = 'flex';
+    }
+
+    function renderCountryTimesGrid(clocks, utcDate) {
+        const grid = document.getElementById('countryTimesGrid');
+        
+        if (clocks.length === 0) {
+            grid.innerHTML = '<p style="grid-column: 1/-1; color: #888;">No countries added to World Clock System.</p>';
+            return;
+        }
+
+        grid.innerHTML = clocks.map(clock => {
+            try {
+                // Get current time in this timezone (for reference)
+                const now = new Date();
+                const currentTimeInZone = new Intl.DateTimeFormat('en-US', {
+                    timeZone: clock.zone,
+                    hour: '2-digit', minute: '2-digit', second: '2-digit',
+                    hour12: false
+                }).format(now);
+
+                // Get event time in this timezone
+                const eventTimeInZone = new Intl.DateTimeFormat('en-US', {
+                    timeZone: clock.zone,
+                    month: 'short', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit',
+                    hour12: false
+                }).format(utcDate);
+
+                return `
+                    <div class="modal-clock-card" style="background: rgba(0,0,0,0.3); border: 1px solid var(--cyber-border); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 1.5rem;">${clock.flag}</div>
+                        <div style="font-size: 0.7rem; color: #888; text-transform: uppercase;">${clock.name}</div>
+                        <div style="font-family: 'Orbitron'; color: var(--cyber-gold); font-size: 1.1rem; margin: 5px 0;">${eventTimeInZone}</div>
+                        <div style="font-size: 0.6rem; color: #666;">${clock.zone}</div>
+                    </div>
+                `;
+            } catch (e) {
+                console.error('Error formatting time for', clock.zone, e);
+                return '';
+            }
+        }).join('');
+    }
+
+    function closeCountryTimesModal() {
+        document.getElementById('countryTimesModal').style.display = 'none';
+        currentCountryTimesEventIndex = -1;
+    }
+
 </script>
 </body>
 </html>

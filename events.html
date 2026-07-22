@@ -101,6 +101,18 @@
     <div id="eventsGrid" class="event-grid"></div>
 </div>
 
+<!-- Country Times Modal (World Clock System) -->
+<div id="eventCountryTimesModal" class="modal" onclick="closeEventCountryTimesModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 700px;">
+        <h2 id="eventCountryTimesName" style="font-family: 'Orbitron'; color: var(--accent-gold); margin-bottom: 10px;">EVENT_NAME</h2>
+        <p id="eventCountryTimesUTC" style="font-size: 0.8rem; color: #888; margin-bottom: 20px;">UTC: ...</p>
+        <div id="eventCountryTimesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <!-- Country times will be loaded here -->
+        </div>
+        <button class="btn-calculate" onclick="closeEventCountryTimesModal()" style="width: 100%; padding: 12px; background: var(--accent-gold); color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">CLOSE</button>
+    </div>
+</div>
+
 <!-- World Clocks Modal -->
 <div id="clockModal" class="modal" onclick="closeClockModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
@@ -156,7 +168,7 @@
             }).format(utcDate);
 
             return `
-                <div class="event-card" id="event-${index}" onclick="openClockModal(${index})">
+                <div class="event-card" id="event-${index}">
                     <div class="event-status" id="status-${index}">Checking...</div>
                     <div class="event-name">${ev.name}</div>
                     <div class="event-region">${ev.region || 'Global'}</div>
@@ -177,6 +189,11 @@
                     <div class="countdown-container">
                         <div class="countdown-label">COUNTDOWN</div>
                         <div class="countdown-timer" id="timer-${index}">00:00:00:00</div>
+                    </div>
+                    
+                    <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-calculate" onclick="openEventClockModal(${index})" style="flex: 1; padding: 8px; font-size: 0.75rem; background: #00ff64; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">🌍 COUNTRY_TIMES</button>
+                        <button class="btn-calculate" onclick="openClockModal(${index})" style="flex: 1; padding: 8px; font-size: 0.75rem; background: var(--accent-gold); color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">⏰ ALL_ZONES</button>
                     </div>
                 </div>
             `;
@@ -309,6 +326,74 @@
     }
 
     window.addEventListener('load', fetchAllData);
+
+    // Country Times Modal Functions (Public Events Page)
+    let currentEventCountryTimesIndex = -1;
+
+    async function openEventClockModal(index) {
+        currentEventCountryTimesIndex = index;
+        const ev = events[index];
+        const utcDate = new Date(ev.dateTime + 'Z');
+        
+        document.getElementById('eventCountryTimesName').textContent = ev.name;
+        document.getElementById('eventCountryTimesUTC').textContent = `UTC: ${ev.dateTime.replace('T', ' ')}`;
+        
+        // Load clocks from data/clocks.json
+        try {
+            const clocksRes = await fetch('data/clocks.json?t=' + Date.now());
+            if (clocksRes.ok) {
+                const clocks = await clocksRes.json();
+                renderEventCountryTimesGrid(clocks, utcDate);
+            } else {
+                document.getElementById('eventCountryTimesGrid').innerHTML = '<p style="grid-column: 1/-1; color: #888;">Failed to load countries.</p>';
+            }
+        } catch (e) {
+            console.error('Error loading clocks:', e);
+            document.getElementById('eventCountryTimesGrid').innerHTML = '<p style="grid-column: 1/-1; color: #ff3232;">Error loading countries.</p>';
+        }
+        
+        document.getElementById('eventCountryTimesModal').style.display = 'flex';
+    }
+
+    function renderEventCountryTimesGrid(clocks, utcDate) {
+        const grid = document.getElementById('eventCountryTimesGrid');
+        
+        if (clocks.length === 0) {
+            grid.innerHTML = '<p style="grid-column: 1/-1; color: #888;">No countries added to World Clock System yet.</p>';
+            return;
+        }
+
+        grid.innerHTML = clocks.map(clock => {
+            try {
+                // Get event time in this timezone
+                const eventTimeInZone = new Intl.DateTimeFormat('en-US', {
+                    timeZone: clock.zone,
+                    month: 'short', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit',
+                    hour12: true
+                }).format(utcDate);
+
+                return `
+                    <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 1.5rem;">${clock.flag}</div>
+                        <div style="font-size: 0.7rem; color: #888; text-transform: uppercase; margin: 5px 0;">${clock.name}</div>
+                        <div style="font-family: 'Orbitron'; color: #00ff64; font-size: 1rem; margin: 5px 0; font-weight: bold;">${eventTimeInZone}</div>
+                        <div style="font-size: 0.6rem; color: #666;">${clock.zone}</div>
+                    </div>
+                `;
+            } catch (e) {
+                console.error('Error formatting time for', clock.zone, e);
+                return '';
+            }
+        }).join('');
+    }
+
+    function closeEventCountryTimesModal(event) {
+        if (event && event.target.id !== 'eventCountryTimesModal') return;
+        document.getElementById('eventCountryTimesModal').style.display = 'none';
+        currentEventCountryTimesIndex = -1;
+    }
+
 </script>
 </body>
 </html>
