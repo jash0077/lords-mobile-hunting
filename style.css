@@ -1329,8 +1329,8 @@ h1::after, h2::after {
 
 /* ===== CARD ICON IMAGES ===== */
 .card-icon-img {
-    width: 64px;
-    height: 64px;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
     border-radius: 12px;
     transition: all 0.3s ease;
@@ -1343,8 +1343,8 @@ h1::after, h2::after {
 
 /* Override the base card-icon box when it contains an image */
 .tool-card .card-icon.has-img {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     background: transparent;
     border: none;
     margin-bottom: 10px;
