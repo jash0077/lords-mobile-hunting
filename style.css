@@ -1329,16 +1329,16 @@ h1::after, h2::after {
 
 /* ===== CARD ICON IMAGES ===== */
 .card-icon-img {
-    width: 90px;
-    height: 90px;
+    width: 64px;
+    height: 64px;
     object-fit: contain;
-    border-radius: 16px;
+    border-radius: 12px;
     transition: all 0.3s ease;
 }
 
 .tool-card:hover .card-icon-img {
     transform: scale(1.15);
-    filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.4));
+    filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.3));
 }
 
 /* Override the base card-icon box when it contains an image */
@@ -1405,11 +1405,11 @@ h1::after, h2::after {
 }
 
 .feature-icon {
-    width: 36px;
-    height: 36px;
+    width: 48px;
+    height: 48px;
     object-fit: contain;
     flex-shrink: 0;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
 .feature-title {
@@ -1434,21 +1434,13 @@ h1::after, h2::after {
         padding: 10px;
     }
     .feature-icon {
-        width: 32px;
-        height: 32px;
-    }
-    .card-icon-img {
-        width: 70px;
-        height: 70px;
+        width: 40px;
+        height: 40px;
     }
 }
 
 @media (max-width: 480px) {
     .feature-badges {
         grid-template-columns: 1fr;
-    }
-    .card-icon-img {
-        width: 64px;
-        height: 64px;
     }
 }
