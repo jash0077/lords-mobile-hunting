@@ -1342,15 +1342,9 @@ h1::after, h2::after {
 }
 
 /* Override the base card-icon box when it contains an image */
-.tool-card .card-icon img {
-    width: auto;
-    height: auto;
-}
-
-.tool-card .card-icon:has(img),
 .tool-card .card-icon.has-img {
-    width: auto;
-    height: auto;
+    width: 100px;
+    height: 100px;
     background: transparent;
     border: none;
     margin-bottom: 10px;
