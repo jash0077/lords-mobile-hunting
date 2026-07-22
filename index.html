@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#2c3e50">
+    <meta name="theme-color" content="#060612">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LM Hub">
@@ -61,26 +61,32 @@
         <a href="migration.html" data-translate-key="migration_guide">Migration Guide</a>
         <a href="research.html" data-translate-key="research_construction">Research &amp; Construction</a>
         <a href="festival.html">Guild Festival</a>
-        <a href="admin-control.html" style="color: var(--accent-gold); font-weight: bold;"><i class="fas fa-user-shield"></i> Admin Control</a>
-
+        <a href="admin-control.html" style="color: var(--neon-purple); font-weight: bold;"><i class="fas fa-user-shield"></i> Admin Control</a>
     </nav>
 </header>
 
 <div class="container">
     <!-- Battle Clock Section -->
-    <div id="homeBattleClock" class="hero-section" style="display:none; padding: 20px; background: linear-gradient(135deg, rgba(245, 166, 35, 0.1) 0%, rgba(0,0,0,0.5) 100%); border: 2px solid var(--accent-gold); margin-bottom: 20px;">
-        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; color: var(--accent-gold); font-family: 'Orbitron', sans-serif;">NEXT GUILD EVENT</div>
-        <div id="homeTimer" style="font-family: 'Orbitron', sans-serif; font-size: 2rem; color: var(--accent-gold); text-shadow: 0 0 10px var(--accent-gold); margin: 10px 0;">00:00:00:00</div>
+    <div id="homeBattleClock" class="hero-section" style="display:none; padding: 20px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(0,0,0,0.5) 100%); border: 2px solid var(--neon-purple); margin-bottom: 20px;">
+        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; color: var(--neon-purple); font-family: 'Orbitron', sans-serif;">NEXT GUILD EVENT</div>
+        <div id="homeTimer" style="font-family: 'Orbitron', sans-serif; font-size: 2rem; color: var(--neon-purple); text-shadow: 0 0 10px var(--glow-purple); margin: 10px 0;">00:00:00:00</div>
     </div>
 
-    <div class="hero-section">
-        <div class="hero-content">
-            <h1 data-translate-key="welcome_title">WELCOME TO HEM GUILD</h1>
-            <p data-translate-key="welcome_description">Your one-stop destination for essential tools and guides to dominate the kingdom.</p>
-            <div class="hero-badges">
-                <span class="badge">⚔️ War Tracking</span>
-                <span class="badge">🎯 Monster Hunting</span>
-                <span class="badge">📊 Advanced Calculators</span>
+    <!-- Hero Section with HEM Logo -->
+    <div class="hero-section hero-main">
+        <div class="hero-layout">
+            <div class="hero-text">
+                <div class="hero-label">WELCOME COMMANDER</div>
+                <h1 data-translate-key="welcome_title">WELCOME TO<br>HEM GUILD</h1>
+                <p data-translate-key="welcome_description">Your one-stop destination for essential tools and guides to dominate the kingdom.</p>
+                <div class="hero-badges">
+                    <span class="badge">⚔️ War Tracking</span>
+                    <span class="badge">🎯 Monster Hunting</span>
+                    <span class="badge">📊 Advanced Calculators</span>
+                </div>
+            </div>
+            <div class="hero-logo">
+                <img src="icons/hem-shield.png" alt="HEM Guild Shield" class="guild-logo">
             </div>
         </div>
     </div>
@@ -88,7 +94,7 @@
     <!-- Search Bar -->
     <div class="search-container" id="searchContainer">
         <i class="fas fa-search search-icon"></i>
-        <input type="text" class="search-input" id="searchInput" placeholder="Search tools..." autocomplete="off">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search tools, guides, calculators..." autocomplete="off">
         <div class="search-results" id="searchResults"></div>
     </div>
 
@@ -96,67 +102,99 @@
     
     <div class="card-grid">
         <a href="calculator.html" class="tool-card" style="animation-delay: 0.1s;">
-            <div class="card-icon"><i class="fas fa-calculator"></i></div>
+            <div class="card-icon"><img src="icons/icon-speedup.png" alt="Speedup Calculator" class="card-icon-img"></div>
             <h3 data-translate-key="speedup_calculator">Speedup Calculator</h3>
             <p data-translate-key="speedup_card_description">Calculate your total speedups in minutes, hours, and days with our easy-to-use tool.</p>
             <div class="card-arrow">→</div>
         </a>
         
         <a href="hunting.html" class="tool-card" style="animation-delay: 0.2s;">
-            <div class="card-icon"><i class="fas fa-dragon"></i></div>
+            <div class="card-icon"><img src="icons/icon-hunting.png" alt="Monster Hunting" class="card-icon-img"></div>
             <h3 data-translate-key="monster_hunting">Monster Hunting</h3>
             <p data-translate-key="hunting_card_description">View the best hero lineups for every monster to maximize your hunting efficiency.</p>
             <div class="card-arrow">→</div>
         </a>
         
         <a href="training.html" class="tool-card" style="animation-delay: 0.3s;">
-            <div class="card-icon"><i class="fas fa-users"></i></div>
+            <div class="card-icon"><img src="icons/icon-training.png" alt="Training Calculator" class="card-icon-img"></div>
             <h3 data-translate-key="training_calculator">Training Calculator</h3>
             <p data-translate-key="training_card_description">Calculate resources needed to train troops for each tier and type.</p>
             <div class="card-arrow">→</div>
         </a>
         
         <a href="composition.html" class="tool-card" style="animation-delay: 0.4s;">
-            <div class="card-icon"><i class="fas fa-chess-knight"></i></div>
+            <div class="card-icon"><img src="icons/icon-troop.png" alt="Troop Composition" class="card-icon-img"></div>
             <h3 data-translate-key="troop_composition">Troop Composition</h3>
             <p data-translate-key="composition_card_description">Calculate your T5/T4 troop split with custom Infantry, Ranged, and Cavalry ratios.</p>
             <div class="card-arrow">→</div>
         </a>
         
         <a href="research.html" class="tool-card" style="animation-delay: 0.5s;">
-            <div class="card-icon"><i class="fas fa-flask"></i></div>
+            <div class="card-icon"><img src="icons/icon-speed.png" alt="Speed Calculator" class="card-icon-img"></div>
             <h3 data-translate-key="speed_calculator">Speed Calculator</h3>
             <p data-translate-key="speed_card_description">Calculate research and construction time with boosts and guild helps.</p>
             <div class="card-arrow">→</div>
         </a>
 
         <a href="leaderboard.html" class="tool-card" style="animation-delay: 0.6s;">
-            <div class="card-icon"><i class="fas fa-swords"></i></div>
+            <div class="card-icon"><img src="icons/icon-war.png" alt="War" class="card-icon-img"></div>
             <h3 data-translate-key="war">War</h3>
             <p data-translate-key="war_card_description">Track guild kills, might loss, and war rankings.</p>
             <div class="card-arrow">→</div>
         </a>
         
-<a href="festival.html" class="tool-card" style="animation-delay: 0.7s;">
-	            <div class="card-icon"><i class="fas fa-tent"></i></div>
-	            <h3>Guild Festival</h3>
-	            <p>Plan your missions and track your points to reach your target with our advanced calculator.</p>
-	            <div class="card-arrow">→</div>
-	        </a>
-	        
+        <a href="festival.html" class="tool-card" style="animation-delay: 0.7s;">
+            <div class="card-icon"><img src="icons/icon-festival.png" alt="Guild Festival" class="card-icon-img"></div>
+            <h3>Guild Festival</h3>
+            <p>Plan your missions and track your points to reach your target with our advanced calculator.</p>
+            <div class="card-arrow">→</div>
+        </a>
+        
         <a href="events.html" class="tool-card" style="animation-delay: 0.8s;">
-            <div class="card-icon"><i class="fas fa-calendar-alt"></i></div>
+            <div class="card-icon"><img src="icons/icon-events.png" alt="Event Schedules" class="card-icon-img"></div>
             <h3 data-translate-key="event_schedules">Event Schedules</h3>
             <p data-translate-key="events_card_description">View upcoming guild events, live countdowns, and global timezones in real-time.</p>
             <div class="card-arrow">→</div>
         </a>
         
-        <a href="admin-control.html" class="tool-card" style="animation-delay: 0.9s; border-left-color: var(--accent-gold);">
-            <div class="card-icon"><i class="fas fa-user-shield" style="color: var(--accent-gold);"></i></div>
-            <h3 style="color: var(--accent-gold);">Admin Control</h3>
+        <a href="admin-control.html" class="tool-card admin-card" style="animation-delay: 0.9s;">
+            <div class="card-icon"><img src="icons/icon-admin.png" alt="Admin Control" class="card-icon-img"></div>
+            <h3 class="admin-title">Admin Control</h3>
             <p>Advanced OCR tools to scan screenshots and automatically update guild data.</p>
             <div class="card-arrow">→</div>
         </a>
+    </div>
+
+    <!-- Feature Badges Section -->
+    <div class="feature-badges">
+        <div class="feature-item">
+            <img src="icons/icon-clock.png" alt="World Clock" class="feature-icon">
+            <div class="feature-text">
+                <div class="feature-title" style="color: var(--neon-cyan);">World Clock</div>
+                <div class="feature-desc">Global time converter for all events</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <img src="icons/icon-secure.png" alt="Secure & Sync" class="feature-icon">
+            <div class="feature-text">
+                <div class="feature-title" style="color: var(--neon-green);">Secure & Sync</div>
+                <div class="feature-desc">Your data is safe and always in sync</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <img src="icons/icon-realtime.png" alt="Real-time Updates" class="feature-icon">
+            <div class="feature-text">
+                <div class="feature-title" style="color: var(--accent-gold);">Real-time Updates</div>
+                <div class="feature-desc">Live data & countdowns updated instantly</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <img src="icons/icon-analytics.png" alt="Advanced Analytics" class="feature-icon">
+            <div class="feature-text">
+                <div class="feature-title" style="color: var(--neon-pink);">Advanced Analytics</div>
+                <div class="feature-desc">Smart insights to boost your gameplay</div>
+            </div>
+        </div>
     </div>
 
     <footer>
@@ -217,4 +255,4 @@
 
 <!-- Deployment trigger -->
 
-<!-- Version: 1.0.1 - Admin Update Force Refresh -->
+<!-- Version: 1.0.2 - Custom Icons & HEM Logo -->
