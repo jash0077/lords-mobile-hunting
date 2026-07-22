@@ -49,8 +49,6 @@
 
         .cyber-btn { padding: 12px 25px; background: var(--cyber-gold); color: black; border: none; border-radius: 5px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; font-size: 0.8rem; transition: 0.3s; display: inline-flex; align-items: center; gap: 10px; }
         .cyber-btn:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--cyber-gold); }
-        .cyber-btn.hype { background: #ff00ff; color: white; box-shadow: 0 0 15px rgba(255, 0, 255, 0.4); }
-        .cyber-btn.secondary { background: transparent; border: 1px solid var(--cyber-border); color: var(--cyber-gold); }
 
         /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 4000; align-items: center; justify-content: center; }
@@ -62,8 +60,6 @@
         .player-item:hover { background: rgba(245, 166, 35, 0.1); }
         .player-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--cyber-gold); }
         
-        #hypeReport { background: #000; color: #00ff00; padding: 20px; border-radius: 8px; text-align: left; font-family: monospace; white-space: pre-wrap; margin: 20px 0; max-height: 300px; overflow-y: auto; border: 1px solid #00ff00; }
-        .search-box { width: 100%; padding: 10px; background: #111; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 10px; }
     </style>
 </head>
 <body class="admin-body">
@@ -146,37 +142,6 @@
     <div class="cyber-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
             <h3 style="font-family: 'Orbitron'; color: var(--cyber-gold); margin: 0;">DATA_ENTRY_SECTOR</h3>
-            <button class="cyber-btn hype" onclick="openHypeSelector()"><i class="fas fa-fire"></i> HYPE_SELECTOR</button>
-        </div>
-        
-        <div style="overflow-x: auto;">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Select Player</th>
-                        <th>Current Might</th>
-                        <th>Might Delta</th>
-                        <th>Current Kills</th>
-                        <th>Kills Incr.</th>
-                    </tr>
-                </thead>
-                <tbody id="resultsBody">
-                    <tr>
-                        <td>
-                            <select class="player-select" id="pSelect" onchange="updateCalc()">
-                                <option value="">-- Choose Member --</option>
-                            </select>
-                        </td>
-                        <td><input type="text" class="num-input" id="pMight" placeholder="e.g. 500M" oninput="updateCalc()"></td>
-                        <td id="pDelta">--</td>
-                        <td><input type="text" class="num-input" id="pKills" placeholder="e.g. 10M" oninput="updateCalc()"></td>
-                        <td id="pKDelta">--</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div style="margin-top: 15px; text-align: right;">
-            <button class="cyber-btn" onclick="addEntry()"><i class="fas fa-plus"></i> ADD_TO_LIST</button>
         </div>
     </div>
 
@@ -194,31 +159,6 @@
         <div style="margin-top: 20px; text-align: right;">
             <button class="cyber-btn secondary" onclick="resetAll()">CLEAR_ALL</button>
             <button class="cyber-btn" onclick="syncAll()">SYNC_MAINFRAME</button>
-        </div>
-    </div>
-</div>
-
-<!-- Hype Selector Modal -->
-<div id="hypeSelectorModal" class="modal">
-    <div class="modal-content">
-        <h2 style="font-family: 'Orbitron'; color: var(--cyber-gold);">SELECT PLAYERS TO HYPE</h2>
-        <input type="text" class="search-box" id="playerSearch" placeholder="Search player name..." oninput="filterPlayers()">
-        <div class="player-list-container" id="playerList"></div>
-        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
-            <button class="cyber-btn hype" onclick="generateHype()">GENERATE_REPORT</button>
-            <button class="cyber-btn secondary" onclick="closeHypeSelector()">CANCEL</button>
-        </div>
-    </div>
-</div>
-
-<!-- Hype Result Modal -->
-<div id="hypeResultModal" class="modal">
-    <div class="modal-content">
-        <h2 style="font-family: 'Orbitron'; color: #ff00ff;">🔥 GUILD HYPE REPORT 🔥</h2>
-        <div id="hypeReport"></div>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button class="cyber-btn" onclick="copyHype()">COPY_TO_CLIPBOARD</button>
-            <button class="cyber-btn secondary" onclick="closeHypeResult()">BACK</button>
         </div>
     </div>
 </div>
@@ -783,8 +723,7 @@
             select.appendChild(opt);
         });
         
-        // Populate Hype Selector
-        renderHypeList();
+        
     }
 
     function parseCSV(csv) {
@@ -838,22 +777,11 @@
     }
 
     // Hype Selector Logic
-    function openHypeSelector() {
-        document.getElementById('hypeSelectorModal').style.display = 'flex';
-        renderHypeList();
-    }
+    
 
-    function closeHypeSelector() { document.getElementById('hypeSelectorModal').style.display = 'none'; }
+    
 
-    function renderHypeList(filter = "") {
-        const container = document.getElementById('playerList');
-        container.innerHTML = '';
-        oldData.filter(p => p.Player.toLowerCase().includes(filter.toLowerCase())).forEach(p => {
-            const item = document.createElement('div');
-            item.className = 'player-item';
-            const isPending = pendingList.find(pr => pr.name === p.Player);
-            item.innerHTML = `
-                <input type="checkbox" id="check-${p.Player}" value="${p.Player}" ${isPending ? 'checked' : ''}>
+    " value="${p.Player}" ${isPending ? 'checked' : ''}>
                 <label for="check-${p.Player}">${p.Player} ${isPending ? '<span style="color:var(--cyber-gold); font-size:0.7rem;">(With Stats)</span>' : ''}</label>
             `;
             item.onclick = (e) => { if(e.target.tagName !== 'INPUT') { const cb = item.querySelector('input'); cb.checked = !cb.checked; } };
@@ -861,21 +789,9 @@
         });
     }
 
-    function filterPlayers() { renderHypeList(document.getElementById('playerSearch').value); }
+    
 
-    function generateHype() {
-        const selected = Array.from(document.querySelectorAll('#playerList input:checked')).map(cb => cb.value);
-        if (selected.length === 0) return alert("Please select at least one player!");
-
-        let report = `🔥 **HEM GUILD WAR REPORT** 🔥\n\n`;
-        report += `🏆 **TOP PERFORMERS THIS WEEK** 🏆\n\n`;
-
-        // Create list with stats if available
-        const listWithStats = selected.map(name => {
-            const pending = pendingList.find(p => p.name === name);
-            if (pending) return pending;
-            const old = oldData.find(p => p.Player === name);
-            return { name, dm: 0, dk: 0, isShoutout: true };
+    ;
         }).sort((a,b) => b.dm - a.dm);
 
         listWithStats.forEach((p, i) => {
@@ -894,12 +810,8 @@
         document.getElementById('hypeResultModal').style.display = 'flex';
     }
 
-    function closeHypeResult() { document.getElementById('hypeResultModal').style.display = 'none'; openHypeSelector(); }
-    function copyHype() {
-        const text = document.getElementById('hypeReport').textContent;
-        navigator.clipboard.writeText(text);
-        alert("Report copied! Paste it in Discord/Telegram.");
-    }
+    
+    
 
     // Battle Clock
     function startTimer() {
