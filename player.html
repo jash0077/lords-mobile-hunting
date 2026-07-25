@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player Profile | Lords Mobile Hub</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -19,14 +18,13 @@
             --accent-green: #3fb950;
             --accent-red: #f85149;
             --border: rgba(255, 255, 255, 0.06);
-            --font-mono: 'Courier New', Courier, monospace;
         }
 
         body { 
             background: var(--bg-dark); 
             color: var(--text-primary); 
             padding: 20px; 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            font-family: 'Inter', sans-serif; 
             line-height: 1.6;
         }
 
@@ -45,7 +43,6 @@
             padding: 1.5rem; 
             border-radius: 12px; 
             border: 1px solid var(--border);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         .profile-avatar { 
@@ -57,7 +54,7 @@
             flex-shrink: 0;
         }
 
-        .profile-info h1 { margin: 0 0 8px; font-size: 1.8rem; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .profile-info h1 { margin: 0 0 8px; font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
         .badge { font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; font-weight: 600; text-transform: uppercase; }
         .badge-guild { background: rgba(77, 148, 255, 0.1); color: var(--accent-blue); border: 1px solid rgba(77, 148, 255, 0.2); }
         .badge-rank { background: rgba(63, 185, 80, 0.1); color: var(--accent-green); border: 1px solid rgba(63, 185, 80, 0.2); }
@@ -66,16 +63,6 @@
             display: inline-flex; gap: 15px; font-size: 0.85rem; color: var(--text-secondary); 
             background: rgba(255,255,255,0.03); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border);
         }
-        .seen-info strong { color: var(--text-primary); }
-
-        .tabs { display: flex; gap: 10px; margin: 1.5rem 0; flex-wrap: wrap; }
-        .tab-btn { 
-            padding: 8px 16px; border: 1px solid var(--border); background: var(--bg-card); 
-            color: var(--text-secondary); border-radius: 8px; cursor: pointer; font-weight: 600; 
-            transition: all 0.2s; font-size: 0.9rem;
-        }
-        .tab-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
-        .tab-btn.active { background: var(--accent-blue); border-color: var(--accent-blue); color: #fff; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
         .stat-card { 
@@ -85,38 +72,23 @@
         .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; }
         .stat-card.blue::before { background: var(--accent-blue); }
         .stat-card.yellow::before { background: #f5a623; }
-        .stat-card.purple::before { background: var(--accent-purple); }
         
-        .stat-icon { font-size: 1.2rem; margin-bottom: 10px; opacity: 0.8; }
         .stat-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
-        .stat-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+        .stat-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; }
         .stat-delta { font-size: 0.85rem; margin-top: 8px; font-weight: 500; }
         .stat-delta.positive { color: var(--accent-green); }
         .stat-delta.negative { color: var(--accent-red); }
 
         .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; }
         .card-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); }
-        .card-header h2 { font-size: 1rem; margin: 0; display: flex; align-items: center; gap: 10px; color: var(--text-primary); }
+        .card-header h2 { font-size: 1rem; margin: 0; display: flex; align-items: center; gap: 10px; }
         .card-body { padding: 1.5rem; }
 
-        .quota-status { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
-        .quota-icon { font-size: 2.5rem; }
-        .progress-container { flex: 1; min-width: 250px; }
-        .progress-label { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
-        .progress-sub { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 10px; }
-        .progress-bar { height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
-        .progress-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
-
-        .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; }
         .chart-box { height: 280px; position: relative; }
-
-        .section-label { color: var(--text-secondary); margin: 2rem 0 1rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
         @media (max-width: 600px) {
             .profile-header { flex-direction: column; text-align: center; }
             .profile-info h1 { justify-content: center; }
-            .chart-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -130,16 +102,15 @@
         
         <div id="loading" style="text-align:center; padding: 100px 0;">
             <i class="fas fa-circle-notch fa-spin fa-3x" style="color: var(--accent-blue);"></i>
-            <p style="margin-top: 20px; color: var(--text-secondary);">Synchronizing player data...</p>
+            <p style="margin-top: 20px; color: var(--text-secondary);">Loading player profile...</p>
         </div>
 
         <div id="profile-content" style="display:none;">
-            <!-- Header Section -->
             <div class="profile-header">
                 <div class="profile-avatar" id="playerAvatar">?</div>
                 <div class="profile-info">
                     <h1 id="playerName">Player Name 
-                        <span class="badge badge-guild" id="playerGuild">GUILD</span>
+                        <span class="badge badge-guild">HEM</span>
                         <span class="badge badge-rank" id="playerRank">R4</span>
                     </h1>
                     <div class="seen-info">
@@ -149,109 +120,59 @@
                 </div>
             </div>
 
-            <!-- Tabs -->
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('war')"><i class="fas fa-khanda"></i> War</button>
-                <button class="tab-btn" onclick="switchTab('festival')"><i class="fas fa-gift"></i> Festival</button>
-                <button class="tab-btn" onclick="switchTab('history')"><i class="fas fa-history"></i> History</button>
-            </div>
-
-            <!-- War Tab Content -->
-            <div id="tab-war">
-                <div class="stats-grid">
-                    <div class="stat-card blue">
-                        <div class="stat-icon">🏰</div>
-                        <div class="stat-value" id="mightVal">--</div>
-                        <div class="stat-label">Current Might</div>
-                        <div class="stat-delta" id="mightGain">--</div>
-                    </div>
-                    <div class="stat-card yellow">
-                        <div class="stat-icon">⚔️</div>
-                        <div class="stat-value" id="killsVal">--</div>
-                        <div class="stat-label">Current Kills</div>
-                        <div class="stat-delta" id="killsGain">--</div>
-                    </div>
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-value" id="mightVal">--</div>
+                    <div class="stat-label">Current Might</div>
+                    <div class="stat-delta" id="mightLoss">--</div>
                 </div>
-
-                <div class="card" id="quotaCard">
-                    <div class="card-header">
-                        <h2><i class="fas fa-bullseye"></i> Monthly Kill Quota (1,000,000)</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="quota-status">
-                            <div class="quota-icon" id="quotaIcon">⏳</div>
-                            <div class="progress-container">
-                                <div class="progress-label" id="quotaStatusText">CALCULATING...</div>
-                                <div class="progress-sub" id="quotaProgressText">0 / 1,000,000 kills</div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" id="quotaBar" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section-label">Performance Charts</div>
-                <div class="chart-grid">
-                    <div class="card">
-                        <div class="card-header"><h2><i class="fas fa-chart-area"></i> Might Progress</h2></div>
-                        <div class="card-body"><div class="chart-box"><canvas id="mightChart"></canvas></div></div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header"><h2><i class="fas fa-chart-line"></i> Kills Growth</h2></div>
-                        <div class="card-body"><div class="chart-box"><canvas id="killsChart"></canvas></div></div>
-                    </div>
+                <div class="stat-card yellow">
+                    <div class="stat-value" id="killsVal">--</div>
+                    <div class="stat-label">Current Kills</div>
+                    <div class="stat-delta" id="killsGain">--</div>
                 </div>
             </div>
 
-            <!-- Festival Tab Content -->
-            <div id="tab-festival" style="display:none;">
-                <div class="stats-grid">
-                    <div class="stat-card purple">
-                        <div class="stat-icon">🎪</div>
-                        <div class="stat-value" id="festVal">--</div>
-                        <div class="stat-label">Latest Festival Points</div>
-                        <div class="stat-delta" id="festRank">--</div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header"><h2><i class="fas fa-history"></i> Festival History</h2></div>
-                    <div class="card-body">
-                        <div class="chart-box" style="height: 300px;"><canvas id="festChart"></canvas></div>
-                    </div>
-                </div>
+            <div class="card">
+                <div class="card-header"><h2><i class="fas fa-chart-area"></i> Might Progress</h2></div>
+                <div class="card-body"><div class="chart-box"><canvas id="mightChart"></canvas></div></div>
             </div>
-
-            <!-- History Tab Content -->
-            <div id="tab-history" style="display:none;">
-                <div class="card">
-                    <div class="card-header"><h2><i class="fas fa-table"></i> Raw Data History</h2></div>
-                    <div class="card-body" style="padding: 0; overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
-                            <thead style="background: rgba(255,255,255,0.05); color: var(--text-secondary);">
-                                <tr>
-                                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border);">Date</th>
-                                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border);">Might</th>
-                                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border);">Kills</th>
-                                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border);">Gain</th>
-                                </tr>
-                            </thead>
-                            <tbody id="historyTableBody">
-                                <!-- Data rows injected here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="card">
+                <div class="card-header"><h2><i class="fas fa-chart-line"></i> Kills Growth</h2></div>
+                <div class="card-body"><div class="chart-box"><canvas id="killsChart"></canvas></div></div>
             </div>
         </div>
     </div>
 
     <script>
-        const SHEET_ID = '1U32usFizcgYfiN2URc9s4tteVXDBZoSDS2AK-KoBfjI';
+        const SHEET_ID = '1SmaO7EImblnP5RlyyxKH1_6GU9Dz1J0gu776ojbSo7I';
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
-        let playerData = [];
-        let charts = {};
+        async function loadProfile() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetPlayer = urlParams.get('name');
+            if (!targetPlayer) {
+                window.location.href = 'leaderboard.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(SHEET_URL);
+                const csvText = await response.text();
+                const allData = parseCSV(csvText);
+                const playerHistory = allData.filter(p => p.NAME.toLowerCase() === targetPlayer.toLowerCase());
+
+                if (playerHistory.length === 0) {
+                    document.getElementById('loading').innerHTML = `<p style="color:var(--accent-red)">Player "${targetPlayer}" not found.</p>`;
+                    return;
+                }
+
+                renderProfile(playerHistory);
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                document.getElementById('loading').innerHTML = `<p style="color:var(--accent-red)">Failed to load data.</p>`;
+            }
+        }
 
         function parseCSV(csv) {
             const lines = csv.split('\n').filter(l => l.trim());
@@ -273,255 +194,65 @@
                 return result;
             };
 
-            const firstRow = parseLine(lines[0]);
-            // Detect if first row is "bulk/transposed" format
-            const dateCol = firstRow[0] || '';
-            const dateParts = dateCol.split(/\s+/);
-            const isBulkFormat = dateParts.length > 10;
-
             const data = [];
-
-            if (isBulkFormat) {
-                const extractValues = (rawCell, headerWords) => {
-                    const parts = rawCell.trim().split(/\s+/);
-                    return parts.slice(headerWords);
-                };
-
-                const dates = extractValues(firstRow[0], 1);
-                const mights = extractValues(firstRow[2], 1);
-                const pkills = extractValues(firstRow[3], 2);
-                const kinc = extractValues(firstRow[4], 2);
-                const mloss = extractValues(firstRow[5], 1);
-                const mgain = extractValues(firstRow[6], 1);
-                const ranks = extractValues(firstRow[7], 1);
-                const gf = extractValues(firstRow[8], 2);
-
-                const playerCount = dates.length;
-                const playerRaw = firstRow[1] || '';
-                const playerText = playerRaw.replace(/^Player\s+/, '').trim();
-                const allPlayerWords = playerText.split(/\s+/);
-
-                const names = [];
-                let wordIdx = 0;
-                let merged = 0;
-
-                for (let p = 0; p < playerCount; p++) {
-                    let name = allPlayerWords[wordIdx];
-                    wordIdx++;
-                    const remaining = allPlayerWords.length - wordIdx;
-                    const remainingPlayers = playerCount - p - 1;
-                    while (remaining - remainingPlayers > merged && wordIdx < allPlayerWords.length) {
-                        const nextWord = allPlayerWords[wordIdx];
-                        const isFirstCharUpper = nextWord && /^[A-Z]/.test(nextWord);
-                        const isAllLower = nextWord && /^[a-z0-9]+$/.test(nextWord);
-                        const isNumber = nextWord && /^\d/.test(nextWord);
-                        const needsMerge = remaining - remainingPlayers > merged;
-                        if (needsMerge && (isAllLower || isNumber || !isFirstCharUpper)) {
-                            name += ' ' + nextWord;
-                            wordIdx++;
-                            merged++;
-                        } else {
-                            break;
-                        }
-                    }
-                    names.push(name);
-                }
-
-                for (let i = 0; i < playerCount; i++) {
-                    data.push({
-                        date: dates[i] || '',
-                        player: names[i] || '',
-                        might: mights[i] || '0',
-                        kills: pkills[i] || '0',
-                        killsIncrease: kinc[i] || '0',
-                        mightLoss: mloss[i] || '0',
-                        mightGain: mgain[i] || '0',
-                        rank: ranks[i] || 'R1',
-                        guildFest: gf[i] || '0',
-                        guild: 'HEM'
-                    });
-                }
-
-                // Parse additional individual rows
-                for (let i = 1; i < lines.length; i++) {
-                    const v = parseLine(lines[i]);
-                    if (v.length >= 7 && v[1] && v[1].trim()) {
-                        data.push({
-                            date: (v[0] || '').trim(),
-                            player: (v[1] || '').trim(),
-                            might: (v[2] || '').trim(),
-                            kills: (v[3] || '').trim(),
-                            killsIncrease: (v[4] || '').trim(),
-                            mightLoss: (v[5] || '').trim(),
-                            mightGain: (v[6] || '').trim(),
-                            rank: (v[7] || '').trim(),
-                            guildFest: (v[8] || '').trim(),
-                            guild: 'HEM'
-                        });
-                    }
-                }
-            } else {
-                const headers = firstRow;
-                for (let i = 1; i < lines.length; i++) {
-                    const values = parseLine(lines[i]);
-                    const obj = {};
-                    headers.forEach((h, idx) => {
-                        obj[h] = values[idx] || '';
-                    });
-                    
-                    const mapped = {
-                        date: obj['Date'] || obj['MONTH'] || '',
-                        player: obj['Player'] || obj['NAME'] || '',
-                        might: obj['Might'] || obj['MIGHT'] || '0',
-                        kills: obj['Player Kill'] || obj['PLAYER_KILL'] || '0',
-                        killsIncrease: obj['Kills INCREASE '] || obj['Kills INCREASE'] || obj['KILL'] || '0',
-                        mightGain: obj['MightGain'] || obj['MIGHT GAIN'] || '0',
-                        mightLoss: obj['MightLoss'] || obj['MIGHT LOSS'] || '0',
-                        rank: obj['RANK'] || 'R1',
-                        guildFest: obj['GUILD FEST'] || '0',
-                        guild: obj['GUILD'] || 'HEM'
-                    };
-                    if (mapped.player) data.push(mapped);
-                }
-            }
-            return data;
-        }
-
-        function formatValue(val) {
-            if (!val) return '0';
-            let n = parseFloat(val.toString().replace(/[^0-9.-]/g, '')) || 0;
-            if (Math.abs(n) >= 1e9) return (n / 1e9).toFixed(2) + 'B';
-            if (Math.abs(n) >= 1e6) return (n / 1e6).toFixed(1) + 'M';
-            if (Math.abs(n) >= 1e3) return (n / 1e3).toFixed(1) + 'K';
-            return n.toLocaleString();
-        }
-
-        function parseNumeric(val) {
-            if (!val) return 0;
-            let s = val.toString().toUpperCase();
-            let n = parseFloat(s.replace(/[^0-9.-]/g, '')) || 0;
-            if (s.includes('B')) n *= 1e9;
-            else if (s.includes('M')) n *= 1e6;
-            else if (s.includes('K')) n *= 1e3;
-            return n;
-        }
-
-        async function loadProfile() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const playerName = urlParams.get('name');
-            if (!playerName) {
-                window.location.href = 'leaderboard.html';
-                return;
-            }
-
-            try {
-                const response = await fetch(SHEET_URL);
-                const csvText = await response.text();
-                const allData = parseCSV(csvText);
-
-                const searchName = playerName.trim().toLowerCase();
-                playerData = allData.filter(p => p.player.trim().toLowerCase() === searchName);
-                
-                if (playerData.length === 0) {
-                    document.getElementById('loading').innerHTML = `<p style="color:var(--accent-red);">Player "${playerName}" not found.</p>`;
-                    return;
-                }
-
-                const latest = playerData[playerData.length - 1];
-                
-                document.getElementById('breadcrumbPlayer').textContent = latest.player;
-                document.getElementById('playerName').childNodes[0].textContent = latest.player + ' ';
-                document.getElementById('playerAvatar').textContent = latest.player.charAt(0).toUpperCase();
-                document.getElementById('playerGuild').textContent = latest.guild;
-                document.getElementById('playerRank').textContent = latest.rank;
-                document.getElementById('firstSeen').textContent = playerData[0].date;
-                document.getElementById('lastSeen').textContent = latest.date;
-
-                document.getElementById('mightVal').textContent = latest.might;
-                const mGain = parseNumeric(latest.mightGain);
-                document.getElementById('mightGain').textContent = (mGain >= 0 ? '+' : '') + formatValue(mGain);
-                document.getElementById('mightGain').className = 'stat-delta ' + (mGain >= 0 ? 'positive' : 'negative');
-
-                document.getElementById('killsVal').textContent = latest.kills;
-                const kGain = parseNumeric(latest.killsIncrease);
-                document.getElementById('killsGain').textContent = '+' + formatValue(kGain);
-                document.getElementById('killsGain').className = 'stat-delta positive';
-
-                const quota = 1000000;
-                const progress = Math.min(100, (kGain / quota) * 100);
-                const quotaBar = document.getElementById('quotaBar');
-                const quotaCard = document.getElementById('quotaCard');
-                
-                document.getElementById('quotaProgressText').textContent = `${formatValue(kGain)} / 1M kills this month`;
-                quotaBar.style.width = progress + '%';
-                
-                if (kGain >= quota) {
-                    document.getElementById('quotaIcon').textContent = '✅';
-                    document.getElementById('quotaStatusText').textContent = 'QUOTA MET';
-                    document.getElementById('quotaStatusText').style.color = 'var(--accent-green)';
-                    quotaBar.style.background = 'var(--accent-green)';
-                    quotaCard.style.borderTop = '3px solid var(--accent-green)';
-                } else {
-                    document.getElementById('quotaIcon').textContent = '❌';
-                    document.getElementById('quotaStatusText').textContent = 'QUOTA NOT MET';
-                    document.getElementById('quotaStatusText').style.color = 'var(--accent-red)';
-                    quotaBar.style.background = 'var(--accent-red)';
-                    quotaCard.style.borderTop = '3px solid var(--accent-red)';
-                }
-
-                document.getElementById('festVal').textContent = latest.guildFest;
-                const festPoints = parseNumeric(latest.guildFest);
-                document.getElementById('festRank').textContent = festPoints > 1500 ? 'Top Performer' : 'Active';
-                document.getElementById('festRank').className = 'stat-delta positive';
-
-                const tableBody = document.getElementById('historyTableBody');
-                playerData.slice().reverse().forEach(row => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td style="padding: 12px; border-bottom: 1px solid var(--border);">${row.date}</td>
-                        <td style="padding: 12px; border-bottom: 1px solid var(--border);">${row.might}</td>
-                        <td style="padding: 12px; border-bottom: 1px solid var(--border);">${row.kills}</td>
-                        <td style="padding: 12px; border-bottom: 1px solid var(--border); color: var(--accent-green);">+${row.killsIncrease}</td>
-                    `;
-                    tableBody.appendChild(tr);
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseLine(lines[i]);
+                if (values.length < 2) continue;
+                data.push({
+                    MONTH: values[0] || '',
+                    NAME: values[1] || '',
+                    PREV_MIGHT: values[2] || '',
+                    MIGHT: values[3] || '',
+                    PREV_KILLS: values[4] || '',
+                    PLAYER_KILL: values[5] || '',
+                    KILL: values[6] || '',
+                    'MIGHT LOSS': values[7] || '',
+                    'MIGHT GAIN': values[8] || '',
+                    RANK: values[9] || '',
+                    'GUILD FEST': values[10] || ''
                 });
-
-                initCharts();
-                
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('profile-content').style.display = 'block';
-
-            } catch (error) {
-                console.error(error);
-                document.getElementById('loading').innerHTML = `<p style="color:var(--accent-red);">Error loading data.</p>`;
             }
+            return data.filter(p => p.NAME && p.NAME !== 'Player');
         }
 
-        function switchTab(tabId) {
-            ['war', 'festival', 'history'].forEach(id => {
-                document.getElementById('tab-' + id).style.display = (id === tabId) ? 'block' : 'none';
-            });
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent.toLowerCase().includes(tabId));
-            });
+        function renderProfile(history) {
+            const latest = history[history.length - 1];
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('profile-content').style.display = 'block';
+            
+            document.getElementById('playerName').firstChild.textContent = latest.NAME + ' ';
+            document.getElementById('breadcrumbPlayer').textContent = latest.NAME;
+            document.getElementById('playerAvatar').textContent = latest.NAME.charAt(0).toUpperCase();
+            document.getElementById('playerRank').textContent = latest.RANK || 'R1';
+            document.getElementById('firstSeen').textContent = history[0].MONTH;
+            document.getElementById('lastSeen').textContent = latest.MONTH;
+            
+            document.getElementById('mightVal').textContent = latest.MIGHT;
+            document.getElementById('killsVal').textContent = latest.PLAYER_KILL;
+            document.getElementById('mightLoss').textContent = 'Might Loss: ' + (latest['MIGHT LOSS'] || '0');
+            document.getElementById('killsGain').textContent = 'Kills Gained: ' + (latest.KILL || '0');
+
+            initCharts(history);
         }
 
-        function initCharts() {
-            const labels = playerData.map(d => d.date);
-            const commonOptions = {
+        function initCharts(history) {
+            const labels = history.map(d => d.MONTH);
+            const parseNumeric = (v) => {
+                if (!v) return 0;
+                let s = v.toString().toUpperCase();
+                let n = parseFloat(s.replace(/[^0-9.]/g, '')) || 0;
+                if (s.includes('B')) n *= 1e9;
+                else if (s.includes('M')) n *= 1e6;
+                else if (s.includes('K')) n *= 1e3;
+                return n;
+            };
+
+            const options = {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    x: { grid: { display: false }, ticks: { color: '#94949e', font: { size: 10 } } },
-                    y: { 
-                        grid: { color: 'rgba(255,255,255,0.05)' }, 
-                        ticks: { 
-                            color: '#94949e', 
-                            font: { size: 10 },
-                            callback: v => formatValue(v)
-                        } 
-                    }
+                    y: { ticks: { callback: v => v >= 1e9 ? (v/1e9).toFixed(1)+'B' : v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v } }
                 }
             };
 
@@ -530,13 +261,13 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        data: playerData.map(d => parseNumeric(d.might)),
+                        data: history.map(d => parseNumeric(d.MIGHT)),
                         borderColor: '#4d94ff',
                         backgroundColor: 'rgba(77, 148, 255, 0.1)',
                         fill: true, tension: 0.4
                     }]
                 },
-                options: commonOptions
+                options: options
             });
 
             new Chart(document.getElementById('killsChart'), {
@@ -544,26 +275,13 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        data: playerData.map(d => parseNumeric(d.kills)),
+                        data: history.map(d => parseNumeric(d.PLAYER_KILL)),
                         borderColor: '#f85149',
                         backgroundColor: 'rgba(248, 81, 73, 0.1)',
                         fill: true, tension: 0.4
                     }]
                 },
-                options: commonOptions
-            });
-
-            new Chart(document.getElementById('festChart'), {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: playerData.map(d => parseNumeric(d.guildFest)),
-                        backgroundColor: '#bc8cff',
-                        borderRadius: 4
-                    }]
-                },
-                options: commonOptions
+                options: options
             });
         }
 
