@@ -19,6 +19,8 @@
             --accent-red: #f85149;
             --accent-gold: #f5a623;
             --border: rgba(255, 255, 255, 0.06);
+            --glow-green: rgba(63, 185, 80, 0.15);
+            --glow-red: rgba(248, 81, 73, 0.15);
         }
 
         body { background: var(--bg-dark); color: var(--text-primary); padding: 20px; font-family: 'Inter', sans-serif; line-height: 1.6; }
@@ -48,9 +50,15 @@
         .stat-card.green::before { background: var(--accent-green); }
         .stat-card.red::before { background: var(--accent-red); }
         
+        .stat-card.highlight-green { background: linear-gradient(145deg, var(--bg-card), var(--glow-green)); border-color: rgba(63, 185, 80, 0.3); }
+        .stat-card.highlight-red { background: linear-gradient(145deg, var(--bg-card), var(--glow-red)); border-color: rgba(248, 81, 73, 0.3); }
+
         .stat-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
         .stat-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; }
         .stat-delta { font-size: 0.85rem; margin-top: 8px; font-weight: 500; }
+        
+        .text-green { color: var(--accent-green) !important; text-shadow: 0 0 10px var(--glow-green); }
+        .text-red { color: var(--accent-red) !important; text-shadow: 0 0 10px var(--glow-red); }
 
         .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; }
         .card-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); }
@@ -88,9 +96,9 @@
 
             <div id="war-tab">
                 <div class="stats-grid">
-                    <div class="stat-card blue"><div class="stat-value" id="mightVal">--</div><div class="stat-label">Current Might</div><div class="stat-delta" id="mightGain">--</div></div>
-                    <div class="stat-card yellow"><div class="stat-value" id="killsVal">--</div><div class="stat-label">Current Kills</div><div class="stat-delta" id="killsGain">--</div></div>
-                    <div class="stat-card red"><div class="stat-value" id="mightLossVal">--</div><div class="stat-label">Total Might Loss</div></div>
+                    <div class="stat-card blue highlight-green"><div class="stat-value text-green" id="mightVal">--</div><div class="stat-label">Current Might</div><div class="stat-delta text-green" id="mightGain">--</div></div>
+                    <div class="stat-card highlight-green yellow"><div class="stat-value text-green" id="killsVal">--</div><div class="stat-label">Current Kills</div><div class="stat-delta text-green" id="killsGain">--</div></div>
+                    <div class="stat-card highlight-red red"><div class="stat-value text-red" id="mightLossVal">--</div><div class="stat-label">Total Might Loss</div></div>
                 </div>
                 <div class="card"><div class="card-header"><h2><i class="fas fa-chart-area"></i> Might Progress</h2></div><div class="card-body"><div class="chart-box"><canvas id="mightChart"></canvas></div></div></div>
                 <div class="card"><div class="card-header"><h2><i class="fas fa-chart-line"></i> Kills Growth</h2></div><div class="card-body"><div class="chart-box"><canvas id="killsChart"></canvas></div></div></div>
@@ -201,9 +209,9 @@
             
             document.getElementById('mightVal').textContent = latest.MIGHT;
             document.getElementById('killsVal').textContent = latest.PLAYER_KILL;
-            document.getElementById('mightGain').textContent = 'Might Gain: ' + (latest['MIGHT GAIN'] || '0');
-            document.getElementById('killsGain').textContent = 'Kills Gained: ' + (latest.KILL || '0');
-            document.getElementById('mightLossVal').textContent = latest['MIGHT LOSS'] || '0';
+            document.getElementById('mightGain').textContent = 'Might Gain: +' + (latest['MIGHT GAIN'] || '0');
+            document.getElementById('killsGain').textContent = 'Kills Gained: +' + (latest.KILL || '0');
+            document.getElementById('mightLossVal').textContent = '-' + (latest['MIGHT LOSS'] || '0');
 
             // GF Tab
             const gfHistory = playerHistory.filter(h => h['GUILD FEST'] && parseVal(h['GUILD FEST']) > 0);
@@ -221,7 +229,7 @@
             // History Tab
             const historyBody = document.getElementById('fullHistoryBody');
             [...playerHistory].reverse().forEach(h => {
-                const row = `<tr><td>${h.MONTH}</td><td>${h.MIGHT}</td><td>${h.PLAYER_KILL}</td><td><span style="color:var(--accent-green)">+${h.KILL || '0'}</span></td><td><span style="color:var(--accent-red)">-${h['MIGHT LOSS'] || '0'}</span></td></tr>`;
+                const row = `<tr><td>${h.MONTH}</td><td>${h.MIGHT}</td><td>${h.PLAYER_KILL}</td><td><span class="text-green">+${h.KILL || '0'}</span></td><td><span class="text-red">-${h['MIGHT LOSS'] || '0'}</span></td></tr>`;
                 historyBody.innerHTML += row;
             });
 
