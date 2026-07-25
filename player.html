@@ -20,55 +20,22 @@
             --border: rgba(255, 255, 255, 0.06);
         }
 
-        body { 
-            background: var(--bg-dark); 
-            color: var(--text-primary); 
-            padding: 20px; 
-            font-family: 'Inter', sans-serif; 
-            line-height: 1.6;
-        }
-
+        body { background: var(--bg-dark); color: var(--text-primary); padding: 20px; font-family: 'Inter', sans-serif; line-height: 1.6; }
         .container { max-width: 900px; margin: 0 auto; }
-
         .breadcrumb { margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-secondary); }
         .breadcrumb a { color: var(--accent-blue); text-decoration: none; }
         .breadcrumb .sep { margin: 0 8px; opacity: 0.5; }
 
-        .profile-header { 
-            display: flex; 
-            align-items: center; 
-            gap: 1.5rem; 
-            margin-bottom: 1.5rem; 
-            background: var(--bg-card); 
-            padding: 1.5rem; 
-            border-radius: 12px; 
-            border: 1px solid var(--border);
-        }
-
-        .profile-avatar { 
-            width: 70px; height: 70px; 
-            border-radius: 50%; 
-            background: var(--accent-blue); 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 2rem; font-weight: 700; color: #fff;
-            flex-shrink: 0;
-        }
-
+        .profile-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; background: var(--bg-card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); }
+        .profile-avatar { width: 70px; height: 70px; border-radius: 50%; background: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700; color: #fff; flex-shrink: 0; }
         .profile-info h1 { margin: 0 0 8px; font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
         .badge { font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; font-weight: 600; text-transform: uppercase; }
         .badge-guild { background: rgba(77, 148, 255, 0.1); color: var(--accent-blue); border: 1px solid rgba(77, 148, 255, 0.2); }
         .badge-rank { background: rgba(63, 185, 80, 0.1); color: var(--accent-green); border: 1px solid rgba(63, 185, 80, 0.2); }
-        
-        .seen-info { 
-            display: inline-flex; gap: 15px; font-size: 0.85rem; color: var(--text-secondary); 
-            background: rgba(255,255,255,0.03); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border);
-        }
+        .seen-info { display: inline-flex; gap: 15px; font-size: 0.85rem; color: var(--text-secondary); background: rgba(255,255,255,0.03); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); }
 
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
-        .stat-card { 
-            background: var(--bg-card); padding: 1.5rem; border-radius: 12px; 
-            border: 1px solid var(--border); position: relative; overflow: hidden;
-        }
+        .stat-card { background: var(--bg-card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); position: relative; overflow: hidden; }
         .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; }
         .stat-card.blue::before { background: var(--accent-blue); }
         .stat-card.yellow::before { background: #f5a623; }
@@ -83,101 +50,52 @@
         .card-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); }
         .card-header h2 { font-size: 1rem; margin: 0; display: flex; align-items: center; gap: 10px; }
         .card-body { padding: 1.5rem; }
-
         .chart-box { height: 280px; position: relative; }
 
-        @media (max-width: 600px) {
-            .profile-header { flex-direction: column; text-align: center; }
-            .profile-info h1 { justify-content: center; }
-        }
+        @media (max-width: 600px) { .profile-header { flex-direction: column; text-align: center; } .profile-info h1 { justify-content: center; } }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="breadcrumb">
-            <a href="leaderboard.html"><i class="fas fa-users"></i> Leaderboard</a>
-            <span class="sep">›</span>
-            <span id="breadcrumbPlayer">Player Profile</span>
-        </div>
-        
-        <div id="loading" style="text-align:center; padding: 100px 0;">
-            <i class="fas fa-circle-notch fa-spin fa-3x" style="color: var(--accent-blue);"></i>
-            <p style="margin-top: 20px; color: var(--text-secondary);">Loading player profile...</p>
-        </div>
-
+        <div class="breadcrumb"><a href="leaderboard.html"><i class="fas fa-users"></i> Leaderboard</a><span class="sep">›</span><span id="breadcrumbPlayer">Player Profile</span></div>
+        <div id="loading" style="text-align:center; padding: 100px 0;"><i class="fas fa-circle-notch fa-spin fa-3x" style="color: var(--accent-blue);"></i><p style="margin-top: 20px; color: var(--text-secondary);">Loading player profile...</p></div>
         <div id="profile-content" style="display:none;">
             <div class="profile-header">
                 <div class="profile-avatar" id="playerAvatar">?</div>
                 <div class="profile-info">
-                    <h1 id="playerName">Player Name 
-                        <span class="badge badge-guild">HEM</span>
-                        <span class="badge badge-rank" id="playerRank">R4</span>
-                    </h1>
-                    <div class="seen-info">
-                        <span>First Seen: <strong id="firstSeen">--</strong></span>
-                        <span>Last Seen: <strong id="lastSeen">--</strong></span>
-                    </div>
+                    <h1 id="playerName">Player Name <span class="badge badge-guild">HEM</span><span class="badge badge-rank" id="playerRank">R4</span></h1>
+                    <div class="seen-info"><span>First Seen: <strong id="firstSeen">--</strong></span><span>Last Seen: <strong id="lastSeen">--</strong></span></div>
                 </div>
             </div>
-
             <div class="stats-grid">
-                <div class="stat-card blue">
-                    <div class="stat-value" id="mightVal">--</div>
-                    <div class="stat-label">Current Might</div>
-                    <div class="stat-delta" id="mightLoss">--</div>
-                </div>
-                <div class="stat-card yellow">
-                    <div class="stat-value" id="killsVal">--</div>
-                    <div class="stat-label">Current Kills</div>
-                    <div class="stat-delta" id="killsGain">--</div>
-                </div>
+                <div class="stat-card blue"><div class="stat-value" id="mightVal">--</div><div class="stat-label">Current Might</div><div class="stat-delta" id="mightLoss">--</div></div>
+                <div class="stat-card yellow"><div class="stat-value" id="killsVal">--</div><div class="stat-label">Current Kills</div><div class="stat-delta" id="killsGain">--</div></div>
             </div>
-
-            <div class="card">
-                <div class="card-header"><h2><i class="fas fa-chart-area"></i> Might Progress</h2></div>
-                <div class="card-body"><div class="chart-box"><canvas id="mightChart"></canvas></div></div>
-            </div>
-            <div class="card">
-                <div class="card-header"><h2><i class="fas fa-chart-line"></i> Kills Growth</h2></div>
-                <div class="card-body"><div class="chart-box"><canvas id="killsChart"></canvas></div></div>
-            </div>
+            <div class="card"><div class="card-header"><h2><i class="fas fa-chart-area"></i> Might Progress</h2></div><div class="card-body"><div class="chart-box"><canvas id="mightChart"></canvas></div></div></div>
+            <div class="card"><div class="card-header"><h2><i class="fas fa-chart-line"></i> Kills Growth</h2></div><div class="card-body"><div class="chart-box"><canvas id="killsChart"></canvas></div></div></div>
         </div>
     </div>
-
     <script>
         const SHEET_ID = '1SmaO7EImblnP5RlyyxKH1_6GU9Dz1J0gu776ojbSo7I';
-        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&t=${Date.now()}`;
 
         async function loadProfile() {
             const urlParams = new URLSearchParams(window.location.search);
             const targetPlayer = urlParams.get('name');
-            if (!targetPlayer) {
-                window.location.href = 'leaderboard.html';
-                return;
-            }
-
+            if (!targetPlayer) { window.location.href = 'leaderboard.html'; return; }
             try {
                 const response = await fetch(SHEET_URL);
                 const csvText = await response.text();
                 const allData = parseCSV(csvText);
                 const playerHistory = allData.filter(p => p.NAME.toLowerCase() === targetPlayer.toLowerCase());
-
-                if (playerHistory.length === 0) {
-                    document.getElementById('loading').innerHTML = `<p style="color:var(--accent-red)">Player "${targetPlayer}" not found.</p>`;
-                    return;
-                }
-
+                if (playerHistory.length === 0) { document.getElementById('loading').innerHTML = `<p style="color:var(--accent-red)">Player "${targetPlayer}" not found.</p>`; return; }
                 renderProfile(playerHistory);
-            } catch (error) {
-                console.error('Error loading profile:', error);
-                document.getElementById('loading').innerHTML = `<p style="color:var(--accent-red)">Failed to load data.</p>`;
-            }
+            } catch (error) { document.getElementById('loading').innerHTML = `<p style="color:var(--accent-red)">Failed to load data.</p>`; }
         }
 
         function parseCSV(csv) {
             const lines = csv.split('\n').filter(l => l.trim());
             if (lines.length < 2) return [];
-            
             const parseLine = (line) => {
                 const result = [];
                 let cur = '';
@@ -185,31 +103,20 @@
                 for (let i = 0; i < line.length; i++) {
                     const char = line[i];
                     if (char === '"') inQuotes = !inQuotes;
-                    else if (char === ',' && !inQuotes) {
-                        result.push(cur.trim());
-                        cur = '';
-                    } else cur += char;
+                    else if (char === ',' && !inQuotes) { result.push(cur.trim()); cur = ''; }
+                    else cur += char;
                 }
                 result.push(cur.trim());
                 return result;
             };
-
             const data = [];
             for (let i = 1; i < lines.length; i++) {
                 const values = parseLine(lines[i]);
                 if (values.length < 2) continue;
                 data.push({
-                    MONTH: values[0] || '',
-                    NAME: values[1] || '',
-                    PREV_MIGHT: values[2] || '',
-                    MIGHT: values[3] || '',
-                    PREV_KILLS: values[4] || '',
-                    PLAYER_KILL: values[5] || '',
-                    KILL: values[6] || '',
-                    'MIGHT LOSS': values[7] || '',
-                    'MIGHT GAIN': values[8] || '',
-                    RANK: values[9] || '',
-                    'GUILD FEST': values[10] || ''
+                    MONTH: values[0] || '', NAME: values[1] || '', PREV_MIGHT: values[2] || '', MIGHT: values[3] || '',
+                    PREV_KILLS: values[4] || '', PLAYER_KILL: values[5] || '', KILL: values[6] || '',
+                    'MIGHT LOSS': values[7] || '', 'MIGHT GAIN': values[8] || '', RANK: values[9] || '', 'GUILD FEST': values[10] || ''
                 });
             }
             return data.filter(p => p.NAME && p.NAME !== 'Player');
@@ -219,19 +126,16 @@
             const latest = history[history.length - 1];
             document.getElementById('loading').style.display = 'none';
             document.getElementById('profile-content').style.display = 'block';
-            
             document.getElementById('playerName').firstChild.textContent = latest.NAME + ' ';
             document.getElementById('breadcrumbPlayer').textContent = latest.NAME;
             document.getElementById('playerAvatar').textContent = latest.NAME.charAt(0).toUpperCase();
             document.getElementById('playerRank').textContent = latest.RANK || 'R1';
             document.getElementById('firstSeen').textContent = history[0].MONTH;
             document.getElementById('lastSeen').textContent = latest.MONTH;
-            
             document.getElementById('mightVal').textContent = latest.MIGHT;
             document.getElementById('killsVal').textContent = latest.PLAYER_KILL;
             document.getElementById('mightLoss').textContent = 'Might Loss: ' + (latest['MIGHT LOSS'] || '0');
             document.getElementById('killsGain').textContent = 'Kills Gained: ' + (latest.KILL || '0');
-
             initCharts(history);
         }
 
@@ -241,50 +145,13 @@
                 if (!v) return 0;
                 let s = v.toString().toUpperCase();
                 let n = parseFloat(s.replace(/[^0-9.]/g, '')) || 0;
-                if (s.includes('B')) n *= 1e9;
-                else if (s.includes('M')) n *= 1e6;
-                else if (s.includes('K')) n *= 1e3;
+                if (s.includes('B')) n *= 1e9; else if (s.includes('M')) n *= 1e6; else if (s.includes('K')) n *= 1e3;
                 return n;
             };
-
-            const options = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { ticks: { callback: v => v >= 1e9 ? (v/1e9).toFixed(1)+'B' : v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v } }
-                }
-            };
-
-            new Chart(document.getElementById('mightChart'), {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: history.map(d => parseNumeric(d.MIGHT)),
-                        borderColor: '#4d94ff',
-                        backgroundColor: 'rgba(77, 148, 255, 0.1)',
-                        fill: true, tension: 0.4
-                    }]
-                },
-                options: options
-            });
-
-            new Chart(document.getElementById('killsChart'), {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: history.map(d => parseNumeric(d.PLAYER_KILL)),
-                        borderColor: '#f85149',
-                        backgroundColor: 'rgba(248, 81, 73, 0.1)',
-                        fill: true, tension: 0.4
-                    }]
-                },
-                options: options
-            });
+            const options = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => v >= 1e9 ? (v/1e9).toFixed(1)+'B' : v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v } } } };
+            new Chart(document.getElementById('mightChart'), { type: 'line', data: { labels: labels, datasets: [{ data: history.map(d => parseNumeric(d.MIGHT)), borderColor: '#4d94ff', backgroundColor: 'rgba(77, 148, 255, 0.1)', fill: true, tension: 0.4 }] }, options: options });
+            new Chart(document.getElementById('killsChart'), { type: 'line', data: { labels: labels, datasets: [{ data: history.map(d => parseNumeric(d.PLAYER_KILL)), borderColor: '#f85149', backgroundColor: 'rgba(248, 81, 73, 0.1)', fill: true, tension: 0.4 }] }, options: options });
         }
-
         loadProfile();
     </script>
 </body>

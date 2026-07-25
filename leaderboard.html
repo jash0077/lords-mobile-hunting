@@ -22,408 +22,75 @@
             --border: rgba(255, 255, 255, 0.06);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg-dark); color: var(--text-primary); font-family: 'Inter', sans-serif; padding: 20px; line-height: 1.5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header-title h1 { font-family: 'Poppins', sans-serif; font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; }
+        .header-title p { color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px; }
+        .nav-controls { display: flex; gap: 12px; align-items: center; }
+        .lang-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; text-decoration: none; cursor: pointer; }
 
-        body {
-            background: var(--bg-dark);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            padding: 20px;
-            line-height: 1.5;
-        }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .summary-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; position: relative; overflow: hidden; transition: transform 0.3s; }
+        .summary-card:hover { transform: translateY(-5px); }
+        .summary-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent-color, var(--accent-blue)); }
+        .card-icon { font-size: 1.2rem; color: var(--accent-color, var(--accent-blue)); margin-bottom: 16px; opacity: 0.8; }
+        .card-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
+        .card-label { color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .chart-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 30px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .section-header h2 { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .chart-container { height: 350px; position: relative; }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
+        .reports-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+        .report-item { padding: 20px 0; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 1fr 3fr; gap: 20px; align-items: start; }
+        .report-item:last-child { border-bottom: none; }
+        .report-month { display: flex; flex-direction: column; gap: 8px; }
+        .month-name { font-weight: 700; font-size: 1.1rem; color: var(--accent-blue); display: flex; align-items: center; gap: 8px; }
+        .latest-badge { background: rgba(77, 148, 255, 0.1); color: var(--accent-blue); font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
+        .snapshot-count { font-size: 0.8rem; color: var(--text-secondary); }
+        .report-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+        .stat-item { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+        .stat-item i { width: 16px; color: var(--text-secondary); font-size: 0.8rem; }
+        .stat-item span { color: var(--text-secondary); }
+        .stat-item strong { color: var(--text-primary); }
+        .view-breakdown { margin-top: 8px; font-size: 0.8rem; color: var(--accent-blue); text-decoration: none; display: inline-block; cursor: pointer; }
+        .view-breakdown:hover { text-decoration: underline; }
 
-        .header-title h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .search-section { background: var(--bg-card); border-radius: 16px; padding: 25px; margin-bottom: 30px; border: 1px solid var(--border); }
+        .search-container { position: relative; margin-bottom: 20px; }
+        .search-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; padding: 15px 20px 15px 45px; color: var(--text-primary); font-size: 1rem; transition: all 0.3s; }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
+        .member-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; max-height: 400px; overflow-y: auto; }
+        .member-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 15px; display: flex; align-items: center; justify-content: space-between; transition: 0.2s; }
+        .member-card:hover { background: rgba(255,255,255,0.06); transform: translateY(-2px); }
+        .member-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; }
+        .member-info { display: flex; align-items: center; gap: 12px; }
+        .member-details h4 { margin: 0; font-size: 0.95rem; }
+        .view-profile-btn { background: rgba(77, 148, 255, 0.1); color: var(--accent-blue); border: 1px solid rgba(77, 148, 255, 0.3); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .view-profile-btn:hover { background: var(--accent-blue); color: white; }
 
-        .header-title p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-top: 4px;
-        }
-
-        .nav-controls {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .lang-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Summary Cards */
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .summary-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s;
-        }
-
-        .summary-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .summary-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--accent-color, var(--accent-blue));
-        }
-
-        .card-icon {
-            font-size: 1.2rem;
-            color: var(--accent-color, var(--accent-blue));
-            margin-bottom: 16px;
-            opacity: 0.8;
-        }
-
-        .card-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .card-label {
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Chart Section */
-        .chart-section {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 30px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .section-header h2 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .chart-container {
-            height: 350px;
-            position: relative;
-        }
-
-        /* Monthly Reports List */
-        .reports-section {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-        }
-
-        .report-item {
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border);
-            display: grid;
-            grid-template-columns: 1fr 3fr;
-            gap: 20px;
-            align-items: start;
-        }
-
-        .report-item:last-child {
-            border-bottom: none;
-        }
-
-        .report-month {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .month-name {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: var(--accent-blue);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .latest-badge {
-            background: rgba(77, 148, 255, 0.1);
-            color: var(--accent-blue);
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-
-        .snapshot-count {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .report-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-        }
-
-        .stat-item i {
-            width: 16px;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-        }
-
-        .stat-item span {
-            color: var(--text-secondary);
-        }
-
-        .stat-item strong {
-            color: var(--text-primary);
-        }
-
-        .view-breakdown {
-            margin-top: 8px;
-            font-size: 0.8rem;
-            color: var(--accent-blue);
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .view-breakdown:hover {
-            text-decoration: underline;
-        }
-
-        /* Search Section */
-        .search-section {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 30px;
-            border: 1px solid var(--border);
-        }
-
-        .search-container {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .search-input {
-            width: 100%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 15px 20px 15px 45px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-        }
-
-        .member-results {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .member-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .member-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: white;
-        }
-
-        .member-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .view-profile-btn {
-            background: rgba(77, 148, 255, 0.1);
-            color: var(--accent-blue);
-            border: 1px solid rgba(77, 148, 255, 0.3);
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 1000px;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 30px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th {
-            text-align: left;
-            padding: 12px;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            border-bottom: 1px solid var(--border);
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.9rem;
-        }
-
-        .rank-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-left: 8px;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 1000px; max-height: 90vh; overflow-y: auto; padding: 30px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; padding: 12px; color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .rank-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-left: 8px; }
         .r5 { background: rgba(245, 166, 35, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
         .r4 { background: rgba(77, 148, 255, 0.15); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); }
         .r3 { background: rgba(188, 140, 255, 0.15); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.3); }
         .r2 { background: rgba(59, 130, 246, 0.1); color: #93c5fd; border: 1px solid rgba(147, 197, 253, 0.2); }
         .r1 { background: rgba(148, 148, 158, 0.1); color: #94949e; border: 1px solid rgba(148, 148, 158, 0.2); }
 
-        .tabs {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-        }
+        .tabs { display: flex; gap: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+        .tab { padding: 10px 0; color: var(--text-secondary); cursor: pointer; font-weight: 600; position: relative; }
+        .tab.active { color: var(--text-primary); }
+        .tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--accent-blue); }
 
-        .tab {
-            padding: 10px 0;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-weight: 600;
-            position: relative;
-        }
-
-        .tab.active {
-            color: var(--text-primary);
-        }
-
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--accent-blue);
-        }
-
-        @media (max-width: 768px) {
-            .report-item { grid-template-columns: 1fr; }
-            .summary-grid { grid-template-columns: 1fr 1fr; }
-        }
+        @media (max-width: 768px) { .report-item { grid-template-columns: 1fr; } .summary-grid { grid-template-columns: 1fr 1fr; } }
     </style>
 </head>
 <body>
@@ -503,18 +170,13 @@
             </div>
             <table>
                 <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Player</th>
-                        <th>Points</th>
-                    </tr>
+                    <tr><th>#</th><th>Player</th><th>Points</th></tr>
                 </thead>
                 <tbody id="gfTableBody"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- Leaderboard Modal -->
     <div id="leaderboardModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -527,13 +189,7 @@
             </div>
             <table>
                 <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Player</th>
-                        <th>Might</th>
-                        <th>Kills</th>
-                        <th>Action</th>
-                    </tr>
+                    <tr><th>#</th><th>Player</th><th>Might</th><th>Kills</th><th>Action</th></tr>
                 </thead>
                 <tbody id="modalTableBody"></tbody>
             </table>
@@ -545,7 +201,7 @@
         let currentSort = 'rank';
         let currentView = 'war';
         const SHEET_ID = '1SmaO7EImblnP5RlyyxKH1_6GU9Dz1J0gu776ojbSo7I';
-        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&t=${Date.now()}`;
 
         async function init() {
             try {
@@ -562,23 +218,20 @@
             const lines = csv.split('\n').filter(l => l.trim());
             if (lines.length < 2) return [];
             
-            function parseLine(line) {
+            const parseLine = (line) => {
                 const result = [];
-                let current = '';
+                let cur = '';
                 let inQuotes = false;
                 for (let i = 0; i < line.length; i++) {
-                    const ch = line[i];
-                    if (ch === '"') inQuotes = !inQuotes;
-                    else if (ch === ',' && !inQuotes) {
-                        result.push(current.trim());
-                        current = '';
-                    } else current += ch;
+                    const char = line[i];
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) { result.push(cur.trim()); cur = ''; }
+                    else cur += char;
                 }
-                result.push(current.trim());
+                result.push(cur.trim());
                 return result;
-            }
+            };
 
-            const headers = parseLine(lines[0]);
             const data = [];
             for (let i = 1; i < lines.length; i++) {
                 const values = parseLine(lines[i]);
@@ -604,16 +257,16 @@
             if (!val) return 0;
             let str = val.toString().toUpperCase().trim();
             let numeric = parseFloat(str.replace(/[^0-9.]/g, '')) || 0;
-            if (str.includes('B')) numeric *= 1000000000;
-            else if (str.includes('M')) numeric *= 1000000;
-            else if (str.includes('K')) numeric *= 1000;
+            if (str.includes('B')) numeric *= 1e9;
+            else if (str.includes('M')) numeric *= 1e6;
+            else if (str.includes('K')) numeric *= 1e3;
             return numeric;
         }
 
         function formatNumber(num) {
-            if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
-            if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
-            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+            if (num >= 1e3) return (num / 1e3).toFixed(1) + 'K';
             return num.toLocaleString();
         }
 
@@ -630,9 +283,7 @@
             const monthlyData = {};
             allData.forEach(p => {
                 const m = p.MONTH || 'Unknown';
-                if (!monthlyData[m]) {
-                    monthlyData[m] = { name: m, players: 0, might: 0, kills: 0, killsGain: 0, mightLoss: 0, playerList: [] };
-                }
+                if (!monthlyData[m]) monthlyData[m] = { name: m, players: 0, might: 0, kills: 0, killsGain: 0, mightLoss: 0, playerList: [] };
                 monthlyData[m].players++;
                 monthlyData[m].might += parseVal(p.MIGHT);
                 monthlyData[m].kills += parseVal(p.PLAYER_KILL);
@@ -664,7 +315,7 @@
                     <div class="report-month">
                         <div class="month-name">${m} ${idx === 0 ? '<span class="latest-badge">Latest</span>' : ''}</div>
                         <div class="snapshot-count"><i class="fas fa-users"></i> Players: <strong>${data.players}</strong></div>
-                        <a href="#" class="view-breakdown" onclick="openFullLeaderboard('${m}')">View breakdown →</a>
+                        <a class="view-breakdown" onclick="openFullLeaderboard('${m}')">View breakdown →</a>
                     </div>
                     <div class="report-stats">
                         <div class="stat-item"><i class="fas fa-swords"></i> <span>Current Kills:</span> <strong>${formatNumber(data.kills)}</strong></div>
@@ -719,14 +370,7 @@
                         { label: 'Total Kills', data: killData, borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', fill: true, yAxisID: 'y1' }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { type: 'linear', position: 'left', title: { display: true, text: 'Might' } },
-                        y1: { type: 'linear', position: 'right', title: { display: true, text: 'Kills' }, grid: { drawOnChartArea: false } }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { type: 'linear', position: 'left' }, y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false } } } }
             });
         }
 
@@ -740,16 +384,7 @@
                 const card = document.createElement('div');
                 card.className = 'member-card';
                 const rankVal = (p.RANK || 'R1').toLowerCase();
-                card.innerHTML = `
-                    <div class="member-info">
-                        <div class="member-avatar">${p.NAME.charAt(0)}</div>
-                        <div class="member-details">
-                            <h4>${p.NAME}</h4>
-                            <span class="rank-badge ${rankVal}">${p.RANK || 'R1'}</span>
-                        </div>
-                    </div>
-                    <button class="view-profile-btn" onclick="window.location.href='player.html?name=' + encodeURIComponent('${p.NAME}')">View Profile</button>
-                `;
+                card.innerHTML = `<div class="member-info"><div class="member-avatar">${p.NAME.charAt(0)}</div><div class="member-details"><h4>${p.NAME}</h4><span class="rank-badge ${rankVal}">${p.RANK || 'R1'}</span></div></div><button class="view-profile-btn" onclick="window.location.href='player.html?name=' + encodeURIComponent('${p.NAME}')">View Profile</button>`;
                 container.appendChild(card);
             });
         }
