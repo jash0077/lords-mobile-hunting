@@ -233,6 +233,7 @@
             };
 
             const data = [];
+            // A:july, B:Player, C:Previous Might, D:Current Might, E:Previous Kills, F:Current Kills, G:Kills INCREASE, H:MightLoss, I:MightGain, J:RANK, K:GUILD FEST
             for (let i = 1; i < lines.length; i++) {
                 const values = parseLine(lines[i]);
                 if (values.length < 2) continue;
