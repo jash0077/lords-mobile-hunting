@@ -11,7 +11,8 @@ const searchData = [
     { title: "Migration Guide", keywords: "migration guide kingdom move transfer", url: "migration.html", key: "migration_guide" },
     { title: "Research & Construction", keywords: "research construction speed boost guild helps", url: "research.html", key: "research_construction" },
     { title: "Guild Festival", keywords: "guild festival fest mission calculator points league", url: "festival.html", key: "guild_festival" },
-    { title: "Event Schedules", keywords: "events schedules kvk dragon arena countdown time", url: "events.html", key: "event_schedules" }
+    { title: "Event Schedules", keywords: "events schedules kvk dragon arena countdown time", url: "events.html", key: "event_schedules" },
+    { title: "Player Comparison", keywords: "player comparison stats growth side-by-side evaluation", url: "comparison.html", key: "player_comparison" }
 ];
 
 function initSearch() {

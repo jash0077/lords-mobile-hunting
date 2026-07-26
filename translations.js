@@ -83,7 +83,8 @@ const translations = {
         "guild_festival": "Guild Festival",
         "festival_card_description": "Plan your missions and track your points to reach your target with our advanced calculator.",
         "event_schedules": "Event Schedules",
-        "events_card_description": "View upcoming guild events, live countdowns, and global timezones in real-time."
+        "events_card_description": "View upcoming guild events, live countdowns, and global timezones in real-time.",
+        "player_comparison": "Player Comparison"
     },
     "es": {
         "app_title": "Lords Mobile Hub",
