@@ -129,7 +129,7 @@
             <div class="comparison-grid" id="statsGrid"></div>
             <div class="charts-container" id="chartsContainer">
                 <div class="chart-card">
-                    <h3><i class="fas fa-chart-line" style="color: var(--accent-blue)"></i> Might Growth</h3>
+                    <h3><i class="fas fa-chart-line" style="color: var(--accent-blue)"></i> Might Progress</h3>
                     <div class="chart-box"><canvas id="mightChart"></canvas></div>
                 </div>
                 <div class="chart-card">
@@ -182,14 +182,41 @@
                 }
                 result.push(cur.trim()); return result;
             };
+            
+            const headers = parseLine(lines[0]);
+            // Map headers to normalized keys
+            const headMap = {};
+            headers.forEach((h, i) => {
+                const head = h.toLowerCase();
+                if (head.includes('player')) headMap.NAME = i;
+                else if (head.includes('current might')) headMap.MIGHT = i;
+                else if (head.includes('previous might')) headMap.PREV_MIGHT = i;
+                else if (head.includes('current kills')) headMap.KILL = i;
+                else if (head.includes('previous kills')) headMap.PREV_KILLS = i;
+                else if (head.includes('kills increase')) headMap.KILLS_INCR = i;
+                else if (head.includes('mightloss')) headMap.LOSS = i;
+                else if (head.includes('mightgain')) headMap.GAIN = i;
+                else if (head.includes('rank')) headMap.RANK = i;
+                else if (head.includes('guild fest')) headMap.GF = i;
+                else if (i === 0) headMap.MONTH = i; // First column is usually month
+            });
+
             const data = [];
             for (let i = 1; i < lines.length; i++) {
                 const v = parseLine(lines[i]);
                 if (v.length < 2) continue;
                 data.push({
-                    MONTH: v[0] || '', NAME: v[1] || '', PREV_MIGHT: v[2] || '', MIGHT: v[3] || '',
-                    PREV_KILLS: v[4] || '', PLAYER_KILL: v[5] || '', KILL: v[6] || '',
-                    'MIGHT LOSS': v[7] || '', 'MIGHT GAIN': v[8] || '', RANK: v[9] || '', 'GUILD FEST': v[10] || ''
+                    MONTH: v[headMap.MONTH] || '',
+                    NAME: v[headMap.NAME] || '',
+                    PREV_MIGHT: v[headMap.PREV_MIGHT] || '',
+                    MIGHT: v[headMap.MIGHT] || '',
+                    PREV_KILLS: v[headMap.PREV_KILLS] || '',
+                    KILL: v[headMap.KILL] || '',
+                    KILLS_INCR: v[headMap.KILLS_INCR] || '',
+                    LOSS: v[headMap.LOSS] || '',
+                    GAIN: v[headMap.GAIN] || '',
+                    RANK: v[headMap.RANK] || '',
+                    GF: v[headMap.GF] || ''
                 });
             }
             return data.filter(p => p.NAME && p.NAME !== 'Player');
@@ -250,10 +277,14 @@
         }
 
         function formatVal(val) {
-            if (val >= 1e9) return (val / 1e9).toFixed(2) + 'B';
-            if (val >= 1e6) return (val / 1e6).toFixed(2) + 'M';
-            if (val >= 1e3) return (val / 1e3).toFixed(1) + 'K';
-            return val.toString();
+            const isNegative = val < 0;
+            const absVal = Math.abs(val);
+            let formatted = '';
+            if (absVal >= 1e9) formatted = (absVal / 1e9).toFixed(2) + 'B';
+            else if (absVal >= 1e6) formatted = (absVal / 1e6).toFixed(2) + 'M';
+            else if (absVal >= 1e3) formatted = (absVal / 1e3).toFixed(1) + 'K';
+            else formatted = absVal.toString();
+            return (isNegative ? '-' : '') + formatted;
         }
 
         function updateComparison() {
@@ -274,17 +305,12 @@
             const playerData = activePlayers.map(name => {
                 const history = allData.filter(p => p.NAME === name);
                 const latest = history[history.length - 1];
-                const first = history[0];
                 
-                const mightStart = parseVal(first.MIGHT);
-                const mightEnd = parseVal(latest.MIGHT);
-                const mightGrowth = mightEnd - mightStart;
-                
-                const killsStart = parseVal(first.KILL);
-                const killsEnd = parseVal(latest.KILL);
-                const killsGrowth = killsEnd - killsStart;
+                const mightIncr = parseVal(latest.GAIN);
+                const killsIncr = parseVal(latest.KILLS_INCR);
+                const mightLoss = parseVal(latest.LOSS);
 
-                return { name, history, latest, mightGrowth, killsGrowth };
+                return { name, history, latest, mightIncr, killsIncr, mightLoss };
             });
 
             playerData.forEach((data, i) => {
@@ -305,20 +331,20 @@
                         <span class="stat-value">${data.latest.MIGHT}</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Might Growth</span>
-                        <span class="stat-value text-green">+${formatVal(data.mightGrowth)}</span>
+                        <span class="stat-label">Might Gain (Monthly)</span>
+                        <span class="stat-value text-green">${data.latest.GAIN ? '+' + data.latest.GAIN : '0'}</span>
                     </div>
                     <div class="stat-row">
                         <span class="stat-label">Current Kills</span>
                         <span class="stat-value">${data.latest.KILL}</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Kills Gained</span>
-                        <span class="stat-value text-green">+${formatVal(data.killsGrowth)}</span>
+                        <span class="stat-label">Kills Gained (Monthly)</span>
+                        <span class="stat-value text-green">${data.latest.KILLS_INCR ? '+' + data.latest.KILLS_INCR : '0'}</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Total Might Loss</span>
-                        <span class="stat-value text-red">${data.latest['MIGHT LOSS'] || '0'}</span>
+                        <span class="stat-label">Might Loss</span>
+                        <span class="stat-value text-red">${data.latest.LOSS || '0'}</span>
                     </div>
                     <div class="stat-row">
                         <span class="stat-label">Avg GF Points</span>
@@ -332,7 +358,7 @@
         }
 
         function calculateAvgGF(history) {
-            const points = history.map(h => parseVal(h['GUILD FEST'])).filter(p => p > 0);
+            const points = history.map(h => parseVal(h.GF)).filter(p => p > 0);
             if (points.length === 0) return '0';
             const avg = points.reduce((a, b) => a + b, 0) / points.length;
             return Math.round(avg).toLocaleString();
