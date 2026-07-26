@@ -199,6 +199,8 @@
                 <select id="modalSort" class="lang-btn" onchange="renderModalTable()">
                     <option value="kills">Sort by Kills ↓</option>
                     <option value="kills_asc">Sort by Kills ↑</option>
+                    <option value="gained_kills">Sort by Gained Kills ↓</option>
+                    <option value="gained_kills_asc">Sort by Gained Kills ↑</option>
                     <option value="might">Sort by Might ↓</option>
                     <option value="might_asc">Sort by Might ↑</option>
                     <option value="name">Sort by Name A-Z</option>
@@ -425,6 +427,10 @@
                 filtered.sort((a, b) => parseVal(b.PLAYER_KILL) - parseVal(a.PLAYER_KILL));
             } else if (sortBy === 'kills_asc') {
                 filtered.sort((a, b) => parseVal(a.PLAYER_KILL) - parseVal(b.PLAYER_KILL));
+            } else if (sortBy === 'gained_kills') {
+                filtered.sort((a, b) => parseVal(b.KILL) - parseVal(a.KILL));
+            } else if (sortBy === 'gained_kills_asc') {
+                filtered.sort((a, b) => parseVal(a.KILL) - parseVal(b.KILL));
             } else if (sortBy === 'might') {
                 filtered.sort((a, b) => parseVal(b.MIGHT) - parseVal(a.MIGHT));
             } else if (sortBy === 'might_asc') {
