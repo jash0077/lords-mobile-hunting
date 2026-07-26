@@ -18,5 +18,25 @@
         "zone": "Australia/Sydney",
         "name": "Australia",
         "flag": "🇦🇺"
+    },
+    {
+        "zone": "Asia/Jakarta",
+        "name": "Indonesia",
+        "flag": "🇮🇩"
+    },
+    {
+        "zone": "Asia/Ho_Chi_Minh",
+        "name": "Vietnam",
+        "flag": "🇻🇳"
+    },
+    {
+        "zone": "Africa/Cairo",
+        "name": "Egypt",
+        "flag": "🇪🇬"
+    },
+    {
+        "zone": "Europe/Paris",
+        "name": "France",
+        "flag": "🇫🇷"
     }
 ]
