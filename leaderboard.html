@@ -196,6 +196,13 @@
             <div style="display:flex; gap:10px; margin-bottom:20px;">
                 <input type="text" id="modalSearch" class="search-input" placeholder="Search in list..." style="flex:1;">
                 <select id="modalMonth" class="lang-btn"></select>
+                <select id="modalSort" class="lang-btn" onchange="renderModalTable()">
+                    <option value="kills">Sort by Kills ↓</option>
+                    <option value="kills_asc">Sort by Kills ↑</option>
+                    <option value="might">Sort by Might ↓</option>
+                    <option value="might_asc">Sort by Might ↑</option>
+                    <option value="name">Sort by Name A-Z</option>
+                </select>
             </div>
             <table>
                 <thead>
@@ -408,11 +415,23 @@
         function renderModalTable() {
             const month = document.getElementById('modalMonth').value;
             const search = document.getElementById('modalSearch').value.toLowerCase();
+            const sortBy = document.getElementById('modalSort') ? document.getElementById('modalSort').value : 'kills';
             const tbody = document.getElementById('modalTableBody');
             let filtered = [...allData];
             if (month) filtered = filtered.filter(p => p.MONTH === month);
             if (search) filtered = filtered.filter(p => p.NAME.toLowerCase().includes(search));
-            filtered.sort((a, b) => parseVal(b.PLAYER_KILL) - parseVal(a.PLAYER_KILL));
+            
+            if (sortBy === 'kills') {
+                filtered.sort((a, b) => parseVal(b.PLAYER_KILL) - parseVal(a.PLAYER_KILL));
+            } else if (sortBy === 'kills_asc') {
+                filtered.sort((a, b) => parseVal(a.PLAYER_KILL) - parseVal(b.PLAYER_KILL));
+            } else if (sortBy === 'might') {
+                filtered.sort((a, b) => parseVal(b.MIGHT) - parseVal(a.MIGHT));
+            } else if (sortBy === 'might_asc') {
+                filtered.sort((a, b) => parseVal(a.MIGHT) - parseVal(b.MIGHT));
+            } else if (sortBy === 'name') {
+                filtered.sort((a, b) => a.NAME.localeCompare(b.NAME));
+            }
             tbody.innerHTML = '';
             filtered.forEach((p, idx) => {
                 const row = document.createElement('tr');

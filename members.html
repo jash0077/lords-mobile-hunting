@@ -182,6 +182,7 @@
                     <select id="members-sort">
                         <option value="rank">Sort by Rank</option>
                         <option value="kills">Sort by Kills</option>
+                        <option value="kills_desc">Sort by Kills (Highest → Lowest)</option>
                         <option value="might">Sort by Might</option>
                         <option value="name">Sort by Name</option>
                     </select>
@@ -279,6 +280,12 @@
             renderPlayerCards(filteredPlayers);
         });
 
+        // Auto-update: refresh data periodically if online
+        const REFRESH_INTERVAL = 60000; // 60 seconds
+        setInterval(() => {
+            if (navigator.onLine) loadPlayers();
+        }, REFRESH_INTERVAL);
+
         document.getElementById("members-sort").addEventListener("change", (event) => {
             const sortBy = event.target.value;
             let sortedPlayers = [...allPlayers];
@@ -287,6 +294,9 @@
                 sortedPlayers.sort((a, b) => parseInt(b.RANK) - parseInt(a.RANK));
             } else if (sortBy === "kills") {
                 sortedPlayers.sort((a, b) => parseValue(b.KILL) - parseValue(a.KILL));
+            } else if (sortBy === "kills_desc") {
+                // Sort by total player kills in descending order (highest to lowest)
+                sortedPlayers.sort((a, b) => parseValue(b.PLAYER_KILL) - parseValue(a.PLAYER_KILL));
             } else if (sortBy === "might") {
                 sortedPlayers.sort((a, b) => parseValue(b.MIGHT) - parseValue(a.MIGHT));
             } else if (sortBy === "name") {
