@@ -220,6 +220,10 @@
         let allData = [];
         let currentSort = 'rank';
         let currentView = 'war';
+        const MONTH_ORDER = {
+            'JANUARY': 1, 'FEBRUARY': 2, 'MARCH': 3, 'APRIL': 4, 'MAY': 5, 'JUNE': 6,
+            'JULY': 7, 'AUGUST': 8, 'SEPTEMBER': 9, 'OCTOBER': 10, 'NOVEMBER': 11, 'DECEMBER': 12
+        };
         const SHEET_ID = '1SmaO7EImblnP5RlyyxKH1_6GU9Dz1J0gu776ojbSo7I';
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&t=${Date.now()}`;
 
@@ -312,12 +316,8 @@
                 monthlyData[m].playerList.push(p);
             });
 
-            const monthOrder = {
-                'JANUARY': 1, 'FEBRUARY': 2, 'MARCH': 3, 'APRIL': 4, 'MAY': 5, 'JUNE': 6,
-                'JULY': 7, 'AUGUST': 8, 'SEPTEMBER': 9, 'OCTOBER': 10, 'NOVEMBER': 11, 'DECEMBER': 12
-            };
             const months = Object.keys(monthlyData).sort((a, b) => {
-                return (monthOrder[b.toUpperCase()] || 0) - (monthOrder[a.toUpperCase()] || 0);
+                return (MONTH_ORDER[b.toUpperCase()] || 0) - (MONTH_ORDER[a.toUpperCase()] || 0);
             });
             const lastMonth = monthlyData[months[0]] || { players: 0, might: 0, kills: 0, killsGain: 0, mightLoss: 0, playerList: [] };
 
@@ -402,7 +402,9 @@
 
         function renderSearchResults(query) {
             const container = document.getElementById('members-grid');
-            const months = Object.keys(allData.reduce((acc, p) => ({...acc, [p.MONTH]: 1}), {})).sort((a, b) => new Date(b) - new Date(a));
+            const months = Object.keys(allData.reduce((acc, p) => ({...acc, [p.MONTH]: 1}), {})).sort((a, b) => {
+                return (MONTH_ORDER[b.toUpperCase()] || 0) - (MONTH_ORDER[a.toUpperCase()] || 0);
+            });
             const lastMonth = months[0];
             const players = allData.filter(p => p.MONTH === lastMonth && p.NAME.toLowerCase().includes(query.toLowerCase()));
             container.innerHTML = '';
