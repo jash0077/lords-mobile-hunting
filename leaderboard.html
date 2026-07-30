@@ -312,7 +312,13 @@
                 monthlyData[m].playerList.push(p);
             });
 
-            const months = Object.keys(monthlyData).sort((a, b) => new Date(b) - new Date(a));
+            const monthOrder = {
+                'JANUARY': 1, 'FEBRUARY': 2, 'MARCH': 3, 'APRIL': 4, 'MAY': 5, 'JUNE': 6,
+                'JULY': 7, 'AUGUST': 8, 'SEPTEMBER': 9, 'OCTOBER': 10, 'NOVEMBER': 11, 'DECEMBER': 12
+            };
+            const months = Object.keys(monthlyData).sort((a, b) => {
+                return (monthOrder[b.toUpperCase()] || 0) - (monthOrder[a.toUpperCase()] || 0);
+            });
             const lastMonth = monthlyData[months[0]] || { players: 0, might: 0, kills: 0, killsGain: 0, mightLoss: 0, playerList: [] };
 
             document.getElementById('stat-members').textContent = lastMonth.players;
