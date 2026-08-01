@@ -84,7 +84,9 @@ const translations = {
         "festival_card_description": "Plan your missions and track your points to reach your target with our advanced calculator.",
         "event_schedules": "Event Schedules",
         "events_card_description": "View upcoming guild events, live countdowns, and global timezones in real-time.",
-        "player_comparison": "Player Comparison"
+        "player_comparison": "Player Comparison",
+        "meridian": "Meridian",
+        "meridian_card_description": "One moment, translated into every timezone. Plan across the world easily."
     },
     "es": {
         "app_title": "Lords Mobile Hub",

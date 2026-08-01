@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian — one moment, every timezone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.4.4/luxon.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
+<style>
+  :root{
+    --bg:#0E1120; --bg-card:#161A30; --bg-card-2:#1B2038;
+    --line:rgba(241,237,228,0.09); --line-strong:rgba(241,237,228,0.18);
+    --text:#F1EDE4; --text-dim:#9CA3C4; --text-faint:#5C6690;
+    --amber:#E8B34E; --periwinkle:#7C89C7; --coral:#E2725B; --green:#7CD98E;
+    --night1:#0A0D1A; --night2:#1B2246; --dawn:#8677A8; --day1:#F2C46B; --day2:#F2A65A; --dusk:#D9724F;
+  }
+  html[data-theme="light"]{
+    --bg:#F6F3EC; --bg-card:#FFFFFF; --bg-card-2:#F1EDE2;
+    --line:rgba(20,20,30,0.08); --line-strong:rgba(20,20,30,0.16);
+    --text:#1B1E2E; --text-dim:#5B5F73; --text-faint:#9498A8;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(124,137,199,0.12), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(232,179,78,0.07), transparent 55%),
+      var(--bg);
+    color:var(--text); font-family:'Inter',sans-serif; min-height:100vh;
+    transition:background-color .2s ease, color .2s ease;
+  }
+  .page{max-width:840px;margin:0 auto;padding:40px 20px 80px;}
+
+  .hero{text-align:center;padding:20px 0 36px;animation:fadeUp .7s ease both;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .wordmark-row{display:flex;align-items:center;justify-content:center;gap:10px;}
+  .wordmark{font-family:'Fraunces',serif;font-weight:600;letter-spacing:0.14em;font-size:15px;color:var(--amber);text-transform:uppercase;}
+  .theme-btn{
+    background:none;border:1px solid var(--line-strong);color:var(--text-dim);
+    border-radius:8px;width:28px;height:28px;font-size:13px;cursor:pointer;
+  }
+  .theme-btn:hover{color:var(--text);border-color:var(--periwinkle);}
+  .header-actions{display:flex;align-items:center;gap:6px;}
+  .admin-btn{
+    background:none;border:1px solid var(--line-strong);color:var(--text-dim);
+    border-radius:8px;height:28px;padding:0 9px;font-size:12px;cursor:pointer;
+    display:flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;
+  }
+  .admin-btn:hover{color:var(--text);border-color:var(--periwinkle);}
+  .admin-btn.unlocked{color:var(--green);border-color:rgba(124,217,142,0.4);}
+  .site-share-btn{
+    background:none;border:1px solid var(--line-strong);color:var(--text-dim);
+    border-radius:8px;width:28px;height:28px;font-size:13px;cursor:pointer;
+  }
+  .site-share-btn:hover{color:var(--text);border-color:var(--periwinkle);}
+  .admin-note{font-size:11px;color:var(--text-faint);margin:2px 0 0;}
+  .view-only-note{
+    background:var(--bg-card-2);border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;font-size:13px;color:var(--text-dim);margin:0 0 6px;
+  }
+  .tagline{color:var(--text-dim);font-size:14px;margin:6px 0 28px;}
+  .hero-time{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:clamp(56px,14vw,88px);line-height:1;letter-spacing:-0.01em;}
+  .hero-meta{margin-top:10px;color:var(--text-dim);font-size:14px;}
+  .hero-meta .dot{margin:0 8px;color:var(--text-faint);}
+
+  section.event-card{background:var(--bg-card);border:1px solid var(--line);border-radius:18px;padding:22px 22px 20px;margin-bottom:34px;}
+  .event-card-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+  .event-card-head h2{font-family:'Fraunces',serif;font-weight:500;font-size:20px;margin:0;}
+  .eyebrow{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-faint);}
+  .event-form{display:grid;grid-template-columns:1.3fr 1fr 1fr 1.4fr auto;gap:10px;align-items:end;}
+  .event-form label{display:flex;flex-direction:column;gap:6px;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-faint);}
+  .event-form input, .event-form select{
+    font-family:'IBM Plex Mono',monospace;background:var(--bg-card-2);border:1px solid var(--line-strong);
+    color:var(--text);border-radius:9px;padding:9px 10px;font-size:14px;width:100%;
+  }
+  .event-form input[type=text]{font-family:'Inter',sans-serif;}
+  .event-form select{font-family:'Inter',sans-serif;}
+  .event-form input:focus, .event-form select:focus{outline:2px solid var(--amber);outline-offset:1px;}
+  .event-form button{background:var(--amber);color:#231705;border:none;border-radius:9px;padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;height:38px;white-space:nowrap;}
+  .event-form button:hover{background:#f0c165;}
+  #applyFlash{display:none;margin-top:10px;font-size:12px;color:var(--green);font-family:'IBM Plex Mono',monospace;}
+
+  .events-list{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);}
+  .events-list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .events-list-label{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-faint);}
+  .backup-actions{display:flex;gap:6px;}
+  .text-btn{
+    background:none;border:1px solid var(--line-strong);color:var(--text-dim);border-radius:7px;
+    padding:4px 10px;font-size:11px;font-family:'Inter',sans-serif;cursor:pointer;
+  }
+  .text-btn:hover{color:var(--text);border-color:var(--periwinkle);}
+  .events-items{display:flex;flex-direction:column;gap:8px;}
+  .empty-note{color:var(--text-faint);font-size:13px;margin:4px 0 0;}
+  .event-item{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:var(--bg-card-2);border:1px solid var(--line);border-radius:12px;padding:11px 14px;
+    cursor:pointer;transition:border-color .15s ease;
+  }
+  .event-item:hover{border-color:var(--line-strong);}
+  .event-item.active{border-color:var(--amber);}
+  .event-item-title{font-family:'Fraunces',serif;font-size:15px;font-weight:500;}
+  .event-item-meta{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-dim);margin-top:2px;}
+  .event-item-countdown{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--coral);margin-top:2px;}
+  .event-item-actions{display:flex;gap:4px;flex-shrink:0;}
+  .icon-btn{background:none;border:1px solid var(--line-strong);color:var(--text-dim);border-radius:7px;width:30px;height:30px;font-size:13px;cursor:pointer;}
+  .icon-btn:hover{color:var(--text);border-color:var(--periwinkle);}
+
+  .world-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .world-head h2{font-family:'Fraunces',serif;font-weight:500;font-size:20px;margin:0;}
+  .format-toggle{display:flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;}
+  .fmt-btn{background:transparent;border:none;color:var(--text-faint);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:6px 12px;cursor:pointer;}
+  .fmt-btn.active{background:var(--amber);color:#231705;font-weight:600;}
+
+  .active-event-banner{display:none;align-items:center;gap:8px;margin-bottom:14px;font-size:13px;color:var(--coral);font-family:'IBM Plex Mono',monospace;}
+  .active-event-banner b{color:var(--text);font-family:'Fraunces',serif;font-weight:600;}
+
+  .add-city{position:relative;margin-bottom:8px;}
+  .add-city input{width:100%;background:var(--bg-card);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'Inter',sans-serif;}
+  .add-city input:focus{outline:2px solid var(--amber);outline-offset:1px;}
+  .add-city-hint{font-size:11px;color:var(--text-faint);margin:0 0 14px 2px;}
+  .suggestions{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg-card-2);border:1px solid var(--line-strong);border-radius:10px;overflow:hidden;z-index:5;display:none;max-height:280px;overflow-y:auto;}
+  .suggestions.open{display:block;}
+  .suggestion-item{padding:10px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:14px;border-bottom:1px solid var(--line);}
+  .suggestion-item:last-child{border-bottom:none;}
+  .suggestion-item:hover{background:rgba(232,179,78,0.08);}
+  .suggestion-item .sub{color:var(--text-faint);font-size:12px;}
+  .suggestion-empty{padding:12px 14px;color:var(--text-faint);font-size:13px;}
+
+  .rows{display:flex;flex-direction:column;gap:10px;}
+  .row{background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:16px 18px 14px;position:relative;}
+  .row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+  .row-city{display:flex;flex-direction:column;gap:2px;}
+  .row-city .name{font-family:'Fraunces',serif;font-size:17px;font-weight:500;display:flex;align-items:center;gap:8px;}
+  .row-city .sub{font-size:12px;color:var(--text-faint);font-family:'IBM Plex Mono',monospace;}
+  .row-right{text-align:right;}
+  .row-now{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:500;display:flex;align-items:center;justify-content:flex-end;gap:8px;}
+  .daynight{font-size:14px;}
+  .row-event-line{margin-top:6px;font-size:15px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:var(--coral);display:flex;align-items:center;justify-content:flex-end;gap:6px;}
+  .row-event-line .arrow{color:var(--text-faint);font-weight:400;}
+  .row-event-line .badge{display:inline-block;margin-left:2px;padding:2px 8px;border-radius:20px;background:rgba(226,114,91,0.16);color:var(--coral);font-size:10px;letter-spacing:0.04em;text-transform:uppercase;font-weight:700;}
+  .remove-btn{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--text-faint);font-size:16px;cursor:pointer;line-height:1;padding:4px;opacity:0.5;}
+  .remove-btn:hover{opacity:1;color:var(--coral);}
+
+  .strip-wrap{margin-top:14px;}
+  .strip{
+    position:relative;height:8px;border-radius:6px;overflow:visible;
+    background:linear-gradient(90deg,
+      var(--night1) 0%, var(--night1) 19%, var(--dawn) 24%, var(--day1) 29%,
+      var(--day2) 50%, var(--day1) 69%, var(--dusk) 75%, var(--night2) 80%, var(--night1) 100%);
+  }
+  .tick-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text-faint);font-family:'IBM Plex Mono',monospace;margin-top:5px;}
+  .marker{position:absolute;top:50%;transform:translate(-50%,-50%);}
+  .marker.now{width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,0.18);}
+  @media (prefers-reduced-motion: no-preference){.marker.now{animation:pulse 2.4s ease-in-out infinite;}}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(255,255,255,0.18);}50%{box-shadow:0 0 0 6px rgba(255,255,255,0.08);}}
+  .marker.event{width:11px;height:11px;background:var(--coral);transform:translate(-50%,-50%) rotate(45deg);border:2px solid var(--bg-card);}
+
+  .footer{text-align:center;color:var(--text-faint);font-size:12px;margin-top:40px;}
+  #errorBanner{
+    display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:50;
+    background:#3A1A16;border:1px solid var(--coral);color:#F3D9D2;
+    border-radius:10px;padding:10px 14px;font-size:12px;font-family:'IBM Plex Mono',monospace;
+  }
+  .modal-overlay{
+    display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,0.55);
+    align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-card{
+    background:var(--bg-card);border:1px solid var(--line-strong);border-radius:16px;
+    padding:20px;max-width:340px;width:100%;
+  }
+  .modal-card h3{font-family:'Fraunces',serif;font-weight:500;font-size:17px;margin:0 0 6px;}
+  .modal-card p{font-size:13px;color:var(--text-dim);margin:0 0 14px;line-height:1.4;}
+  .modal-card input{
+    font-family:'IBM Plex Mono',monospace;background:var(--bg-card-2);border:1px solid var(--line-strong);
+    color:var(--text);border-radius:9px;padding:10px 12px;font-size:15px;width:100%;margin-bottom:6px;
+  }
+  .modal-card input:focus{outline:2px solid var(--amber);outline-offset:1px;}
+  .modal-error{font-size:12px;color:var(--coral);min-height:16px;margin:2px 0 10px;}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;}
+  .modal-btn{border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+  .modal-btn.primary{background:var(--amber);color:#231705;}
+  .modal-btn.primary:hover{background:#f0c165;}
+  .modal-btn.secondary{background:none;border:1px solid var(--line-strong);color:var(--text-dim);}
+  .modal-btn.secondary:hover{color:var(--text);border-color:var(--periwinkle);}
+
+  @media (max-width:640px){
+    .event-form{grid-template-columns:1fr 1fr;}
+    .event-form button{grid-column:1 / -1;}
+    .row-top{flex-direction:column;}
+    .row-right{text-align:left;}
+    .row-now{justify-content:flex-start;}
+    .row-event-line{justify-content:flex-start;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <div class="wordmark-row">
+      <div class="wordmark">Meridian</div>
+      <div class="header-actions">
+        <button type="button" class="admin-btn" id="adminToggle" title="Admin controls who can add/remove events"><span id="adminIcon">🔒</span> <span id="adminLabel">Admin</span></button>
+        <button type="button" class="site-share-btn" id="siteShareBtn" title="Copy link to this app">🔗</button>
+        <button type="button" class="theme-btn" id="themeToggle" title="Toggle theme">🌓</button>
+      </div>
+    </div>
+    <p class="tagline">One moment, translated into every timezone.</p>
+    <div class="hero-clock">
+      <div id="heroTime" class="hero-time">--:--</div>
+      <div class="hero-meta">
+        <span id="heroDate">—</span>
+        <span class="dot">·</span>
+        <span id="heroZone">your time</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="event-card">
+    <div class="event-card-head">
+      <h2>Plan across timezones</h2>
+      <span class="eyebrow">Everyone can view · Admin can edit</span>
+    </div>
+    <div id="viewOnlyNote" class="view-only-note" style="display:none;">
+      Anyone can view events and search any city or timezone below. Only the admin can add, edit, or remove events — unlock admin above.
+    </div>
+    <form id="eventForm" class="event-form">
+      <label>Title<input type="text" id="evTitle" placeholder="e.g. Team sync" maxlength="60"></label>
+      <label>Date<input type="date" id="evDate" required></label>
+      <label>Time<input type="time" id="evTime" required></label>
+      <label>In<select id="evZone"></select></label>
+      <button type="submit" id="convertBtn">Add event</button>
+    </form>
+    <div id="applyFlash">✓ Event saved</div>
+
+    <div class="events-list">
+      <div class="events-list-head">
+        <div class="events-list-label">Your events</div>
+        <div class="backup-actions">
+          <button type="button" class="text-btn" id="exportBtn">Export</button>
+          <button type="button" class="text-btn" id="importBtn">Import</button>
+          <input type="file" id="importFile" accept="application/json" hidden>
+        </div>
+      </div>
+      <div id="eventsList" class="events-items"></div>
+    </div>
+  </section>
+
+  <section class="world">
+    <div class="world-head">
+      <h2>World times</h2>
+      <div class="format-toggle">
+        <button class="fmt-btn" id="fmt12" type="button">12h</button>
+        <button class="fmt-btn active" id="fmt24" type="button">24h</button>
+      </div>
+    </div>
+    <div id="activeEventBanner" class="active-event-banner">Showing conversions for <b id="activeEventTitle"></b></div>
+    <div class="add-city">
+      <input id="citySearch" placeholder="Add any city, country, or timezone…" autocomplete="off">
+      <div id="citySuggestions" class="suggestions"></div>
+    </div>
+    <p class="add-city-hint">Searches 25 popular cities plus every IANA timezone worldwide.</p>
+    <div id="rows" class="rows"></div>
+  </section>
+
+  <p class="footer">Times update live from your device clock · Timezones follow IANA / DST rules · Events and cities are saved only in this browser · Anyone with the link can view and search; only the admin PIN can add or remove events</p>
+</div>
+
+<div id="errorBanner"></div>
+
+<div id="modalOverlay" class="modal-overlay">
+  <div class="modal-card">
+    <h3 id="modalTitle">Title</h3>
+    <p id="modalMessage">Message</p>
+    <input id="modalInput" type="text">
+    <div id="modalError" class="modal-error"></div>
+    <div class="modal-actions">
+      <button type="button" class="modal-btn secondary" id="modalCancel">Cancel</button>
+      <button type="button" class="modal-btn primary" id="modalConfirm">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const { DateTime } = luxon;
+
+const CITIES = [
+  {id:'kolkata', name:'India', sub:'Mumbai · Delhi', zone:'Asia/Kolkata', flag:'🇮🇳', lat:28.6139, lon:77.2090},
+  {id:'tokyo', name:'Tokyo', sub:'Japan', zone:'Asia/Tokyo', flag:'🇯🇵', lat:35.6762, lon:139.6503},
+  {id:'paris', name:'Paris', sub:'France', zone:'Europe/Paris', flag:'🇫🇷', lat:48.8566, lon:2.3522},
+  {id:'madrid', name:'Madrid', sub:'Spain', zone:'Europe/Madrid', flag:'🇪🇸', lat:40.4168, lon:-3.7038},
+  {id:'london', name:'London', sub:'United Kingdom', zone:'Europe/London', flag:'🇬🇧', lat:51.5072, lon:-0.1276},
+  {id:'newyork', name:'New York', sub:'United States', zone:'America/New_York', flag:'🇺🇸', lat:40.7128, lon:-74.0060},
+  {id:'losangeles', name:'Los Angeles', sub:'United States', zone:'America/Los_Angeles', flag:'🇺🇸', lat:34.0522, lon:-118.2437},
+  {id:'chicago', name:'Chicago', sub:'United States', zone:'America/Chicago', flag:'🇺🇸', lat:41.8781, lon:-87.6298},
+  {id:'lima', name:'Lima', sub:'Peru', zone:'America/Lima', flag:'🇵🇪', lat:-12.0464, lon:-77.0428},
+  {id:'hanoi', name:'Hanoi', sub:'Vietnam', zone:'Asia/Ho_Chi_Minh', flag:'🇻🇳', lat:21.0278, lon:105.8342},
+  {id:'singapore', name:'Singapore', sub:'Singapore', zone:'Asia/Singapore', flag:'🇸🇬', lat:1.3521, lon:103.8198},
+  {id:'dubai', name:'Dubai', sub:'UAE', zone:'Asia/Dubai', flag:'🇦🇪', lat:25.2048, lon:55.2708},
+  {id:'sydney', name:'Sydney', sub:'Australia', zone:'Australia/Sydney', flag:'🇦🇺', lat:-33.8688, lon:151.2093},
+  {id:'beijing', name:'Beijing', sub:'China', zone:'Asia/Shanghai', flag:'🇨🇳', lat:39.9042, lon:116.4074},
+  {id:'moscow', name:'Moscow', sub:'Russia', zone:'Europe/Moscow', flag:'🇷🇺', lat:55.7558, lon:37.6173},
+  {id:'berlin', name:'Berlin', sub:'Germany', zone:'Europe/Berlin', flag:'🇩🇪', lat:52.5200, lon:13.4050},
+  {id:'saopaulo', name:'São Paulo', sub:'Brazil', zone:'America/Sao_Paulo', flag:'🇧🇷', lat:-23.5505, lon:-46.6333},
+  {id:'mexicocity', name:'Mexico City', sub:'Mexico', zone:'America/Mexico_City', flag:'🇲🇽', lat:19.4326, lon:-99.1332},
+  {id:'toronto', name:'Toronto', sub:'Canada', zone:'America/Toronto', flag:'🇨🇦', lat:43.6532, lon:-79.3832},
+  {id:'cairo', name:'Cairo', sub:'Egypt', zone:'Africa/Cairo', flag:'🇪🇬', lat:30.0444, lon:31.2357},
+  {id:'johannesburg', name:'Johannesburg', sub:'South Africa', zone:'Africa/Johannesburg', flag:'🇿🇦', lat:-26.2041, lon:28.0473},
+  {id:'seoul', name:'Seoul', sub:'South Korea', zone:'Asia/Seoul', flag:'🇰🇷', lat:37.5665, lon:126.9780},
+  {id:'bangkok', name:'Bangkok', sub:'Thailand', zone:'Asia/Bangkok', flag:'🇹🇭', lat:13.7563, lon:100.5018},
+  {id:'auckland', name:'Auckland', sub:'New Zealand', zone:'Pacific/Auckland', flag:'🇳🇿', lat:-36.8485, lon:174.7633},
+  {id:'jakarta', name:'Jakarta', sub:'Indonesia', zone:'Asia/Jakarta', flag:'🇮🇩', lat:-6.2088, lon:106.8456},
+];
+const DEFAULT_FAVORITES = ['kolkata','tokyo','paris','madrid','london','newyork','lima','hanoi','sydney','dubai'];
+const ALL_ZONES = (typeof Intl.supportedValuesOf === 'function') ? Intl.supportedValuesOf('timeZone') : [];
+
+function genId(){ return 'ev_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function loadJSON(key, fallback){
+  try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch(e){ return fallback; }
+}
+function saveJSON(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){ /* storage unavailable (e.g. sandboxed preview) — app still works, just won't persist */ } }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function showError(msg){
+  console.error('Meridian:', msg);
+  const el = document.getElementById('errorBanner');
+  el.textContent = msg;
+  el.style.display = 'block';
+  clearTimeout(showError._t);
+  showError._t = setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+// ---------- In-page modal (replaces window.prompt/alert, which some ----------
+// ---------- in-app WebViews / file viewers silently ignore) ----------
+const modalOverlay = document.getElementById('modalOverlay');
+const modalTitle = document.getElementById('modalTitle');
+const modalMessage = document.getElementById('modalMessage');
+const modalInput = document.getElementById('modalInput');
+const modalErrorEl = document.getElementById('modalError');
+const modalCancelBtn = document.getElementById('modalCancel');
+const modalConfirmBtn = document.getElementById('modalConfirm');
+let modalOnConfirm = null;
+
+function closeModal(){
+  modalOverlay.classList.remove('open');
+  modalOnConfirm = null;
+  modalErrorEl.textContent = '';
+}
+function openPromptModal({ title, message, placeholder = '', inputType = 'text', confirmLabel = 'OK', readOnlyValue = null, onConfirm }){
+  modalTitle.textContent = title;
+  modalMessage.textContent = message;
+  modalErrorEl.textContent = '';
+  modalConfirmBtn.textContent = confirmLabel;
+  if (readOnlyValue !== null){
+    modalInput.style.display = 'block';
+    modalInput.type = 'text';
+    modalInput.value = readOnlyValue;
+    modalInput.readOnly = true;
+    modalCancelBtn.style.display = 'none';
+    modalConfirmBtn.textContent = 'Close';
+  } else {
+    modalInput.style.display = 'block';
+    modalInput.type = inputType;
+    modalInput.readOnly = false;
+    modalInput.value = '';
+    modalInput.placeholder = placeholder;
+    modalCancelBtn.style.display = 'inline-block';
+  }
+  modalOnConfirm = onConfirm;
+  modalOverlay.classList.add('open');
+  setTimeout(() => { if (readOnlyValue !== null) modalInput.select(); else modalInput.focus(); }, 50);
+}
+modalCancelBtn.addEventListener('click', closeModal);
+modalConfirmBtn.addEventListener('click', () => {
+  if (modalInput.readOnly){ closeModal(); return; }
+  const val = modalInput.value;
+  const cb = modalOnConfirm;
+  if (cb) cb(val);
+});
+modalInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter'){ e.preventDefault(); modalConfirmBtn.click(); }
+  if (e.key === 'Escape'){ e.preventDefault(); closeModal(); }
+});
+modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+
+function showLinkModal(title, link){
+  openPromptModal({ title, message: 'Copy this link to share it:', readOnlyValue: link, onConfirm: () => {} });
+}
+
+// ---------- State ----------
+let favorites = loadJSON('meridian:favorites', DEFAULT_FAVORITES.slice());
+let use24h = loadJSON('meridian:use24h', true);
+let theme = loadJSON('meridian:theme', 'dark');
+let customCities = loadJSON('meridian:customCities', []);
+let events = loadJSON('meridian:events', null);
+if (!events || !Array.isArray(events)){
+  events = [{ id: genId(), title: 'Example event', dateStr: '2026-08-02', timeStr: '14:00', zoneId: 'kolkata' }];
+}
+let activeEventId = loadJSON('meridian:activeEventId', events.length ? events[0].id : null);
+
+// Admin gating: anyone opening this page (including via a shared link) can view
+// events and search/add any city or timezone to their own world-clock view.
+// Only someone who knows this device's admin PIN can add/edit/remove events.
+// This is a lightweight, client-side lock (no server), suited to a trusted
+// small-group link — not a substitute for real authentication.
+// The admin PIN is fixed by the site owner (not user-editable via the UI).
+// It is intentionally NOT read from localStorage, so a value saved by an
+// earlier version of this page in your browser can never override it.
+let adminPin = '523890';
+let isAdminUnlocked = loadJSON('meridian:adminUnlocked', false);
+function persistAdminUnlocked(){ saveJSON('meridian:adminUnlocked', isAdminUnlocked); }
+function isAdmin(){ return !!isAdminUnlocked; }
+
+function cityById(id){ return CITIES.find(c => c.id === id) || customCities.find(c => c.id === id); }
+function persistFavorites(){ saveJSON('meridian:favorites', favorites); }
+function persistUse24h(){ saveJSON('meridian:use24h', use24h); }
+function persistTheme(){ saveJSON('meridian:theme', theme); }
+function persistCustomCities(){ saveJSON('meridian:customCities', customCities); }
+function persistEvents(){ saveJSON('meridian:events', events); saveJSON('meridian:activeEventId', activeEventId); }
+
+document.documentElement.setAttribute('data-theme', theme);
+
+// ---------- Incoming shared-event link ----------
+(function importSharedEvent(){
+  try{
+    const params = new URLSearchParams(location.search);
+    if (!(params.has('date') && params.has('time') && params.has('zone'))) return;
+    const zoneId = params.get('zone');
+    if (!cityById(zoneId)) return;
+    const shared = {
+      title: (params.get('title') || 'Shared event').slice(0,60),
+      dateStr: params.get('date'),
+      timeStr: params.get('time'),
+      zoneId
+    };
+    const dup = events.find(e => e.title===shared.title && e.dateStr===shared.dateStr && e.timeStr===shared.timeStr && e.zoneId===shared.zoneId);
+    if (dup){ activeEventId = dup.id; }
+    else {
+      shared.id = genId();
+      events.unshift(shared);
+      activeEventId = shared.id;
+      persistEvents();
+    }
+  } catch(e){ showError('Could not read the shared link.'); }
+})();
+
+// ---------- Form setup ----------
+const evZoneSel = document.getElementById('evZone');
+function populateZoneOptions(){
+  const prev = evZoneSel.value;
+  evZoneSel.innerHTML = '';
+  [...CITIES, ...customCities].forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = `${c.flag} ${c.name} — ${c.sub}`;
+    evZoneSel.appendChild(opt);
+  });
+  const stillExists = [...CITIES, ...customCities].some(c => c.id === prev);
+  evZoneSel.value = stillExists ? prev : 'kolkata';
+}
+populateZoneOptions();
+
+const evTitleInput = document.getElementById('evTitle');
+const evDateInput = document.getElementById('evDate');
+const evTimeInput = document.getElementById('evTime');
+evDateInput.value = '2026-08-02';
+evTimeInput.value = '14:00';
+
+function addEventFromForm(){
+  if (!isAdmin()){ showError('Only the admin can add events.'); return; }
+  if (!evDateInput.value || !evTimeInput.value) return;
+  const ev = {
+    id: genId(),
+    title: (evTitleInput.value.trim() || 'Untitled event'),
+    dateStr: evDateInput.value,
+    timeStr: evTimeInput.value,
+    zoneId: evZoneSel.value
+  };
+  events.unshift(ev);
+  activeEventId = ev.id;
+  persistEvents();
+  evTitleInput.value = '';
+  renderAll();
+  const flash = document.getElementById('applyFlash');
+  flash.style.display = 'block';
+  clearTimeout(addEventFromForm._t);
+  addEventFromForm._t = setTimeout(() => { flash.style.display = 'none'; }, 1400);
+}
+
+document.getElementById('eventForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  addEventFromForm();
+});
+
+// ---------- Events list interactions ----------
+document.getElementById('eventsList').addEventListener('click', (e) => {
+  const shareBtn = e.target.closest('[data-share]');
+  const deleteBtn = e.target.closest('[data-delete]');
+  const item = e.target.closest('.event-item');
+
+  if (shareBtn){
+    const ev = events.find(x => x.id === shareBtn.dataset.share);
+    if (!ev) return;
+    const url = new URL(location.href);
+    url.search = '';
+    url.searchParams.set('title', ev.title);
+    url.searchParams.set('date', ev.dateStr);
+    url.searchParams.set('time', ev.timeStr);
+    url.searchParams.set('zone', ev.zoneId);
+    const link = url.toString();
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(link).then(() => {
+        shareBtn.textContent = '✓';
+        setTimeout(() => { shareBtn.textContent = '🔗'; }, 1400);
+      }).catch(() => { showLinkModal('Event link', link); });
+    } else {
+      showLinkModal('Event link', link);
+    }
+    return;
+  }
+  if (deleteBtn){
+    if (!isAdmin()) { showError('Only the admin can remove events.'); return; }
+    const id = deleteBtn.dataset.delete;
+    events = events.filter(x => x.id !== id);
+    if (activeEventId === id) activeEventId = events.length ? events[0].id : null;
+    persistEvents();
+    renderAll();
+    return;
+  }
+  if (item){
+    activeEventId = item.dataset.id;
+    persistEvents();
+    renderAll();
+  }
+});
+
+// ---------- Export / Import ----------
+document.getElementById('exportBtn').addEventListener('click', () => {
+  try{
+    const payload = { favorites, events, customCities, use24h, exportedAt: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'meridian-backup.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch(e){ showError('Export failed — your browser may be blocking downloads.'); }
+});
+document.getElementById('importBtn').addEventListener('click', () => {
+  if (!isAdmin()){ showError('Only the admin can import a backup.'); return; }
+  document.getElementById('importFile').click();
+});
+document.getElementById('importFile').addEventListener('change', (e) => {
+  if (!isAdmin()){ showError('Only the admin can import a backup.'); e.target.value = ''; return; }
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const data = JSON.parse(reader.result);
+      if (Array.isArray(data.favorites)) favorites = data.favorites;
+      if (Array.isArray(data.events)) events = data.events;
+      if (Array.isArray(data.customCities)) customCities = data.customCities;
+      if (typeof data.use24h === 'boolean') use24h = data.use24h;
+      activeEventId = events.length ? events[0].id : null;
+      persistFavorites(); persistEvents(); persistCustomCities(); persistUse24h();
+      populateZoneOptions(); syncFmtButtons(); renderAll();
+    } catch(err){ showError('That file could not be read as a Meridian backup.'); }
+  };
+  reader.onerror = () => showError('Could not read that file.');
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+// ---------- Format toggle ----------
+document.getElementById('fmt12').addEventListener('click', () => { use24h = false; persistUse24h(); syncFmtButtons(); renderAll(); });
+document.getElementById('fmt24').addEventListener('click', () => { use24h = true; persistUse24h(); syncFmtButtons(); renderAll(); });
+function syncFmtButtons(){
+  document.getElementById('fmt12').classList.toggle('active', !use24h);
+  document.getElementById('fmt24').classList.toggle('active', use24h);
+}
+
+// ---------- Theme toggle ----------
+document.getElementById('themeToggle').addEventListener('click', () => {
+  theme = (theme === 'dark') ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  persistTheme();
+});
+
+// ---------- Admin lock/unlock ----------
+function syncAdminUI(){
+  const btn = document.getElementById('adminToggle');
+  const label = document.getElementById('adminLabel');
+  const note = document.getElementById('viewOnlyNote');
+  const form = document.getElementById('eventForm');
+  const importBtn = document.getElementById('importBtn');
+  const admin = isAdmin();
+  btn.classList.toggle('unlocked', admin);
+  document.getElementById('adminIcon').textContent = admin ? '🔓' : '🔒';
+  label.textContent = admin ? 'Admin ✓' : 'Admin';
+  btn.title = admin ? 'Admin unlocked — click to lock' : 'Unlock admin to add or remove events';
+  form.style.display = admin ? 'grid' : 'none';
+  note.style.display = admin ? 'none' : 'block';
+  importBtn.style.display = admin ? 'inline-block' : 'none';
+}
+document.getElementById('adminToggle').addEventListener('click', () => {
+  if (isAdminUnlocked){
+    isAdminUnlocked = false;
+    persistAdminUnlocked();
+    syncAdminUI();
+    renderAll();
+    return;
+  }
+  openPromptModal({
+    title: 'Admin unlock',
+    message: 'Enter the admin PIN to add or remove events.',
+    placeholder: 'PIN',
+    inputType: 'password',
+    confirmLabel: 'Unlock',
+    onConfirm: (val) => {
+      if ((val || '').trim() === adminPin){
+        isAdminUnlocked = true;
+        persistAdminUnlocked();
+        closeModal();
+        syncAdminUI();
+        renderAll();
+      } else {
+        modalErrorEl.textContent = 'Incorrect PIN.';
+      }
+    }
+  });
+});
+
+// ---------- Share the app itself (as opposed to a single event) ----------
+document.getElementById('siteShareBtn').addEventListener('click', () => {
+  const url = new URL(location.href);
+  url.search = '';
+  const link = url.toString();
+  const btn = document.getElementById('siteShareBtn');
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(link).then(() => {
+      btn.textContent = '✓';
+      setTimeout(() => { btn.textContent = '🔗'; }, 1400);
+    }).catch(() => { showLinkModal('Site link', link); });
+  } else {
+    showLinkModal('Site link', link);
+  }
+});
+
+// ---------- Add city search (curated cities + worldwide IANA zones) ----------
+const citySearch = document.getElementById('citySearch');
+const suggestBox = document.getElementById('citySuggestions');
+let lastSuggestions = [];
+
+function buildSuggestions(q){
+  const taken = new Set(favorites);
+  const known = [...CITIES, ...customCities].filter(c =>
+    !taken.has(c.id) && (c.name.toLowerCase().includes(q) || c.sub.toLowerCase().includes(q))
+  ).slice(0, 6);
+  let results = known.map(c => ({ ...c, kind: 'known' }));
+  if (results.length < 6 && ALL_ZONES.length){
+    const existingZones = new Set([...CITIES, ...customCities].map(c => c.zone));
+    const room = 6 - results.length;
+    const zoneMatches = ALL_ZONES.filter(z => z.toLowerCase().includes(q) && !existingZones.has(z)).slice(0, room);
+    zoneMatches.forEach(z => {
+      const parts = z.split('/');
+      const name = parts[parts.length - 1].replace(/_/g, ' ');
+      const region = parts.length > 1 ? parts.slice(0, -1).join('/').replace(/_/g, ' ') : 'IANA timezone';
+      results.push({ id: 'iana_' + z.replace(/[^a-zA-Z0-9]/g, '_'), name, sub: region, zone: z, flag: '🌐', lat: null, lon: null, kind: 'iana' });
+    });
+  }
+  return results;
+}
+
+citySearch.addEventListener('input', () => {
+  const q = citySearch.value.trim().toLowerCase();
+  if (!q){ suggestBox.classList.remove('open'); suggestBox.innerHTML = ''; lastSuggestions = []; return; }
+  lastSuggestions = buildSuggestions(q);
+  suggestBox.innerHTML = lastSuggestions.length
+    ? lastSuggestions.map(c => `<div class="suggestion-item" data-id="${c.id}"><span>${c.flag} ${escapeHtml(c.name)}</span><span class="sub">${escapeHtml(c.sub)}</span></div>`).join('')
+    : `<div class="suggestion-empty">No matching city or timezone</div>`;
+  suggestBox.classList.add('open');
+});
+suggestBox.addEventListener('click', (e) => {
+  const item = e.target.closest('.suggestion-item');
+  if (!item) return;
+  const picked = lastSuggestions.find(c => c.id === item.dataset.id);
+  if (!picked) return;
+  if (picked.kind === 'iana' && !customCities.find(c => c.id === picked.id)){
+    customCities.push({ id: picked.id, name: picked.name, sub: picked.sub, zone: picked.zone, flag: picked.flag, lat: null, lon: null });
+    persistCustomCities();
+    populateZoneOptions();
+  }
+  favorites.push(picked.id);
+  persistFavorites();
+  citySearch.value = '';
+  suggestBox.classList.remove('open');
+  suggestBox.innerHTML = '';
+  renderAll();
+});
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.add-city')) suggestBox.classList.remove('open');
+});
+
+// ---------- Helpers ----------
+function buildEventInstant(ev){
+  if (!ev) return null;
+  const city = cityById(ev.zoneId);
+  if (!city) return null;
+  const [y, m, d] = ev.dateStr.split('-').map(Number);
+  const [hh, mm] = ev.timeStr.split(':').map(Number);
+  if (!y || !m || !d || isNaN(hh) || isNaN(mm)) return null;
+  const dt = DateTime.fromObject({ year: y, month: m, day: d, hour: hh, minute: mm }, { zone: city.zone });
+  return dt.isValid ? dt : null;
+}
+function fmtTime(dt){ return use24h ? dt.toFormat('HH:mm') : dt.toFormat('h:mm a'); }
+function dayLabel(cityNowDT, targetDT){
+  const diff = Math.round(targetDT.startOf('day').diff(cityNowDT.startOf('day'), 'days').days);
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Tomorrow';
+  if (diff === -1) return 'Yesterday';
+  return targetDT.toFormat('ccc, LLL d');
+}
+function countdownText(eventInstant){
+  const now = DateTime.now();
+  const ms = eventInstant.diff(now).as('milliseconds');
+  if (ms < 0) return 'Already passed';
+  const d = eventInstant.diff(now, ['days','hours','minutes']).toObject();
+  const days = Math.floor(d.days || 0), hours = Math.floor(d.hours || 0), mins = Math.floor(d.minutes || 0);
+  if (days > 0) return `in ${days}d ${hours}h`;
+  if (hours > 0) return `in ${hours}h ${mins}m`;
+  return `in ${mins}m`;
+}
+function pct(dt){ return ((dt.hour + dt.minute/60) / 24) * 100; }
+function activeEvent(){ return events.find(e => e.id === activeEventId) || null; }
+
+// Real sunrise/sunset shading for cities with known coordinates; falls back to the
+// static approximate gradient (set in CSS) for custom/IANA-only cities or if SunCalc is unavailable.
+function computeStripGradient(city, cityNow){
+  try{
+    if (city.lat == null || city.lon == null || typeof SunCalc === 'undefined') return null;
+    const ref = new Date(cityNow.year, cityNow.month - 1, cityNow.day, 12);
+    const t = SunCalc.getTimes(ref, city.lat, city.lon);
+    const toPct = (d) => {
+      const dt = DateTime.fromJSDate(d).setZone(city.zone);
+      if (!dt.isValid || isNaN(dt.hour)) throw new Error('bad sun time');
+      return pct(dt);
+    };
+    const nightEnd = toPct(t.nightEnd), dawn = toPct(t.dawn), sunrise = toPct(t.sunrise),
+          sunset = toPct(t.sunset), dusk = toPct(t.dusk), night = toPct(t.night);
+    return `linear-gradient(90deg, var(--night1) 0%, var(--night1) ${nightEnd}%, var(--dawn) ${dawn}%, var(--day1) ${sunrise}%, var(--day1) ${sunset}%, var(--dusk) ${dusk}%, var(--night2) ${night}%, var(--night1) 100%)`;
+  } catch(e){ return null; }
+}
+
+// ---------- Render ----------
+function renderHero(){
+  const now = DateTime.now();
+  document.getElementById('heroTime').textContent = fmtTime(now);
+  document.getElementById('heroDate').textContent = now.toFormat('cccc, LLLL d');
+  document.getElementById('heroZone').textContent = now.zoneName.replace(/_/g,' ');
+}
+
+function renderEventsList(){
+  const el = document.getElementById('eventsList');
+  if (!events.length){
+    el.innerHTML = `<p class="empty-note">No saved events yet — create one above.</p>`;
+    return;
+  }
+  el.innerHTML = events.map(ev => {
+    const zc = cityById(ev.zoneId);
+    const dt = buildEventInstant(ev);
+    const isActive = ev.id === activeEventId;
+    return `
+      <div class="event-item ${isActive ? 'active' : ''}" data-id="${ev.id}">
+        <div class="event-item-main">
+          <div class="event-item-title">${escapeHtml(ev.title)}</div>
+          <div class="event-item-meta">${zc ? zc.flag : ''} ${dt ? fmtTime(dt) : '—'} · ${dt ? dt.toFormat('ccc, LLL d') : ''} · ${zc ? escapeHtml(zc.name) : ''}</div>
+          <div class="event-item-countdown">${dt ? countdownText(dt) : ''}</div>
+        </div>
+        <div class="event-item-actions">
+          <button type="button" class="icon-btn" data-share="${ev.id}" title="Copy share link">🔗</button>
+          ${isAdmin() ? `<button type="button" class="icon-btn" data-delete="${ev.id}" title="Delete event">✕</button>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderRows(){
+  const rowsEl = document.getElementById('rows');
+  const ev = activeEvent();
+  const eventInstant = buildEventInstant(ev);
+  const validEvent = !!eventInstant;
+
+  const banner = document.getElementById('activeEventBanner');
+  if (validEvent){
+    banner.style.display = 'flex';
+    document.getElementById('activeEventTitle').textContent = ev.title;
+  } else {
+    banner.style.display = 'none';
+  }
+
+  if (!favorites.length){
+    rowsEl.innerHTML = `<p class="empty-note">No cities yet — search above to add your first one.</p>`;
+    return;
+  }
+
+  rowsEl.innerHTML = favorites.map(id => {
+    const city = cityById(id);
+    if (!city) return '';
+    const cityNow = DateTime.now().setZone(city.zone);
+    const isDay = cityNow.hour >= 6 && cityNow.hour < 18;
+    const offset = cityNow.toFormat('ZZ');
+    const nowPct = pct(cityNow);
+    const gradient = computeStripGradient(city, cityNow);
+
+    let eventLine = '';
+    let eventMarker = '';
+    if (validEvent){
+      const local = eventInstant.setZone(city.zone);
+      const label = dayLabel(cityNow, local);
+      eventLine = `<div class="row-event-line"><span class="arrow">event →</span>${fmtTime(local)} · ${local.toFormat('ccc, LLL d')} <span class="badge">${label}</span></div>`;
+      eventMarker = `<div class="marker event" style="left:${pct(local)}%" title="Event: ${fmtTime(local)}"></div>`;
+    }
+
+    return `
+      <div class="row" data-id="${city.id}">
+        <button type="button" class="remove-btn" data-remove="${city.id}" aria-label="Remove ${escapeHtml(city.name)}">✕</button>
+        <div class="row-top">
+          <div class="row-city">
+            <div class="name">${city.flag} ${escapeHtml(city.name)}</div>
+            <div class="sub">${escapeHtml(city.sub)} · UTC${offset}</div>
+          </div>
+          <div class="row-right">
+            <div class="row-now"><span class="daynight">${isDay ? '☀' : '☾'}</span>${fmtTime(cityNow)}</div>
+            ${eventLine}
+          </div>
+        </div>
+        <div class="strip-wrap">
+          <div class="strip" ${gradient ? `style="background:${gradient}"` : ''}>
+            <div class="marker now" style="left:${nowPct}%" title="Now: ${fmtTime(cityNow)}"></div>
+            ${eventMarker}
+          </div>
+          <div class="tick-labels"><span>12a</span><span>6a</span><span>12p</span><span>6p</span><span>12a</span></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  rowsEl.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      favorites = favorites.filter(f => f !== btn.dataset.remove);
+      persistFavorites();
+      renderAll();
+    });
+  });
+}
+
+function renderAll(){
+  try{
+    renderHero();
+    renderEventsList();
+    renderRows();
+  } catch(e){
+    showError('Something went wrong updating the page — check the browser console for details.');
+  }
+}
+
+syncFmtButtons();
+syncAdminUI();
+renderAll();
+setInterval(renderAll, 1000);
+</script>
+</body>
+</html>
