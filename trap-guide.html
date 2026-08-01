@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trap Guide — HEM Guild Lords Mobile</title>
+    <title>Trap Guide — Advanced Lords Mobile Strategies</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -28,24 +28,41 @@
         html, body { margin: 0; padding: 0; }
         body {
             background: 
-                radial-gradient(1200px 600px at 15% -10%, rgba(124, 137, 199, 0.08), transparent 60%),
-                radial-gradient(900px 500px at 100% 0%, rgba(232, 179, 78, 0.05), transparent 55%),
+                radial-gradient(1200px 600px at 15% -10%, rgba(124, 137, 199, 0.06), transparent 60%),
+                radial-gradient(900px 500px at 100% 0%, rgba(232, 179, 78, 0.04), transparent 55%),
                 var(--bg);
             color: var(--text);
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
         .page {
-            max-width: 840px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 40px 20px 80px;
+            padding: 20px 16px 60px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0 20px;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: var(--text-dim);
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .hero {
             text-align: center;
-            padding: 20px 0 48px;
+            padding: 10px 0 30px;
             animation: fadeUp .7s ease both;
         }
 
@@ -54,46 +71,29 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .wordmark-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .wordmark {
-            font-family: 'Fraunces', serif;
-            font-weight: 600;
-            letter-spacing: 0.14em;
-            font-size: 15px;
-            color: var(--amber);
-            text-transform: uppercase;
-        }
-
         .hero h1 {
             font-family: 'Fraunces', serif;
             font-weight: 500;
-            font-size: clamp(32px, 8vw, 48px);
+            font-size: clamp(28px, 6vw, 40px);
             line-height: 1.1;
-            margin: 0 0 16px;
+            margin: 0 0 8px;
             color: var(--text);
         }
 
         .tagline {
             color: var(--text-dim);
-            font-size: 16px;
-            max-width: 600px;
+            font-size: 14px;
+            max-width: 500px;
             margin: 0 auto;
         }
 
         section.card {
             background: var(--bg-card);
             border: 1px solid var(--line);
-            border-radius: 18px;
-            padding: 32px;
-            margin-bottom: 32px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.01);
         }
 
         .card-head {
@@ -101,22 +101,22 @@
             align-items: baseline;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 24px;
+            gap: 4px;
+            margin-bottom: 16px;
             border-bottom: 1px solid var(--line);
-            padding-bottom: 16px;
+            padding-bottom: 12px;
         }
 
         .card-head h2 {
             font-family: 'Fraunces', serif;
             font-weight: 500;
-            font-size: 22px;
+            font-size: 20px;
             margin: 0;
             color: var(--text);
         }
 
         .eyebrow {
-            font-size: 11px;
+            font-size: 10px;
             letter-spacing: 0.08em;
             text-transform: uppercase;
             color: var(--text-faint);
@@ -125,63 +125,62 @@
 
         h3 {
             font-family: 'Fraunces', serif;
-            font-size: 19px;
+            font-size: 17px;
             font-weight: 500;
-            margin: 24px 0 12px;
+            margin: 20px 0 10px;
             color: var(--text);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         h3 i {
             color: var(--amber);
-            font-size: 16px;
+            font-size: 14px;
         }
 
         p {
-            margin: 0 0 16px;
+            margin: 0 0 12px;
             color: var(--text-dim);
-            font-size: 15px;
+            font-size: 14px;
         }
 
         .warning-box {
-            background: rgba(226, 114, 91, 0.08);
-            border: 1px solid rgba(226, 114, 91, 0.2);
-            border-radius: 12px;
-            padding: 20px;
-            margin: 24px 0;
+            background: rgba(226, 114, 91, 0.06);
+            border: 1px solid rgba(226, 114, 91, 0.15);
+            border-radius: 10px;
+            padding: 16px;
+            margin: 16px 0;
         }
 
         .warning-box h4 {
             color: var(--coral);
             font-family: 'Fraunces', serif;
-            font-size: 16px;
-            margin: 0 0 8px;
+            font-size: 14px;
+            margin: 0 0 4px;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
         .warning-box p {
             color: var(--coral);
             margin: 0;
-            font-size: 14px;
+            font-size: 13px;
             opacity: 0.9;
         }
 
         ul {
             list-style: none;
             padding: 0;
-            margin: 0 0 24px;
+            margin: 0 0 20px;
         }
 
         ul li {
             background: var(--bg-card-2);
             border: 1px solid var(--line);
-            border-radius: 10px;
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            font-size: 14px;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            font-size: 13px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -199,55 +198,49 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 16px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
         }
 
         .grid-item {
             background: var(--bg-card-2);
             border: 1px solid var(--line);
-            border-radius: 14px;
-            padding: 20px;
-            transition: transform 0.2s ease, border-color 0.2s ease;
-        }
-
-        .grid-item:hover {
-            border-color: var(--amber);
-            transform: translateY(-2px);
+            border-radius: 12px;
+            padding: 16px;
         }
 
         .grid-item h4 {
             font-family: 'Fraunces', serif;
-            font-size: 16px;
-            margin: 0 0 8px;
+            font-size: 15px;
+            margin: 0 0 6px;
             color: var(--text);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .grid-item h4 i {
             color: var(--amber);
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .grid-item p {
-            font-size: 13px;
+            font-size: 12px;
             margin: 0;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         .footer {
             text-align: center;
-            padding: 40px 0;
+            padding: 30px 0;
             border-top: 1px solid var(--line);
-            margin-top: 40px;
+            margin-top: 30px;
         }
 
         .footer p {
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
+            font-size: 10px;
             letter-spacing: 0.1em;
             color: var(--text-faint);
             text-transform: uppercase;
@@ -255,11 +248,11 @@
 
         .badge {
             display: inline-block;
-            padding: 2px 8px;
+            padding: 2px 6px;
             border-radius: 20px;
-            background: rgba(232, 179, 78, 0.12);
+            background: rgba(232, 179, 78, 0.1);
             color: var(--amber);
-            font-size: 10px;
+            font-size: 9px;
             letter-spacing: 0.04em;
             text-transform: uppercase;
             font-weight: 700;
@@ -267,77 +260,72 @@
         }
 
         @media (max-width: 640px) {
-            .page { padding: 20px 16px 40px; }
-            section.card { padding: 20px; }
-            .hero h1 { font-size: 32px; }
+            .page { padding: 10px 12px 40px; }
+            section.card { padding: 16px; }
+            .hero h1 { font-size: 26px; }
             .grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="page">
-        <nav style="display: flex; justify-content: space-between; align-items: center; padding: 20px 0;">
-            <a href="index.html" style="text-decoration: none; color: var(--text-dim); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px;">
-                <i class="fas fa-arrow-left"></i> Back to Hub
+        <nav>
+            <a href="index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> Hub
             </a>
-            <div class="badge">Classified Dossier</div>
+            <div class="badge">Classified Strategy</div>
         </nav>
 
         <header class="hero">
-            <div class="wordmark-row">
-                <div class="wordmark">HEM Guild</div>
-            </div>
-            <h1>The War Manual: Trap Guide</h1>
-            <p class="tagline">Strategic imperatives for dominance, deception, and the art of the ambush.</p>
+            <h1>Trap Guide</h1>
+            <p class="tagline">Advanced tactical imperatives for deception and dominance in Lords Mobile.</p>
         </header>
 
         <section class="card">
             <div class="card-head">
                 <h2>Operational Briefing</h2>
-                <span class="eyebrow">Fundamentals</span>
+                <span class="eyebrow">The Meta</span>
             </div>
-            <h3><i class="fas fa-shield-alt"></i> The Art of the Ambush</h3>
-            <p>A trap account is not merely a castle; it is a meticulously crafted illusion. Its purpose: to project an image of vulnerability, drawing powerful adversaries into a fatal engagement. When the enemy commits, the trap unleashes its hidden might, capturing their leaders and shattering their forces.</p>
+            <h3><i class="fas fa-shield-alt"></i> The Artifact & T5 Meta</h3>
+            <p>In 2024-2025, artifacts and T5 troops have significantly boosted rally lead stats. Trapping now requires higher base stats and smarter troop buffers. <strong>Efficiency is survival.</strong></p>
             <div class="warning-box">
-                <h4><i class="fas fa-exclamation-triangle"></i> Critical Warning</h4>
-                <p>Under no circumstances claim territory missions. These generate deceptive might that inflates your power score without enhancing combat capability. Stay lean to remain a target.</p>
+                <h4><i class="fas fa-exclamation-triangle"></i> Might Control</h4>
+                <p>Never claim territory missions. Avoid excessive economy or wall research. Keep your might "visually appealing" to draw hits from overconfident leads.</p>
             </div>
         </section>
 
         <section class="card">
             <div class="card-head">
-                <h2>Solo Trap Deployment</h2>
-                <span class="eyebrow">100M - 250M Might</span>
+                <h2>Solo Trap (Meta 2025)</h2>
+                <span class="eyebrow">150M - 300M Might</span>
             </div>
-            <p>Engineered to decisively counter single-player attacks. Your objective is swift leader capture and maximum troop destruction with minimal casualties.</p>
+            <p>Designed to cap T5 solo attacks. Aim for <strong>400%+ Mixed Attack</strong> and <strong>600%+ Army HP</strong>.</p>
             
             <h3><i class="fas fa-users"></i> Troop Composition</h3>
             <ul>
-                <li><span class="stat-label">T2 Infantry</span> <strong>2.5M - 3.5M</strong></li>
-                <li><span class="stat-label">T2 Ranged</span> <strong>2.5M - 3.5M</strong></li>
-                <li><span class="stat-label">T2 Cavalry</span> <strong>2.5M - 3.5M</strong></li>
-                <li><span class="stat-label">T4 Infantry</span> <strong>400K - 600K</strong></li>
-                <li><span class="stat-label">T4 Ranged</span> <strong>400K - 600K</strong></li>
-                <li><span class="stat-label">T4 Cavalry</span> <strong>400K - 600K</strong></li>
+                <li><span class="stat-label">T2 Frontline (Inf/Range/Cav)</span> <strong>3M - 4M Each</strong></li>
+                <li><span class="stat-label">T4 Backline (Inf/Range/Cav)</span> <strong>600K - 1M Each</strong></li>
+                <li><span class="stat-label">T1 Siege (Pyris Buffer)</span> <strong>500K</strong></li>
             </ul>
 
-            <h3><i class="fas fa-helmet-battle"></i> Gear & Stat Prioritization</h3>
-            <p>Focus on <strong>Army HP</strong> and <strong>Mixed Attack</strong>. Essential F2P gear: Frostwing Greatsword, Bumblehelm, Firewall Plate, Storm Tasset, Winter Mittens, and Burning Scroll x3.</p>
+            <h3><i class="fas fa-bolt"></i> Fury Trapping</h3>
+            <p>Don't just sit in anti-scout. Going into <strong>Fury</strong> by scouting forts or stealing balls during Lords Cup is the fastest way to get soloed by top leads.</p>
         </section>
 
         <section class="card">
             <div class="card-head">
-                <h2>Rally Trap Deployment</h2>
-                <span class="eyebrow">400M - 600M Might</span>
+                <h2>Rally Trap (Meta 2025)</h2>
+                <span class="eyebrow">500M - 800M Might</span>
             </div>
-            <p>Designed to absorb and crush multiple coordinated rallies. Demands a deeper troop reserve and flawless tactical execution.</p>
+            <p>Built to absorb multiple coordinated rallies. Flawless gear swaps and wedge formations are mandatory.</p>
             
-            <h3><i class="fas fa-compress-arrows-alt"></i> The Archer Wedge</h3>
-            <p>Deploy the Archer Wedge to survive 20+ rallies. This leverages an overwhelming ranged buffer to absorb the initial onslaught.</p>
+            <h3><i class="fas fa-compress-arrows-alt"></i> The Archer Wedge Buffer</h3>
+            <p>To survive 10+ rallies, use a massive T2 ranged buffer to protect your core. If you have T5, use them as a 10% buffer to reduce T4 losses.</p>
             <ul>
-                <li><span class="stat-label">T2 Infantry & Cavalry</span> <strong>30.0M Each</strong></li>
-                <li><span class="stat-label">T4 Mixed Troops</span> <strong>6.0M Each</strong></li>
-                <li><span class="stat-label">Minimum T4s</span> <strong>3.0M Each</strong></li>
+                <li><span class="stat-label">T2 Infantry & Cavalry</span> <strong>8M - 12M Each</strong></li>
+                <li><span class="stat-label">T2 Ranged (Buffer)</span> <strong>15M - 20M</strong></li>
+                <li><span class="stat-label">T4 Core</span> <strong>3M - 5M Each</strong></li>
+                <li><span class="stat-label">T5 Buffer (Optional)</span> <strong>200K Each</strong></li>
             </ul>
         </section>
 
@@ -346,24 +334,24 @@
                 <h2>Baiting & Deception</h2>
                 <span class="eyebrow">Covert Operations</span>
             </div>
-            <p>Project an undeniable image of vulnerability. Every detail must reinforce the illusion of an easy target.</p>
+            <p>Deception is your primary weapon. Make your castle look like an easy target.</p>
             
             <div class="grid">
                 <div class="grid-item">
-                    <h4><i class="fas fa-exchange-alt"></i> Fake Gear</h4>
-                    <p>Maintain Hunting/Training gear. Swap to War Gear 1-2 seconds before impact.</p>
+                    <h4><i class="fas fa-exchange-alt"></i> Believable Gear</h4>
+                    <p>Don't use gray/green gear; it's too obvious. Use <strong>Monster Hunting</strong> or unfinished War gear to look like a "noob" spender.</p>
+                </div>
+                <div class="grid-item">
+                    <h4><i class="fas fa-basketball-ball"></i> Ball Stealing</h4>
+                    <p>During Lords Cup, steal balls from top guilds. This triggers <strong>Rage Solos</strong> which are easier to cap than coordinated rallies.</p>
+                </div>
+                <div class="grid-item">
+                    <h4><i class="fas fa-microphone-slash"></i> Fake Offline</h4>
+                    <p>Drop shield during guild "sleep hours". Don't scout back. Let them think you're sleeping or away.</p>
                 </div>
                 <div class="grid-item">
                     <h4><i class="fas fa-hat-cowboy"></i> Farmer Leader</h4>
-                    <p>Deploy a non-combat hero (Trickster/Scarlet Bolt) on your wall to signal negligence.</p>
-                </div>
-                <div class="grid-item">
-                    <h4><i class="fas fa-microphone-slash"></i> Radio Silence</h4>
-                    <p>Do not scout or communicate. Simulate an unattended, vulnerable account.</p>
-                </div>
-                <div class="grid-item">
-                    <h4><i class="fas fa-moon"></i> Timed Shield Drop</h4>
-                    <p>Allow shield to expire naturally during "sleep hours" to attract opportunists.</p>
+                    <p>Put Trickster or Scarlet Bolt on your wall. It signals that you don't know how to play defense.</p>
                 </div>
             </div>
         </section>
@@ -374,27 +362,32 @@
                 <span class="eyebrow">Jewels & Familiars</span>
             </div>
             <h3><i class="fas fa-gem"></i> Jewel Priority</h3>
-            <p>Mixed Attack is paramount. Deploy Infantry, Ranged, and Cavalry Attack jewels across all war gear.</p>
+            <p>Attack > HP > Defense. Fill all 8 war gear pieces with Inf/Range/Cav Attack jewels. <strong>Gold jewels are a must for Rally Traps.</strong></p>
             
-            <h3><i class="fas fa-dragon"></i> Defensive Familiars</h3>
-            <p>Prioritize <strong>HP Buffs</strong> and <strong>Type-Specific Shields</strong>. Use Gryphon, Aquiris, and Terraspike for F2P; Jade Wyrm and Hell Drider for P2P.</p>
+            <h3><i class="fas fa-dragon"></i> Familiar Loadout</h3>
+            <ul>
+                <li><span class="stat-label">Pact 3:</span> <strong>Gryphon</strong> (Stat boost), <strong>Aquiris</strong> (Army HP)</li>
+                <li><span class="stat-label">Pact 4:</span> <strong>Terraspike/Evil Weevil</strong> (Army HP/Def)</li>
+                <li><span class="stat-label">Pact 5:</span> <strong>Jade Wyrm</strong> (Shield), <strong>Hell Drider</strong> (Stun)</li>
+            </ul>
+            <p><strong>Pro Tip:</strong> Prioritize familiars that activate at <strong>10% troop loss</strong> to halt rallies early.</p>
         </section>
 
         <section class="card">
             <div class="card-head">
                 <h2>Prohibited Protocols</h2>
-                <span class="eyebrow">Fatal Flaws</span>
+                <span class="eyebrow">Avoid Zeroing</span>
             </div>
             <ul>
-                <li><span class="stat-label">Economy Research</span> <strong>Avoid</strong></li>
-                <li><span class="stat-label">Wall Research</span> <strong>Avoid</strong></li>
-                <li><span class="stat-label">Max Hunting Research</span> <strong>Limit to Lv 7-8</strong></li>
-                <li><span class="stat-label">Anti-Scout</span> <strong>Always Active</strong></li>
+                <li><span class="stat-label">Economy Research</span> <strong>Fatal</strong></li>
+                <li><span class="stat-label">Wall Research</span> <strong>Useless Might</strong></li>
+                <li><span class="stat-label">Monster Hunting</span> <strong>Limit to Lv 8</strong></li>
+                <li><span class="stat-label">Anti-Scout</span> <strong>Active 24/7</strong></li>
             </ul>
         </section>
 
         <footer class="footer">
-            <p>&copy; 2026 HEM GUILD // CLASSIFIED OPERATIONS // END OF DOSSIER</p>
+            <p>&copy; 2026 CLASSIFIED OPERATIONS // END OF DOSSIER</p>
         </footer>
     </div>
 </body>
