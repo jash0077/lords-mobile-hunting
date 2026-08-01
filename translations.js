@@ -86,7 +86,9 @@ const translations = {
         "events_card_description": "View upcoming guild events, live countdowns, and global timezones in real-time.",
         "player_comparison": "Player Comparison",
         "meridian": "Meridian",
-        "meridian_card_description": "One moment, translated into every timezone. Plan across the world easily."
+        "meridian_card_description": "One moment, translated into every timezone. Plan across the world easily.",
+        "trap_guide": "Trap Guide",
+        "trap_card_description": "Learn how to build Solo and Rally traps. Troop compositions, gear, and low-might strategies."
     },
     "es": {
         "app_title": "Lords Mobile Hub",

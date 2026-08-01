@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lords-mobile-hub-cache-v3';
+const CACHE_NAME = 'lords-mobile-hub-cache-v4';
 const urlsToCache = [
   '/lords-mobile-hunting/',
   '/lords-mobile-hunting/index.html',
@@ -15,6 +15,7 @@ const urlsToCache = [
   '/lords-mobile-hunting/data/events.json',
   '/lords-mobile-hunting/admin.html',
   '/lords-mobile-hunting/meridian.html',
+  '/lords-mobile-hunting/trap-guide.html',
   '/lords-mobile-hunting/icons/icon-192x192.png',
   '/lords-mobile-hunting/icons/icon-512x512.png',
   '/lords-mobile-hunting/icons/apple-touch-icon.png',
