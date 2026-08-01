@@ -88,7 +88,9 @@ const translations = {
         "meridian": "Meridian",
         "meridian_card_description": "One moment, translated into every timezone. Plan across the world easily.",
         "trap_guide": "Trap Guide",
-        "trap_card_description": "Learn how to build Solo and Rally traps. Troop compositions, gear, and low-might strategies."
+        "trap_card_description": "Learn how to build Solo and Rally traps. Troop compositions, gear, and low-might strategies.",
+        "gear_simulator": "Gear Simulator",
+        "gear_simulator_description": "Test different gear combinations and calculate total boosts instantly."
     },
     "es": {
         "app_title": "Lords Mobile Hub",

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gear Simulator — Lords Mobile Field Manual</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --bg: #F6F3EC;
+            --surface: #FFFFFF;
+            --surface-2: #F1EDE2;
+            --line: rgba(20, 20, 30, 0.08);
+            --text: #1B1E2E;
+            --text-dim: #5B5F73;
+            --gold: #E8B34E;
+            --gold-bright: #7C89C7;
+            --blood: #E2725B;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+
+        .simulator-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .simulator-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .gear-layout {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 40px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+        }
+
+        .leader-figure {
+            width: 150px;
+            height: 250px;
+            background: var(--surface-2);
+            border: 2px dashed var(--line);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+            color: var(--text-dim);
+            opacity: 0.5;
+        }
+
+        .slot {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: var(--surface);
+            border: 2px solid var(--line);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .slot:hover {
+            border-color: var(--gold);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+
+        .slot.active {
+            border-color: var(--gold);
+            background: rgba(232, 179, 78, 0.05);
+        }
+
+        .slot-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-dim);
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        .slot-icon {
+            font-size: 24px;
+        }
+
+        .slot-item-name {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--gold);
+            text-align: center;
+            padding: 0 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+        }
+
+        /* Slot Positions */
+        .slot-main-hand { top: 50px; left: 50px; }
+        .slot-helmet    { top: 20px; left: 50%; transform: translateX(-50%); }
+        .slot-off-hand  { top: 50px; right: 50px; }
+        .slot-armor     { top: 50%; left: 50px; transform: translateY(-50%); }
+        .slot-legs      { bottom: 50px; left: 50%; transform: translateX(-50%); }
+        .slot-acc-1     { top: 50%; right: 50px; transform: translateY(-50%); }
+        .slot-acc-2     { bottom: 50px; left: 50px; }
+        .slot-acc-3     { bottom: 50px; right: 50px; }
+
+        .stats-panel {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 24px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .stats-title {
+            font-family: 'Fraunces', serif;
+            font-size: 20px;
+            margin: 0 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--line);
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 600;
+            color: var(--gold);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            width: 90%;
+            max-width: 500px;
+            border-radius: 16px;
+            padding: 24px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .item-option {
+            padding: 16px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .item-option:hover {
+            border-color: var(--gold);
+            background: var(--surface-2);
+        }
+
+        .item-name {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .item-stats {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .btn-clear {
+            background: var(--surface-2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            background: var(--gold);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="main-nav">
+    <div class="nav-inner">
+        <div class="nav-brand"><span class="mark"></span> Gear Simulator</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="trap-guide.html">Trap Guide</a>
+            <a href="gear-simulator.html">Gear Simulator</a>
+            <a href="calculator.html">Calculators</a>
+        </div>
+    </div>
+</nav>
+
+<div class="simulator-container">
+    <div class="gear-layout">
+        <div class="leader-figure"><i class="fas fa-user-shield"></i></div>
+        
+        <div class="slot slot-main-hand" onclick="openModal('Main Hand')">
+            <span class="slot-icon">🗡️</span>
+            <span class="slot-label">Main Hand</span>
+            <span class="slot-item-name" id="name-Main Hand">Empty</span>
+        </div>
+        <div class="slot slot-helmet" onclick="openModal('Helmet')">
+            <span class="slot-icon">🪖</span>
+            <span class="slot-label">Helmet</span>
+            <span class="slot-item-name" id="name-Helmet">Empty</span>
+        </div>
+        <div class="slot slot-off-hand" onclick="openModal('Off-Hand')">
+            <span class="slot-icon">🛡️</span>
+            <span class="slot-label">Off-Hand</span>
+            <span class="slot-item-name" id="name-Off-Hand">Empty</span>
+        </div>
+        <div class="slot slot-armor" onclick="openModal('Armor')">
+            <span class="slot-icon">👕</span>
+            <span class="slot-label">Armor</span>
+            <span class="slot-item-name" id="name-Armor">Empty</span>
+        </div>
+        <div class="slot slot-legs" onclick="openModal('Legs')">
+            <span class="slot-icon">👖</span>
+            <span class="slot-label">Legs</span>
+            <span class="slot-item-name" id="name-Legs">Empty</span>
+        </div>
+        <div class="slot slot-acc-1" onclick="openModal('Accessory', 1)">
+            <span class="slot-icon">💍</span>
+            <span class="slot-label">Accessory 1</span>
+            <span class="slot-item-name" id="name-Acc-1">Empty</span>
+        </div>
+        <div class="slot slot-acc-2" onclick="openModal('Accessory', 2)">
+            <span class="slot-icon">💍</span>
+            <span class="slot-label">Accessory 2</span>
+            <span class="slot-item-name" id="name-Acc-2">Empty</span>
+        </div>
+        <div class="slot slot-acc-3" onclick="openModal('Accessory', 3)">
+            <span class="slot-icon">💍</span>
+            <span class="slot-label">Accessory 3</span>
+            <span class="slot-item-name" id="name-Acc-3">Empty</span>
+        </div>
+    </div>
+
+    <div class="stats-panel">
+        <h2 class="stats-title">
+            Total Boosts
+            <button class="btn-clear" onclick="clearAll()">Clear</button>
+        </h2>
+        <div id="stats-display">
+            <!-- Stats will be injected here -->
+        </div>
+        <button class="btn-save" onclick="saveSet()">Save Set</button>
+    </div>
+</div>
+
+<div class="modal" id="itemModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Select Item</h3>
+            <button class="btn-clear" onclick="closeModal()">Close</button>
+        </div>
+        <div id="itemOptions">
+            <!-- Options will be injected here -->
+        </div>
+    </div>
+</div>
+
+<script src="gear-data.js"></script>
+<script>
+    let currentSet = {
+        "Main Hand": null,
+        "Off-Hand": null,
+        "Helmet": null,
+        "Armor": null,
+        "Legs": null,
+        "Acc-1": null,
+        "Acc-2": null,
+        "Acc-3": null
+    };
+
+    let activeSlot = null;
+    let activeAccIndex = null;
+
+    function openModal(slotType, accIndex = null) {
+        activeSlot = slotType;
+        activeAccIndex = accIndex;
+        
+        const modal = document.getElementById('itemModal');
+        const optionsContainer = document.getElementById('itemOptions');
+        const title = document.getElementById('modalTitle');
+        
+        title.innerText = `Select ${slotType}${accIndex ? ' ' + accIndex : ''}`;
+        optionsContainer.innerHTML = '';
+        
+        const items = gearData[slotType];
+        
+        // Add "None" option
+        const noneOption = document.createElement('div');
+        noneOption.className = 'item-option';
+        noneOption.innerHTML = '<div class="item-name">None</div>';
+        noneOption.onclick = () => selectItem(null);
+        optionsContainer.appendChild(noneOption);
+
+        items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'item-option';
+            
+            let statsText = Object.entries(item.stats)
+                .map(([name, val]) => `${name} +${val}%`)
+                .join(', ');
+            
+            div.innerHTML = `
+                <div class="item-name">${item.name}</div>
+                <div class="item-stats">${statsText}</div>
+            `;
+            div.onclick = () => selectItem(item);
+            optionsContainer.appendChild(div);
+        });
+        
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('itemModal').style.display = 'none';
+    }
+
+    function selectItem(item) {
+        const slotKey = activeAccIndex ? `Acc-${activeAccIndex}` : activeSlot;
+        currentSet[slotKey] = item;
+        
+        const nameDisplay = document.getElementById(`name-${slotKey}`);
+        nameDisplay.innerText = item ? item.name : 'Empty';
+        
+        closeModal();
+        updateStats();
+    }
+
+    function updateStats() {
+        const totals = {};
+        
+        Object.values(currentSet).forEach(item => {
+            if (item && item.stats) {
+                Object.entries(item.stats).forEach(([stat, val]) => {
+                    totals[stat] = (totals[stat] || 0) + val;
+                });
+            }
+        });
+        
+        const display = document.getElementById('stats-display');
+        display.innerHTML = '';
+        
+        if (Object.keys(totals).length === 0) {
+            display.innerHTML = '<p style="color:var(--text-dim); font-size:14px; text-align:center;">No items equipped</p>';
+            return;
+        }
+
+        // Sort stats: Attack first, then HP, then DEF
+        const sortedStats = Object.entries(totals).sort((a, b) => {
+            if (a[0].includes('ATK') && !b[0].includes('ATK')) return -1;
+            if (!a[0].includes('ATK') && b[0].includes('ATK')) return 1;
+            return a[0].localeCompare(b[0]);
+        });
+
+        sortedStats.forEach(([stat, val]) => {
+            const row = document.createElement('div');
+            row.className = 'stat-row';
+            row.innerHTML = `
+                <span>${stat}</span>
+                <span class="stat-value">+${val.toFixed(1)}%</span>
+            `;
+            display.appendChild(row);
+        });
+    }
+
+    function clearAll() {
+        Object.keys(currentSet).forEach(key => {
+            currentSet[key] = null;
+            const display = document.getElementById(`name-${key}`);
+            if (display) display.innerText = 'Empty';
+        });
+        updateStats();
+    }
+
+    function saveSet() {
+        localStorage.setItem('savedGearSet', JSON.stringify(currentSet));
+        alert('Gear set saved locally!');
+    }
+
+    // Load saved set on start
+    window.onload = () => {
+        const saved = localStorage.getItem('savedGearSet');
+        if (saved) {
+            currentSet = JSON.parse(saved);
+            Object.entries(currentSet).forEach(([key, item]) => {
+                const display = document.getElementById(`name-${key}`);
+                if (display) display.innerText = item ? item.name : 'Empty';
+            });
+            updateStats();
+        }
+    };
+</script>
+
+</body>
+</html>

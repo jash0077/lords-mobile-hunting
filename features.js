@@ -12,7 +12,8 @@ const searchData = [
     { title: "Research & Construction", keywords: "research construction speed boost guild helps", url: "research.html", key: "research_construction" },
     { title: "Guild Festival", keywords: "guild festival fest mission calculator points league", url: "festival.html", key: "guild_festival" },
     { title: "Event Schedules", keywords: "events schedules kvk dragon arena countdown time", url: "events.html", key: "event_schedules" },
-    { title: "Player Comparison", keywords: "player comparison stats growth side-by-side evaluation", url: "comparison.html", key: "player_comparison" }
+    { title: "Player Comparison", keywords: "player comparison stats growth side-by-side evaluation", url: "comparison.html", key: "player_comparison" },
+    { title: "Gear Simulator", keywords: "gear equipment simulator stats trap defense mix set", url: "gear-simulator.html", key: "gear_simulator" }
 ];
 
 function initSearch() {
