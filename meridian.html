@@ -18,7 +18,7 @@
     --night1:#0A0D1A; --night2:#1B2246; --dawn:#8677A8; --day1:#F2C46B; --day2:#F2A65A; --dusk:#D9724F;
   }
   html[data-theme="light"]{
-    --bg:#F6F3EC; --bg-card:#FFFFFF; --bg-card-2:#F1EDE2;
+    --bg: var(--light-bg-custom, #F6F3EC); --bg-card:#FFFFFF; --bg-card-2:#F1EDE2;
     --line:rgba(20,20,30,0.08); --line-strong:rgba(20,20,30,0.16);
     --text:#1B1E2E; --text-dim:#5B5F73; --text-faint:#9498A8;
   }
@@ -207,6 +207,8 @@
       <div class="header-actions">
         <button type="button" class="admin-btn" id="adminToggle" title="Admin controls who can add/remove events"><span id="adminIcon">🔒</span> <span id="adminLabel">Admin</span></button>
         <button type="button" class="site-share-btn" id="siteShareBtn" title="Copy link to this app">🔗</button>
+        <input type="color" id="lightColorPicker" style="display:none; width:28px; height:28px; border:1px solid var(--line-strong); padding:0; background:none; cursor:pointer; border-radius:8px; vertical-align:middle;" title="Adjust Day Mode Color">
+        <button type="button" class="theme-btn" id="dayToggle" title="Switch to Day Mode">☀️</button>
         <button type="button" class="theme-btn" id="themeToggle" title="Toggle theme">🌓</button>
       </div>
     </div>
@@ -396,6 +398,11 @@ function showLinkModal(title, link){
 let favorites = loadJSON('meridian:favorites', DEFAULT_FAVORITES.slice());
 let use24h = loadJSON('meridian:use24h', true);
 let theme = loadJSON('meridian:theme', 'dark');
+let lightBgColor = loadJSON('meridian:lightBgColor', '#F6F3EC');
+document.documentElement.style.setProperty('--light-bg-custom', lightBgColor);
+const colorPicker = document.getElementById('lightColorPicker');
+if(theme === 'light') colorPicker.style.display = 'inline-block';
+colorPicker.value = lightBgColor;
 let customCities = loadJSON('meridian:customCities', []);
 let events = loadJSON('meridian:events', null);
 if (!events || !Array.isArray(events)){
@@ -586,10 +593,26 @@ function syncFmtButtons(){
 }
 
 // ---------- Theme toggle ----------
+function updateThemeUI() {
+  document.documentElement.setAttribute('data-theme', theme);
+  colorPicker.style.display = (theme === 'light') ? 'inline-block' : 'none';
+  persistTheme();
+}
+
 document.getElementById('themeToggle').addEventListener('click', () => {
   theme = (theme === 'dark') ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', theme);
-  persistTheme();
+  updateThemeUI();
+});
+
+document.getElementById('dayToggle').addEventListener('click', () => {
+  theme = 'light';
+  updateThemeUI();
+});
+
+colorPicker.addEventListener('input', (e) => {
+  lightBgColor = e.target.value;
+  document.documentElement.style.setProperty('--light-bg-custom', lightBgColor);
+  saveJSON('meridian:lightBgColor', lightBgColor);
 });
 
 // ---------- Admin lock/unlock ----------
