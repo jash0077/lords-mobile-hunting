@@ -3,186 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gear Simulator — Lords Mobile Field Manual</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Gear Sim — HEM Guild</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
     <style>
         :root {
-            --bg: #F6F3EC;
-            --surface: #FFFFFF;
-            --surface-2: #F1EDE2;
-            --line: rgba(20, 20, 30, 0.08);
-            --text: #1B1E2E;
-            --text-dim: #5B5F73;
-            --gold: #E8B34E;
-            --gold-bright: #7C89C7;
-            --blood: #E2725B;
+            --primary: #E8B34E;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: #334155;
         }
 
         body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
             margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        .simulator-container {
-            max-width: 1000px;
-            margin: 40px auto;
+        header {
+            padding: 15px 20px;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
             padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 30px;
+            box-sizing: border-box;
         }
 
-        @media (max-width: 900px) {
-            .simulator-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .gear-layout {
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 16px;
-            padding: 40px;
-            position: relative;
+        /* Set Selection */
+        .set-tabs {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 500px;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        .leader-figure {
-            width: 150px;
-            height: 250px;
-            background: var(--surface-2);
-            border: 2px dashed var(--line);
+        .set-tab {
+            flex: 1;
+            padding: 10px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .set-tab.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(232, 179, 78, 0.1);
+        }
+
+        /* Hero Area */
+        .sim-area {
+            background: var(--card);
             border-radius: 20px;
-            display: flex;
-            justify-content: center;
+            padding: 30px;
+            position: relative;
+            display: grid;
+            grid-template-columns: 80px 1fr 80px;
+            gap: 20px;
             align-items: center;
-            font-size: 60px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .hero-visual {
+            text-align: center;
+            font-size: 80px;
             color: var(--text-dim);
-            opacity: 0.5;
+            opacity: 0.3;
         }
 
         .slot {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            background: var(--surface);
-            border: 2px solid var(--line);
+            width: 70px;
+            height: 70px;
+            background: var(--bg);
+            border: 2px solid var(--border);
             border-radius: 12px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            position: relative;
+            transition: 0.2s;
         }
 
         .slot:hover {
-            border-color: var(--gold);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            border-color: var(--primary);
         }
 
-        .slot.active {
-            border-color: var(--gold);
+        .slot.has-item {
+            border-color: var(--primary);
             background: rgba(232, 179, 78, 0.05);
         }
 
-        .slot-label {
+        .slot-icon { font-size: 24px; margin-bottom: 4px; }
+        .slot-name { font-size: 9px; text-transform: uppercase; color: var(--text-dim); text-align: center; }
+        
+        .item-name-overlay {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
             font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-dim);
-            margin-top: 4px;
-            text-align: center;
-        }
-
-        .slot-icon {
-            font-size: 24px;
-        }
-
-        .slot-item-name {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--gold);
-            text-align: center;
-            padding: 0 4px;
+            color: var(--primary);
+            white-space: nowrap;
+            font-weight: bold;
+            max-width: 90px;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
-            width: 100%;
         }
 
-        /* Slot Positions */
-        .slot-main-hand { top: 50px; left: 50px; }
-        .slot-helmet    { top: 20px; left: 50%; transform: translateX(-50%); }
-        .slot-off-hand  { top: 50px; right: 50px; }
-        .slot-armor     { top: 50%; left: 50px; transform: translateY(-50%); }
-        .slot-legs      { bottom: 50px; left: 50%; transform: translateX(-50%); }
-        .slot-acc-1     { top: 50%; right: 50px; transform: translateY(-50%); }
-        .slot-acc-2     { bottom: 50px; left: 50px; }
-        .slot-acc-3     { bottom: 50px; right: 50px; }
-
-        .stats-panel {
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 16px;
-            padding: 24px;
-            height: fit-content;
-            position: sticky;
-            top: 100px;
+        .side-slots {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
         }
 
-        .stats-title {
-            font-family: 'Fraunces', serif;
-            font-size: 20px;
-            margin: 0 0 20px;
+        .bottom-slots {
+            grid-column: 1 / span 3;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* Stats Bar */
+        .stats-summary {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            font-size: 13px;
+            padding: 5px 0;
+            border-bottom: 1px solid var(--border);
         }
 
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--line);
-            font-size: 14px;
+        .stat-val {
+            color: var(--primary);
+            font-weight: bold;
         }
 
-        .stat-value {
-            font-family: 'IBM Plex Mono', monospace;
-            font-weight: 600;
-            color: var(--gold);
-        }
-
+        /* Selection Modal */
         .modal {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
+            bottom: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
             z-index: 1000;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
+            justify-content: flex-end;
         }
 
         .modal-content {
-            background: var(--surface);
-            width: 90%;
-            max-width: 500px;
-            border-radius: 16px;
-            padding: 24px;
-            max-height: 80vh;
+            background: var(--card);
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            max-height: 70vh;
             overflow-y: auto;
         }
 
@@ -191,135 +202,130 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            background: var(--card);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .item-option {
-            padding: 16px;
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            margin-bottom: 12px;
+        .item-row {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
             cursor: pointer;
-            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .item-option:hover {
-            border-color: var(--gold);
-            background: var(--surface-2);
-        }
+        .item-row:hover { background: rgba(255,255,255,0.05); }
 
-        .item-name {
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
+        .item-info h4 { margin: 0; font-size: 16px; }
+        .item-info p { margin: 5px 0 0; font-size: 12px; color: var(--text-dim); }
 
-        .item-stats {
-            font-size: 12px;
-            color: var(--text-dim);
-        }
-
-        .btn-clear {
-            background: var(--surface-2);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .btn-save {
-            background: var(--gold);
+        .clear-btn {
+            background: #ef4444;
             color: white;
             border: none;
-            padding: 12px;
+            padding: 10px;
             width: 100%;
             border-radius: 8px;
             margin-top: 20px;
-            font-weight: 600;
             cursor: pointer;
+        }
+
+        @media (max-width: 400px) {
+            .sim-area { padding: 15px; grid-template-columns: 70px 1fr 70px; }
+            .slot { width: 60px; height: 60px; }
         }
     </style>
 </head>
 <body>
 
-<nav class="main-nav">
-    <div class="nav-inner">
-        <div class="nav-brand"><span class="mark"></span> Gear Simulator</div>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="trap-guide.html">Trap Guide</a>
-            <a href="gear-simulator.html">Gear Simulator</a>
-            <a href="calculator.html">Calculators</a>
-        </div>
-    </div>
-</nav>
+<header>
+    <a href="trap-guide.html" class="back-btn"><i class="fas fa-chevron-left"></i> BACK</a>
+    <div style="font-weight: bold;">GEAR SIMULATOR</div>
+    <div style="width: 50px;"></div>
+</header>
 
-<div class="simulator-container">
-    <div class="gear-layout">
-        <div class="leader-figure"><i class="fas fa-user-shield"></i></div>
-        
-        <div class="slot slot-main-hand" onclick="openModal('Main Hand')">
-            <span class="slot-icon">🗡️</span>
-            <span class="slot-label">Main Hand</span>
-            <span class="slot-item-name" id="name-Main Hand">Empty</span>
-        </div>
-        <div class="slot slot-helmet" onclick="openModal('Helmet')">
-            <span class="slot-icon">🪖</span>
-            <span class="slot-label">Helmet</span>
-            <span class="slot-item-name" id="name-Helmet">Empty</span>
-        </div>
-        <div class="slot slot-off-hand" onclick="openModal('Off-Hand')">
-            <span class="slot-icon">🛡️</span>
-            <span class="slot-label">Off-Hand</span>
-            <span class="slot-item-name" id="name-Off-Hand">Empty</span>
-        </div>
-        <div class="slot slot-armor" onclick="openModal('Armor')">
-            <span class="slot-icon">👕</span>
-            <span class="slot-label">Armor</span>
-            <span class="slot-item-name" id="name-Armor">Empty</span>
-        </div>
-        <div class="slot slot-legs" onclick="openModal('Legs')">
-            <span class="slot-icon">👖</span>
-            <span class="slot-label">Legs</span>
-            <span class="slot-item-name" id="name-Legs">Empty</span>
-        </div>
-        <div class="slot slot-acc-1" onclick="openModal('Accessory', 1)">
-            <span class="slot-icon">💍</span>
-            <span class="slot-label">Accessory 1</span>
-            <span class="slot-item-name" id="name-Acc-1">Empty</span>
-        </div>
-        <div class="slot slot-acc-2" onclick="openModal('Accessory', 2)">
-            <span class="slot-icon">💍</span>
-            <span class="slot-label">Accessory 2</span>
-            <span class="slot-item-name" id="name-Acc-2">Empty</span>
-        </div>
-        <div class="slot slot-acc-3" onclick="openModal('Accessory', 3)">
-            <span class="slot-icon">💍</span>
-            <span class="slot-label">Accessory 3</span>
-            <span class="slot-item-name" id="name-Acc-3">Empty</span>
-        </div>
+<div class="container">
+    <div class="set-tabs">
+        <div class="set-tab active" onclick="loadPreset('mixed')">Mixed Set</div>
+        <div class="set-tab" onclick="loadPreset('f2p')">F2P Trap</div>
+        <div class="set-tab" onclick="loadPreset('rally')">Rally Trap</div>
     </div>
 
-    <div class="stats-panel">
-        <h2 class="stats-title">
-            Total Boosts
-            <button class="btn-clear" onclick="clearAll()">Clear</button>
-        </h2>
-        <div id="stats-display">
-            <!-- Stats will be injected here -->
+    <div class="sim-area">
+        <div class="side-slots">
+            <div class="slot" id="slot-Main Hand" onclick="openPicker('Main Hand')">
+                <span class="slot-icon">🗡️</span>
+                <span class="slot-name">Weapon</span>
+                <div class="item-name-overlay" id="name-Main Hand"></div>
+            </div>
+            <div class="slot" id="slot-Armor" onclick="openPicker('Armor')">
+                <span class="slot-icon">👕</span>
+                <span class="slot-name">Armor</span>
+                <div class="item-name-overlay" id="name-Armor"></div>
+            </div>
+            <div class="slot" id="slot-Acc-1" onclick="openPicker('Accessory', 1)">
+                <span class="slot-icon">💍</span>
+                <span class="slot-name">Acc 1</span>
+                <div class="item-name-overlay" id="name-Acc-1"></div>
+            </div>
         </div>
-        <button class="btn-save" onclick="saveSet()">Save Set</button>
+
+        <div class="hero-visual">
+            <i class="fas fa-shield-halved"></i>
+        </div>
+
+        <div class="side-slots">
+            <div class="slot" id="slot-Helmet" onclick="openPicker('Helmet')">
+                <span class="slot-icon">🪖</span>
+                <span class="slot-name">Helm</span>
+                <div class="item-name-overlay" id="name-Helmet"></div>
+            </div>
+            <div class="slot" id="slot-Off-Hand" onclick="openPicker('Off-Hand')">
+                <span class="slot-icon">🛡️</span>
+                <span class="slot-name">Off-Hand</span>
+                <div class="item-name-overlay" id="name-Off-Hand"></div>
+            </div>
+            <div class="slot" id="slot-Acc-2" onclick="openPicker('Accessory', 2)">
+                <span class="slot-icon">💍</span>
+                <span class="slot-name">Acc 2</span>
+                <div class="item-name-overlay" id="name-Acc-2"></div>
+            </div>
+        </div>
+
+        <div class="bottom-slots">
+            <div class="slot" id="slot-Legs" onclick="openPicker('Legs')">
+                <span class="slot-icon">👖</span>
+                <span class="slot-name">Legs</span>
+                <div class="item-name-overlay" id="name-Legs"></div>
+            </div>
+            <div class="slot" id="slot-Acc-3" onclick="openPicker('Accessory', 3)">
+                <span class="slot-icon">💍</span>
+                <span class="slot-name">Acc 3</span>
+                <div class="item-name-overlay" id="name-Acc-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-summary">
+        <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Total Attribute Boosts</div>
+        <div class="stats-grid" id="stats-grid">
+            <!-- Stats will appear here -->
+        </div>
+        <button class="clear-btn" onclick="clearAll()">RESET ALL</button>
     </div>
 </div>
 
-<div class="modal" id="itemModal">
+<div class="modal" id="pickerModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 id="modalTitle">Select Item</h3>
-            <button class="btn-clear" onclick="closeModal()">Close</button>
+            <h3 id="pickerTitle">Select Item</h3>
+            <i class="fas fa-times" onclick="closePicker()" style="cursor:pointer; font-size: 20px;"></i>
         </div>
-        <div id="itemOptions">
-            <!-- Options will be injected here -->
-        </div>
+        <div id="pickerList"></div>
     </div>
 </div>
 
@@ -337,125 +343,151 @@
     };
 
     let activeSlot = null;
-    let activeAccIndex = null;
+    let activeAccIdx = null;
 
-    function openModal(slotType, accIndex = null) {
-        activeSlot = slotType;
-        activeAccIndex = accIndex;
+    function openPicker(type, accIdx = null) {
+        activeSlot = type;
+        activeAccIdx = accIdx;
+        const modal = document.getElementById('pickerModal');
+        const list = document.getElementById('pickerList');
+        const title = document.getElementById('pickerTitle');
         
-        const modal = document.getElementById('itemModal');
-        const optionsContainer = document.getElementById('itemOptions');
-        const title = document.getElementById('modalTitle');
+        title.innerText = type + (accIdx ? ' ' + accIdx : '');
+        list.innerHTML = '<div class="item-row" onclick="selectItem(null)"><h4>None</h4></div>';
         
-        title.innerText = `Select ${slotType}${accIndex ? ' ' + accIndex : ''}`;
-        optionsContainer.innerHTML = '';
-        
-        const items = gearData[slotType];
-        
-        // Add "None" option
-        const noneOption = document.createElement('div');
-        noneOption.className = 'item-option';
-        noneOption.innerHTML = '<div class="item-name">None</div>';
-        noneOption.onclick = () => selectItem(null);
-        optionsContainer.appendChild(noneOption);
-
-        items.forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'item-option';
-            
-            let statsText = Object.entries(item.stats)
-                .map(([name, val]) => `${name} +${val}%`)
-                .join(', ');
-            
-            div.innerHTML = `
-                <div class="item-name">${item.name}</div>
-                <div class="item-stats">${statsText}</div>
+        gearData[type].forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            let statsStr = Object.entries(item.stats).map(([k,v]) => `${k} +${v}%`).join(', ');
+            row.innerHTML = `
+                <div class="item-info">
+                    <h4>${item.name}</h4>
+                    <p>${statsStr}</p>
+                </div>
+                <i class="fas fa-plus" style="color:var(--primary)"></i>
             `;
-            div.onclick = () => selectItem(item);
-            optionsContainer.appendChild(div);
+            row.onclick = () => selectItem(item);
+            list.appendChild(row);
         });
         
         modal.style.display = 'flex';
     }
 
-    function closeModal() {
-        document.getElementById('itemModal').style.display = 'none';
+    function closePicker() {
+        document.getElementById('pickerModal').style.display = 'none';
     }
 
     function selectItem(item) {
-        const slotKey = activeAccIndex ? `Acc-${activeAccIndex}` : activeSlot;
-        currentSet[slotKey] = item;
+        const key = activeAccIdx ? `Acc-${activeAccIdx}` : activeSlot;
+        currentSet[key] = item;
         
-        const nameDisplay = document.getElementById(`name-${slotKey}`);
-        nameDisplay.innerText = item ? item.name : 'Empty';
+        const slotEl = document.getElementById(`slot-${key}`);
+        const nameEl = document.getElementById(`name-${key}`);
         
-        closeModal();
+        if (item) {
+            slotEl.classList.add('has-item');
+            nameEl.innerText = item.name;
+        } else {
+            slotEl.classList.remove('has-item');
+            nameEl.innerText = '';
+        }
+        
+        closePicker();
         updateStats();
     }
 
     function updateStats() {
         const totals = {};
-        
         Object.values(currentSet).forEach(item => {
-            if (item && item.stats) {
-                Object.entries(item.stats).forEach(([stat, val]) => {
-                    totals[stat] = (totals[stat] || 0) + val;
+            if (item) {
+                Object.entries(item.stats).forEach(([k, v]) => {
+                    totals[k] = (totals[k] || 0) + v;
                 });
             }
         });
+
+        const grid = document.getElementById('stats-grid');
+        grid.innerHTML = '';
         
-        const display = document.getElementById('stats-display');
-        display.innerHTML = '';
+        const importantStats = [
+            "Infantry ATK", "Ranged ATK", "Cavalry ATK",
+            "Army HP", "Army DEF", "Infantry HP", "Cavalry HP"
+        ];
+
+        importantStats.forEach(stat => {
+            if (totals[stat]) {
+                const div = document.createElement('div');
+                div.className = 'stat-item';
+                div.innerHTML = `<span>${stat}</span><span class="stat-val">+${totals[stat].toFixed(1)}%</span>`;
+                grid.appendChild(div);
+            }
+        });
         
-        if (Object.keys(totals).length === 0) {
-            display.innerHTML = '<p style="color:var(--text-dim); font-size:14px; text-align:center;">No items equipped</p>';
-            return;
+        if (grid.innerHTML === '') {
+            grid.innerHTML = '<div style="grid-column: 1/span 2; text-align:center; color:var(--text-dim); padding: 20px;">No gear selected</div>';
         }
-
-        // Sort stats: Attack first, then HP, then DEF
-        const sortedStats = Object.entries(totals).sort((a, b) => {
-            if (a[0].includes('ATK') && !b[0].includes('ATK')) return -1;
-            if (!a[0].includes('ATK') && b[0].includes('ATK')) return 1;
-            return a[0].localeCompare(b[0]);
-        });
-
-        sortedStats.forEach(([stat, val]) => {
-            const row = document.createElement('div');
-            row.className = 'stat-row';
-            row.innerHTML = `
-                <span>${stat}</span>
-                <span class="stat-value">+${val.toFixed(1)}%</span>
-            `;
-            display.appendChild(row);
-        });
     }
 
     function clearAll() {
-        Object.keys(currentSet).forEach(key => {
-            currentSet[key] = null;
-            const display = document.getElementById(`name-${key}`);
-            if (display) display.innerText = 'Empty';
+        Object.keys(currentSet).forEach(k => {
+            currentSet[k] = null;
+            const slotEl = document.getElementById(`slot-${k}`);
+            const nameEl = document.getElementById(`name-${k}`);
+            slotEl.classList.remove('has-item');
+            nameEl.innerText = '';
         });
         updateStats();
     }
 
-    function saveSet() {
-        localStorage.setItem('savedGearSet', JSON.stringify(currentSet));
-        alert('Gear set saved locally!');
+    function loadPreset(type) {
+        clearAll();
+        document.querySelectorAll('.set-tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+
+        const find = (slot, name) => gearData[slot].find(i => i.name === name);
+
+        if (type === 'mixed') {
+            selectItemManual('Main Hand', find('Main Hand', 'Frostwing Greatsword'));
+            selectItemManual('Off-Hand', find('Off-Hand', 'Winter Mittens'));
+            selectItemManual('Helmet', find('Helmet', 'Bumblehelm'));
+            selectItemManual('Armor', find('Armor', 'Firewall Plate'));
+            selectItemManual('Legs', find('Legs', 'Storm Tasset'));
+            selectItemManual('Acc-1', find('Accessory', 'Burning Scroll'));
+            selectItemManual('Acc-2', find('Accessory', 'Burning Scroll'));
+            selectItemManual('Acc-3', find('Accessory', 'Burning Scroll'));
+        } else if (type === 'f2p') {
+            selectItemManual('Main Hand', find('Main Hand', 'Frostwing Greatsword'));
+            selectItemManual('Off-Hand', find('Off-Hand', 'Call of the Deep'));
+            selectItemManual('Helmet', find('Helmet', 'Beast Helmet'));
+            selectItemManual('Armor', find('Armor', 'Terror Shield'));
+            selectItemManual('Legs', find('Legs', 'Dragon\'s Stride'));
+            selectItemManual('Acc-1', find('Accessory', 'Ring of Ancients'));
+            selectItemManual('Acc-2', find('Accessory', 'Ring of Ancients'));
+            selectItemManual('Acc-3', find('Accessory', 'Ring of Ancients'));
+        } else if (type === 'rally') {
+            selectItemManual('Main Hand', find('Main Hand', 'Skullcrusher'));
+            selectItemManual('Off-Hand', find('Off-Hand', 'Winter Mittens'));
+            selectItemManual('Helmet', find('Helmet', 'Bumblehelm'));
+            selectItemManual('Armor', find('Armor', 'Firewall Plate'));
+            selectItemManual('Legs', find('Legs', 'Storm Tasset'));
+            selectItemManual('Acc-1', find('Accessory', 'Ambrosial Cup'));
+            selectItemManual('Acc-2', find('Accessory', 'Ambrosial Cup'));
+            selectItemManual('Acc-3', find('Accessory', 'Ambrosial Cup'));
+        }
     }
 
-    // Load saved set on start
-    window.onload = () => {
-        const saved = localStorage.getItem('savedGearSet');
-        if (saved) {
-            currentSet = JSON.parse(saved);
-            Object.entries(currentSet).forEach(([key, item]) => {
-                const display = document.getElementById(`name-${key}`);
-                if (display) display.innerText = item ? item.name : 'Empty';
-            });
-            updateStats();
+    function selectItemManual(key, item) {
+        currentSet[key] = item;
+        const slotEl = document.getElementById(`slot-${key}`);
+        const nameEl = document.getElementById(`name-${key}`);
+        if (item) {
+            slotEl.classList.add('has-item');
+            nameEl.innerText = item.name;
         }
-    };
+        updateStats();
+    }
+
+    window.onload = () => loadPreset('mixed');
 </script>
 
 </body>
