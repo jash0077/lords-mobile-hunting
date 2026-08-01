@@ -3,465 +3,454 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full Trap Guide — Lords Mobile Data & Strategy</title>
+    <title>The Trap Account — Lords Mobile Field Manual</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --bg: #F6F3EC;
-            --bg-card: #FFFFFF;
-            --bg-card-2: #F1EDE2;
-            --line: rgba(20, 20, 30, 0.08);
-            --line-strong: rgba(20, 20, 30, 0.16);
-            --text: #1B1E2E;
-            --text-dim: #5B5F73;
-            --text-faint: #9498A8;
-            --amber: #E8B34E;
-            --periwinkle: #7C89C7;
-            --coral: #E2725B;
-            --green: #7CD98E;
+            --bg: #120e0a;
+            --surface: #1c1610;
+            --surface-2: #241b12;
+            --line: #3a2f22;
+            --steel: #8c8478;
+            --parchment: #e9dfc9;
+            --parchment-dim: #a99d84;
+            --gold: #c9a24a;
+            --gold-bright: #e8c46e;
+            --blood: #8a2a34;
+            --blood-bright: #b23a46;
+            --shadow-lift: 0 -1px 0 rgba(255,255,255,.06) inset;
         }
 
         * { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
         body {
-            background: 
-                radial-gradient(1000px 500px at 15% -10%, rgba(124, 137, 199, 0.05), transparent 60%),
+            margin: 0;
+            background:
+                radial-gradient(1200px 600px at 15% -10%, rgba(201,162,74,.08), transparent 60%),
+                radial-gradient(900px 500px at 90% 10%, rgba(138,42,52,.10), transparent 55%),
                 var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            line-height: 1.4;
-        }
-
-        .page {
-            max-width: 780px;
-            margin: 0 auto;
-            padding: 12px 12px 40px;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-        }
-
-        .back-link {
-            text-decoration: none;
-            color: var(--text-dim);
-            font-size: 12px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .hero {
-            text-align: center;
-            padding: 8px 0 20px;
-        }
-
-        .hero h1 {
-            font-family: 'Fraunces', serif;
-            font-weight: 500;
-            font-size: 28px;
-            margin: 0 0 4px;
-            color: var(--text);
-        }
-
-        .tagline {
-            color: var(--text-dim);
-            font-size: 13px;
-            margin: 0;
-        }
-
-        section.card {
-            background: var(--bg-card);
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-
-        .card-head {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            border-bottom: 1px solid var(--line);
-            padding-bottom: 8px;
-        }
-
-        .card-head h2 {
-            font-family: 'Fraunces', serif;
-            font-weight: 500;
+            color: var(--parchment);
+            font-family: 'Crimson Pro', serif;
             font-size: 18px;
-            margin: 0;
+            line-height: 1.6;
         }
 
-        .eyebrow {
-            font-size: 9px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--text-faint);
-            font-family: 'IBM Plex Mono', monospace;
+        /* Subtle grain effect */
+        body::after {
+            content: "";
+            position: fixed; inset: 0; pointer-events: none; z-index: 999;
+            opacity: .035; mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
-        h3 {
-            font-family: 'Fraunces', serif;
-            font-size: 15px;
-            font-weight: 600;
-            margin: 16px 0 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        h1, h2, h3, .eyebrow, .stat-label, .nav-brand { font-family: 'Cinzel', serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+        
+        a { color: var(--gold-bright); text-decoration: none; transition: color 0.2s; }
+        a:hover { color: var(--gold); }
 
-        h3 i { color: var(--amber); font-size: 13px; }
-
-        p { margin: 0 0 10px; font-size: 13px; color: var(--text-dim); }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            margin-bottom: 12px;
-        }
-
-        th {
-            text-align: left;
-            background: var(--bg-card-2);
-            padding: 8px;
-            color: var(--text-faint);
-            text-transform: uppercase;
-            font-size: 10px;
-            letter-spacing: 0.05em;
-        }
-
-        td {
-            padding: 8px;
+        /* Navigation */
+        nav.main-nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(18,14,10,.86);
+            backdrop-filter: blur(8px);
             border-bottom: 1px solid var(--line);
-            color: var(--text-dim);
+        }
+        .nav-inner {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 28px; max-width: 1080px; margin: 0 auto;
+        }
+        .nav-brand {
+            font-weight: 700; letter-spacing: .06em;
+            font-size: 15px; color: var(--parchment); text-transform: uppercase;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .nav-brand .mark {
+            width: 22px; height: 22px;
+            background: conic-gradient(from 45deg, var(--gold), var(--blood-bright), var(--gold));
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+        }
+        .nav-links { display: flex; gap: 26px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+        .nav-links a { color: var(--parchment-dim); }
+
+        /* Hero Section */
+        .hero {
+            padding: 96px 0 70px;
+            position: relative;
+            border-bottom: 1px solid var(--line);
+            overflow: hidden;
+        }
+        .eyebrow {
+            display: inline-flex; align-items: center; gap: 10px;
+            font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 22px;
+        }
+        .eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--gold); }
+        h1.title {
+            font-size: clamp(40px, 6vw, 68px);
+            line-height: 1.04; margin: 0 0 22px;
+            font-weight: 700; max-width: 820px;
+        }
+        h1.title em {
+            font-style: normal; color: var(--gold-bright);
+            text-shadow: 0 0 26px rgba(232,196,110,.25);
+        }
+        .hero p.sub { max-width: 600px; font-size: 19px; color: var(--parchment-dim); margin: 0 0 40px; }
+
+        /* Might Gauge */
+        .gauge-panel {
+            background: linear-gradient(180deg, var(--surface), var(--surface-2));
+            border: 1px solid var(--line);
+            border-radius: 4px; padding: 26px 28px 28px;
+            max-width: 640px;
+            box-shadow: var(--shadow-lift), 0 20px 40px -20px rgba(0,0,0,.6);
+        }
+        .gauge-head { margin-bottom: 18px; }
+        .stat-label { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--parchment-dim); }
+        .gauge-row { margin-bottom: 16px; }
+        .gauge-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+        .gauge-track {
+            height: 12px; border-radius: 2px; background: #0e0b08;
+            border: 1px solid var(--line); overflow: hidden; position: relative;
+        }
+        .gauge-fill { height: 100%; width: 0; transition: width 1.6s cubic-bezier(.16,1,.3,1); }
+        .gauge-fill.might { background: linear-gradient(90deg, #5a4a2a, var(--gold)); }
+        .gauge-fill.power { background: linear-gradient(90deg, #5a1c22, var(--blood-bright)); }
+        .gauge-panel.animate .gauge-fill.might { width: 23%; }
+        .gauge-panel.animate .gauge-fill.power { width: 91%; }
+        .gauge-foot { margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--line); font-size: 14px; color: var(--parchment-dim); font-style: italic; }
+
+        /* Sections */
+        section { padding: 80px 0; border-bottom: 1px solid var(--line); }
+        section.alt { background: linear-gradient(180deg, rgba(255,255,255,.012), transparent); }
+        .section-head { max-width: 640px; margin-bottom: 48px; }
+        h2.section-title { font-size: clamp(28px, 3.6vw, 38px); margin: 0 0 14px; font-weight: 600; }
+        .section-head p { color: var(--parchment-dim); font-size: 17px; }
+
+        /* Cards & Grids */
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+        .principle { background: var(--surface); padding: 32px 26px; }
+        .principle .pnum { font-family: 'JetBrains Mono', monospace; color: var(--blood-bright); font-size: 13px; margin-bottom: 14px; }
+        .principle h3 { font-size: 20px; margin: 0 0 10px; color: var(--gold-bright); font-family: 'Crimson Pro', serif; }
+        .principle p { margin: 0; color: var(--parchment-dim); font-size: 15.5px; }
+
+        /* Stages */
+        .stagelist { border-left: 2px solid var(--line); margin-left: 6px; }
+        .stage { position: relative; padding: 0 0 40px 32px; }
+        .stage::before {
+            content: ""; position: absolute; left: -7px; top: 4px; width: 12px; height: 12px;
+            border-radius: 50%; background: var(--bg); border: 2px solid var(--gold);
+        }
+        .stage h3 { margin: 0 0 8px; font-size: 19px; color: var(--parchment); font-family: 'Crimson Pro', serif; }
+        .stage .tag {
+            display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+            color: var(--gold); border: 1px solid var(--line); padding: 3px 8px; border-radius: 2px;
+            margin-bottom: 10px; text-transform: uppercase;
         }
 
-        td strong { color: var(--text); }
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; font-size: 15.5px; margin-bottom: 20px; }
+        table caption { text-align: left; font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+        th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+        th { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; color: var(--parchment-dim); font-weight: 500; background: rgba(255,255,255,0.02); }
+        td strong { color: var(--gold-bright); }
+        tr:hover td { background: rgba(201,162,74,.04); }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
+        /* Callouts */
+        .callout {
+            background: linear-gradient(135deg, rgba(138,42,52,.14), rgba(138,42,52,.03));
+            border: 1px solid rgba(138,42,52,.35); border-radius: 4px;
+            padding: 26px 28px; margin: 24px 0;
+        }
+        .callout h4 { margin: 0 0 8px; font-family: 'Cinzel', serif; font-size: 14px; text-transform: uppercase; color: var(--blood-bright); }
+        .callout p { margin: 0; color: var(--parchment-dim); font-size: 15.5px; }
+
+        /* Checklist */
+        .checklist { list-style: none; padding: 0; display: grid; gap: 2px; background: var(--line); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+        .checklist li { background: var(--surface); padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; font-size: 15.5px; }
+        .checklist li::before {
+            content: "✓"; font-family: 'JetBrains Mono', monospace; color: var(--gold); font-weight: 700;
+            border: 1px solid var(--gold); border-radius: 50%; width: 20px; height: 20px; min-width: 20px;
+            display: flex; align-items: center; justify-content: center; font-size: 11px; margin-top: 2px;
         }
 
-        .grid-item {
-            background: var(--bg-card-2);
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 12px;
+        /* Responsive */
+        @media (max-width: 760px) {
+            .grid-3 { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            h1.title { font-size: 40px; }
         }
 
-        .grid-item h4 {
-            font-size: 13px;
-            margin: 0 0 4px;
-            font-family: 'Fraunces', serif;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background: rgba(232, 179, 78, 0.1);
-            color: var(--amber);
-            font-size: 9px;
-            font-weight: 700;
-            font-family: 'IBM Plex Mono', monospace;
-        }
-
-        .warning-strip {
-            background: rgba(226, 114, 91, 0.08);
-            border-left: 3px solid var(--coral);
-            padding: 8px 12px;
-            margin: 12px 0;
-            font-size: 12px;
-            color: var(--coral);
-        }
-
-        @media (max-width: 600px) {
-            .hero h1 { font-size: 24px; }
-            section.card { padding: 12px; }
-            th, td { padding: 6px; }
-        }
+        footer { padding: 60px 0; text-align: center; color: var(--parchment-dim); font-size: 13.5px; }
     </style>
 </head>
 <body>
-    <div class="page">
-        <nav>
-            <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Hub</a>
-            <div class="badge">V.2025.08</div>
-        </nav>
 
-        <header class="hero">
-            <h1>Full Trap Guide</h1>
-            <p class="tagline">Granular data for Solo and Rally traps.</p>
-        </header>
-
-        <!-- Troop Compositions -->
-        <section class="card">
-            <div class="card-head">
-                <h2>Standard Troop Compositions</h2>
-                <span class="eyebrow">The Buffer</span>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Solo Trap (200M)</th>
-                        <th>Rally Trap (600M+)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>T2 Inf/Cav</strong></td>
-                        <td>3.5M Each</td>
-                        <td>10M - 12M Each</td>
-                    </tr>
-                    <tr>
-                        <td><strong>T2 Ranged</strong></td>
-                        <td>4M (Frontline)</td>
-                        <td>15M - 20M (Buffer)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>T4 Inf/Cav/Rng</strong></td>
-                        <td>800K Each</td>
-                        <td>4M - 6M Each</td>
-                    </tr>
-                    <tr>
-                        <td><strong>T5 Buffer</strong></td>
-                        <td>None</td>
-                        <td>200K Each (Anti-T5)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>T1 Siege</strong></td>
-                        <td>500K (Pyris)</td>
-                        <td>1M (Anti-Pyris)</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p><i>Note: T2 Ranged is used as a massive buffer in Archer Wedge to absorb initial rally impact.</i></p>
-        </section>
-
-        <!-- The Lean Rally Trap -->
-        <section class="card">
-            <div class="card-head">
-                <h2>The Lean Rally Trap</h2>
-                <span class="eyebrow">Optimized Efficiency</span>
-            </div>
-            <p>A streamlined, high-performance setup designed for maximum attrition with minimal T4 exposure. This configuration is built for <strong>Archer Wedge</strong> dominance.</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tier</th>
-                        <th>Recommended Count</th>
-                        <th>Strategic Role</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Tier 4 (All Types)</strong></td>
-                        <td>6M Each</td>
-                        <td>Primary Damage Engine</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tier 2 Inf / Cav</strong></td>
-                        <td>30M Each</td>
-                        <td>Frontline Attrition Layer</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tier 2 Ranged</strong></td>
-                        <td>50M</td>
-                        <td>Formation Anchor & Buffer</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="warning-strip">
-                <strong>Why it works:</strong> Archer Wedge maximizes ranged output while the massive T2 layers absorb the initial impact, protecting your T4 core from direct damage.
-            </div>
-        </section>
-
-        <!-- Wall Heroes -->
-        <section class="card">
-            <div class="card-head">
-                <h2>Wall Hero Lineups</h2>
-                <span class="eyebrow">The Commanders</span>
-            </div>
-            <h3><i class="fas fa-user-shield"></i> F2P Defense (Best Mix)</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Hero</th>
-                        <th>Main Stat</th>
-                        <th>Troop Type</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Rose Knight</strong></td>
-                        <td>20% Army ATK / 50% Cav HP</td>
-                        <td>Cavalry</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Bombin' Goblin</strong></td>
-                        <td>20% Army ATK</td>
-                        <td>Ranged</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Demon Slayer</strong></td>
-                        <td>30% Inf ATK / 50% Inf HP</td>
-                        <td>Infantry</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Snow Queen</strong></td>
-                        <td>30% Rng ATK / 50% Rng HP</td>
-                        <td>Ranged</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Child of Light</strong></td>
-                        <td>30% Cav ATK / 50% Cav HP</td>
-                        <td>Cavalry</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3><i class="fas fa-crown"></i> P2P / 11K Elite</h3>
-            <div class="grid">
-                <div class="grid-item">
-                    <h4>Watcher</h4>
-                    <p>20% Army ATK, 25% Army HP. Essential for all traps.</p>
-                </div>
-                <div class="grid-item">
-                    <h4>Lore Weaver</h4>
-                    <p>20% Army ATK, 25% Army HP, 25% Army DEF.</p>
-                </div>
-                <div class="grid-item">
-                    <h4>Lightweaver</h4>
-                    <p>60% Inf ATK, 60% Rng ATK, 30% Army HP.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Gear Sets -->
-        <section class="card">
-            <div class="card-head">
-                <h2>Essential Trap Gear</h2>
-                <span class="eyebrow">The Arsenal</span>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Slot</th>
-                        <th>F2P Mixed Set</th>
-                        <th>P2P / Champion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Main Hand</strong></td>
-                        <td>Frostwing Greatsword</td>
-                        <td>Champion Blade</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Off-Hand</strong></td>
-                        <td>Winter Mittens</td>
-                        <td>Champion Light</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Helmet</strong></td>
-                        <td>Bumblehelm</td>
-                        <td>Champion Visor</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Armor</strong></td>
-                        <td>Firewall Plate</td>
-                        <td>Champion Plate</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Legs</strong></td>
-                        <td>Storm Tasset</td>
-                        <td>Champion Greaves</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Accessory</strong></td>
-                        <td>Burning Scroll x3</td>
-                        <td>Champ Faith / Cups</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="warning-strip">
-                <strong>Jewel Rule:</strong> Never use Defense jewels. Only Inf/Rng/Cav Attack jewels.
-            </div>
-        </section>
-
-        <!-- Familiar Loadouts -->
-        <section class="card">
-            <div class="card-head">
-                <h2>Familiar Loadouts</h2>
-                <span class="eyebrow">The Guardians</span>
-            </div>
-            <div class="grid">
-                <div class="grid-item">
-                    <h4>Gryphon (P3)</h4>
-                    <p><strong>Trigger:</strong> 10% Loss<br><strong>Effect:</strong> 200% Army ATK boost.</p>
-                </div>
-                <div class="grid-item">
-                    <h4>Aquiris (P3)</h4>
-                    <p><strong>Passive:</strong> 15% Army HP. Essential for survivability.</p>
-                </div>
-                <div class="grid-item">
-                    <h4>Jade Wyrm (P5)</h4>
-                    <p><strong>Trigger:</strong> 4% Loss<br><strong>Effect:</strong> Creates an impenetrable shield.</p>
-                </div>
-                <div class="grid-item">
-                    <h4>Hell Drider (P5)</h4>
-                    <p><strong>Trigger:</strong> 7% Loss<br><strong>Effect:</strong> Stuns enemy troops.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Research Priorities -->
-        <section class="card">
-            <div class="card-head">
-                <h2>Research Path</h2>
-                <span class="eyebrow">The Foundation</span>
-            </div>
-            <ul>
-                <li><i class="fas fa-check-circle"></i> <strong>Military:</strong> Unlock T4 (Minimum requirement).</li>
-                <li><i class="fas fa-check-circle"></i> <strong>Army Leadership:</strong> Phalanx & Wedge formations. Counter-research (Lv 10).</li>
-                <li><i class="fas fa-check-circle"></i> <strong>Military Command:</strong> Hidden Talent (Deployment slots) and Army HP/DEF boosts.</li>
-                <li><i class="fas fa-check-circle"></i> <strong>Familiars:</strong> Pact 4 (Evil Weevil) and Pact 5 (Elite skills).</li>
-            </ul>
-        </section>
-
-        <!-- Strategic Mindset -->
-        <section class="card">
-            <div class="card-head">
-                <h2>The Commander's Mindset</h2>
-                <span class="eyebrow">Strategic Principles</span>
-            </div>
-            <h3><i class="fas fa-brain"></i> Proactive Defense</h3>
-            <p>Success as a trap isn't just about the numbers; it's about <strong>Strategic Self-Assessment</strong>. Align your defense with your actual account strength and budget. Mimicking high-spender tactics without the stats leads to ruin.</p>
-            
-            <h3><i class="fas fa-shield-alt"></i> The Shield of Wisdom</h3>
-            <p>This guide is designed for <strong>Active Defense</strong>. If you are online and countering, you are invincible. If you are offline or facing a kingdom of titans, use a shield. Protecting your progress is smarter than losing millions to ego.</p>
-            
-            <h3><i class="fas fa-chart-line"></i> Quality Over Bloat</h3>
-            <p>Instead of endless troop training, focus on <strong>Efficiency</strong>. Invest in research, gear, and hero synergy. A lean, high-stat account will always outperform a bloated, weak one.</p>
-        </section>
-
-        <footer class="footer">
-            <p>&copy; 2026 CLASSIFIED DOSSIER // END OF TRANSMISSION</p>
-        </footer>
+<nav class="main-nav">
+    <div class="nav-inner">
+        <div class="nav-brand"><span class="mark"></span> Classified Dossier</div>
+        <div class="nav-links">
+            <a href="#concept">Concept</a>
+            <a href="#buildings">Buildings</a>
+            <a href="#troops">Troops</a>
+            <a href="#gear">Gear</a>
+            <a href="#talents">Talents</a>
+            <a href="#checklist">Checklist</a>
+        </div>
     </div>
+</nav>
+
+<section class="hero">
+    <div class="wrap">
+        <div class="eyebrow">Lords Mobile &middot; Strategic Manual</div>
+        <h1 class="title">Look weak.<br>Hit like <em>an empire</em>.</h1>
+        <p class="sub">A trap account is a castle built to be underestimated — low visible might, devastating defensive force. This is the complete guide to the "Look Weak" strategy.</p>
+
+        <div class="gauge-panel" id="gaugePanel">
+            <div class="gauge-head"><span class="stat-label">Tactical Analysis</span></div>
+            <div class="gauge-row">
+                <div class="gauge-top"><span>Displayed Might</span><span class="mono" style="color:var(--gold-bright)">LOW</span></div>
+                <div class="gauge-track"><div class="gauge-fill might"></div></div>
+            </div>
+            <div class="gauge-row">
+                <div class="gauge-top"><span>Real Defensive Power</span><span class="mono" style="color:var(--blood-bright)">MASSIVE</span></div>
+                <div class="gauge-track"><div class="gauge-fill power"></div></div>
+            </div>
+            <div class="gauge-foot">The gap between perception and reality is your greatest weapon.</div>
+        </div>
+    </div>
+</section>
+
+<section id="concept">
+    <div class="wrap">
+        <div class="section-head">
+            <div class="eyebrow">The Concept</div>
+            <h2 class="section-title">Three Core Principles</h2>
+            <p>Every decision must be measured against these three rules of engagement.</p>
+        </div>
+        <div class="grid-3">
+            <div class="principle">
+                <div class="pnum">01</div>
+                <h3>Stay Small on Paper</h3>
+                <p>Minimize visible might. Avoid unnecessary buildings and research that inflate your power without adding combat value.</p>
+            </div>
+            <div class="principle">
+                <div class="pnum">02</div>
+                <h3>Stack HP and Defense</h3>
+                <p>Maximize troop health and defense stats. A trap survives the hit and grinds the attacker's army down through attrition.</p>
+            </div>
+            <div class="principle">
+                <div class="pnum">03</div>
+                <h3>Build for Aftermath</h3>
+                <p>Maximize infirmary capacity. The goal is to convert deaths into wounded, and wounded back into troops rapidly.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="alt" id="buildings">
+    <div class="wrap">
+        <div class="section-head">
+            <div class="eyebrow">Buildings</div>
+            <h2 class="section-title">The Fortress Lifecycle</h2>
+            <p>A trap account's layout evolves. Early speed is replaced by defensive capacity.</p>
+        </div>
+        <div class="stagelist">
+            <div class="stage">
+                <span class="tag">Foundation</span>
+                <h3>Castle Level 25</h3>
+                <p>The essential milestone. Unlocks advanced structures, higher-tier research, and T4 troops.</p>
+            </div>
+            <div class="stage">
+                <span class="tag">Expansion</span>
+                <h3>Manors for Training</h3>
+                <p>Run manors during active troop training to maximize speed. These are temporary fixtures.</p>
+            </div>
+            <div class="stage">
+                <span class="tag">Mobilization</span>
+                <h3>Infirmary Conversion</h3>
+                <p>Once troop counts are met, demolish manors for infirmaries (Lv 21-25). Minimize deaths at all costs.</p>
+            </div>
+            <div class="stage">
+                <span class="tag">Support</span>
+                <h3>Embassy Maximization</h3>
+                <p>High embassy level allows more guild reinforcements—critical for surviving full rallies.</p>
+            </div>
+            <div class="stage">
+                <span class="tag">Discipline</span>
+                <h3>Minimum Viable Infrastructure</h3>
+                <p>Skip unnecessary upgrades. Every point of might must be justified by defensive utility.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="troops">
+    <div class="wrap">
+        <div class="section-head">
+            <div class="eyebrow">Troop Composition</div>
+            <h2 class="section-title">The Attrition Engine</h2>
+            <p>Strategic troop layering creates a damage sponge that protects your high-tier damage dealers.</p>
+        </div>
+
+        <table>
+            <caption>Standard Compositions</caption>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Solo Trap (200M)</th>
+                    <th>Rally Trap (600M+)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>T2 Inf/Cav</strong></td><td>3.5M Each</td><td>10M - 12M Each</td></tr>
+                <tr><td><strong>T2 Ranged</strong></td><td>4M (Frontline)</td><td>15M - 20M (Buffer)</td></tr>
+                <tr><td><strong>T4 Inf/Cav/Rng</strong></td><td>800K Each</td><td>4M - 6M Each</td></tr>
+                <tr><td><strong>T5 Buffer</strong></td><td>None</td><td>200K Each</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout">
+            <h4>The Lean Rally Trap (Optimized)</h4>
+            <p>A streamlined setup for Archer Wedge dominance: <strong>6M T4</strong> of each type, <strong>30M T2 Inf/Cav</strong>, and <strong>50M T2 Archers</strong>. This maximizes attrition while protecting your T4 core.</p>
+        </div>
+
+        <div class="grid-3" style="margin-top:24px;">
+            <div class="principle">
+                <h3>Meat Shield (T2)</h3>
+                <p>Absorbs the bulk of damage. Trained in massive volume (millions) to protect the damage engine.</p>
+            </div>
+            <div class="principle">
+                <h3>Attackers (T4/T5)</h3>
+                <p>The primary damage engine. Kept behind the shield to decimate the enemy army.</p>
+            </div>
+            <div class="principle">
+                <h3>Siege Engines</h3>
+                <p>Skip entirely. Siege is for offense; a trap account is a pure defensive fortress.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="alt" id="gear">
+    <div class="wrap">
+        <div class="section-head">
+            <div class="eyebrow">Equipment</div>
+            <h2 class="section-title">The Arsenal</h2>
+            <p>Prioritize Army HP and Mixed Defense over pure single-type attack stats.</p>
+        </div>
+
+        <table>
+            <caption>Mixed Defensive Set</caption>
+            <thead><tr><th>Slot</th><th>F2P / Mixed</th><th>Strategic Value</th></tr></thead>
+            <tbody>
+                <tr><td>Main Hand</td><td>Frostwing Greatsword</td><td>All-around ATK boost</td></tr>
+                <tr><td>Off-Hand</td><td>Winter Mittens</td><td>Massive Army HP / Defense</td></tr>
+                <tr><td>Helmet</td><td>Bumblehelm</td><td>Cav/Rng Defense focus</td></tr>
+                <tr><td>Armor</td><td>Firewall Plate</td><td>Inf/Cav Defense focus</td></tr>
+                <tr><td>Legs</td><td>Storm Tasset</td><td>Mixed stats dominance</td></tr>
+                <tr><td>Accessory</td><td>Burning Scroll x3</td><td>Mixed Army ATK</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout">
+            <h4>The Disguise Trick</h4>
+            <p>Sit in weak "farming" gear to bait scouts. Use <strong>Quick Swap</strong> to flip into your real defensive set the moment a rally lands.</p>
+        </div>
+    </div>
+</section>
+
+<section id="talents">
+    <div class="wrap">
+        <div class="section-head">
+            <div class="eyebrow">Talents & Research</div>
+            <h2 class="section-title">The Foundation</h2>
+            <p>Skip the economy tree. Focus on survival, healing, and enemy debuffs.</p>
+        </div>
+        <div class="grid-3">
+            <div class="principle">
+                <h3>Survival</h3>
+                <p><strong>Army Health II / Defense II</strong>: Core stat boosts. <strong>Bigger Infirmary</strong>: Essential for capacity.</p>
+            </div>
+            <div class="principle">
+                <h3>Tactical</h3>
+                <p><strong>Quick Swap</strong>: The heart of the bait strategy. <strong>Field Triage</strong>: Faster healing efficiency.</p>
+            </div>
+            <div class="principle">
+                <h3>Debuffs</h3>
+                <p><strong>Sabotage / Plague / Demoralize</strong>: Chip 10% off the attacker's army stats before they land.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="alt" id="mindset">
+    <div class="wrap">
+        <div class="section-head">
+            <div class="eyebrow">Philosophy</div>
+            <h2 class="section-title">The Commander's Mindset</h2>
+            <p>Success is 90% psychology and 10% stats.</p>
+        </div>
+        <div class="grid-3">
+            <div class="principle">
+                <h3>Proactive Defense</h3>
+                <p>Be honest about your strength. Mimicking titans without the stats leads to ruin. Align strategy with reality.</p>
+            </div>
+            <div class="principle">
+                <h3>The Shield of Wisdom</h3>
+                <p>Active defense only. If offline or facing titans, shield. Progress is more important than ego.</p>
+            </div>
+            <div class="principle">
+                <h3>Quality Over Bloat</h3>
+                <p>Invest in research and gear synergy. A lean, high-stat account outperforms a bloated, weak one.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="checklist">
+    <div class="wrap">
+        <div class="section-head">
+            <div class="eyebrow">Pre-Fight</div>
+            <h2 class="section-title">Checklist for Baiting</h2>
+            <p>Ensure these assets are ready before you lower your guard.</p>
+        </div>
+        <ul class="checklist">
+            <li><span><strong>Resource Tokens</strong>: Keep resources in bags so they aren't looted.</span></li>
+            <li><span><strong>Speedups</strong>: Several days saved for post-hit healing.</span></li>
+            <li><span><strong>Shields</strong>: In reserve for strategic cooling off.</span></li>
+            <li><span><strong>Anti-Scout</strong>: Prevent enemies from seeing your real troop count.</span></li>
+            <li><span><strong>Defense Boosts</strong>: Active or ready to trigger immediately.</span></li>
+            <li><span><strong>Vault Protection</strong>: Keep loose resources below protected limits.</span></li>
+            <li><span><strong>Guild Briefing</strong>: Ensure reinforcements match your formation.</span></li>
+        </ul>
+    </div>
+</section>
+
+<footer>
+    <div class="wrap">
+        <div class="nav-brand" style="justify-content:center; margin-bottom:10px;"><span class="mark"></span> Classified Dossier</div>
+        <p>&copy; 2026 Lords Mobile Field Manual // END OF TRANSMISSION</p>
+        <p style="opacity:.6; font-size:12px;">Fan-made reference. Not affiliated with IGG.</p>
+    </div>
+</footer>
+
+<script>
+    const panel = document.getElementById('gaugePanel');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                panel.classList.add('animate');
+                observer.disconnect();
+            }
+        });
+    }, { threshold: 0.4 });
+    observer.observe(panel);
+</script>
+
 </body>
 </html>
