@@ -279,6 +279,7 @@
     <h3 id="modalTitle">Title</h3>
     <p id="modalMessage">Message</p>
     <input id="modalInput" type="text">
+      <input id="tokenInput" placeholder="GitHub Token (for cloud sync)" type="password" style="margin-top:8px; display:none; font-family:'IBM Plex Mono',monospace; background:var(--bg-card-2); border:1px solid var(--line-strong); color:var(--text); border-radius:9px; padding:10px 12px; font-size:15px; width:100%;">
     <div id="modalError" class="modal-error"></div>
     <div class="modal-actions">
       <button type="button" class="modal-btn secondary" id="modalCancel">Cancel</button>
@@ -632,7 +633,7 @@ document.getElementById('adminToggle').addEventListener('click', () => {
     inputType: 'password',
     confirmLabel: 'Unlock',
     onConfirm: (val) => {
-              const tokenVal = document.getElementById('tokenInput').value;
+              const tEl = document.getElementById('tokenInput'); const tokenVal = tEl ? tEl.value : '';
         if (tokenVal) {
           githubToken = tokenVal;
           saveJSON('meridian:githubToken', githubToken);
