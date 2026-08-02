@@ -18,7 +18,7 @@
     --night1:#0A0D1A; --night2:#1B2246; --dawn:#8677A8; --day1:#F2C46B; --day2:#F2A65A; --dusk:#D9724F;
   }
   html[data-theme="light"]{
-    --bg: var(--light-bg-custom, #F6F3EC); --bg-card:#FFFFFF; --bg-card-2:#F1EDE2;
+    --bg:#F6F3EC; --bg-card:#FFFFFF; --bg-card-2:#F1EDE2;
     --line:rgba(20,20,30,0.08); --line-strong:rgba(20,20,30,0.16);
     --text:#1B1E2E; --text-dim:#5B5F73; --text-faint:#9498A8;
   }
@@ -207,8 +207,6 @@
       <div class="header-actions">
         <button type="button" class="admin-btn" id="adminToggle" title="Admin controls who can add/remove events"><span id="adminIcon">🔒</span> <span id="adminLabel">Admin</span></button>
         <button type="button" class="site-share-btn" id="siteShareBtn" title="Copy link to this app">🔗</button>
-        <input type="color" id="lightColorPicker" style="display:none; width:28px; height:28px; border:1px solid var(--line-strong); padding:0; background:none; cursor:pointer; border-radius:8px; vertical-align:middle;" title="Adjust Day Mode Color">
-        <button type="button" class="theme-btn" id="dayToggle" title="Switch to Day Mode">☀️</button>
         <button type="button" class="theme-btn" id="themeToggle" title="Toggle theme">🌓</button>
       </div>
     </div>
@@ -244,7 +242,7 @@
       <div class="events-list-head">
         <div class="events-list-label">Your events</div>
         <div class="backup-actions">
-        <button type="button" class="text-btn" id="syncBtn" style="display:none; color:var(--amber); border-color:var(--amber);">☁ Sync to Cloud</button>
+          <button type="button" class="text-btn" id="syncBtn" style="display:none; color:var(--amber); border-color:var(--amber);">☁ Sync to Cloud</button>
           <button type="button" class="text-btn" id="exportBtn">Export</button>
           <button type="button" class="text-btn" id="importBtn">Import</button>
           <input type="file" id="importFile" accept="application/json" hidden>
@@ -280,7 +278,7 @@
   <div class="modal-card">
     <h3 id="modalTitle">Title</h3>
     <p id="modalMessage">Message</p>
-    <input id="modalInput" type="text"><input id="tokenInput" placeholder="GitHub Token (optional for sync)" type="password" style="margin-top:8px;">
+    <input id="modalInput" type="text">
     <div id="modalError" class="modal-error"></div>
     <div class="modal-actions">
       <button type="button" class="modal-btn secondary" id="modalCancel">Cancel</button>
@@ -354,8 +352,7 @@ function closeModal(){
   modalOnConfirm = null;
   modalErrorEl.textContent = '';
 }
-function openPromptModal({
-    showTokenField: true, title, message, placeholder = '', inputType = 'text', confirmLabel = 'OK', readOnlyValue = null, showTokenField = false, onConfirm }){
+function openPromptModal({ title, message, placeholder = '', inputType = 'text', confirmLabel = 'OK', readOnlyValue = null, showTokenField = false, onConfirm }){
   modalTitle.textContent = title;
   modalMessage.textContent = message;
   modalErrorEl.textContent = '';
@@ -376,7 +373,8 @@ function openPromptModal({
     modalCancelBtn.style.display = 'inline-block';
   }
   modalOnConfirm = onConfirm;
-  const tInput = document.getElementById('tokenInput'); if(tInput) tInput.style.display = showTokenField ? 'block' : 'none'; if(showTokenField && tInput) tInput.value = githubToken || ''; modalOverlay.classList.add('open');
+  const tInput = document.getElementById('tokenInput'); if(tInput) tInput.style.display = showTokenField ? 'block' : 'none'; if(showTokenField && tInput) tInput.value = githubToken || '';
+  modalOverlay.classList.add('open');
   setTimeout(() => { if (readOnlyValue !== null) modalInput.select(); else modalInput.focus(); }, 50);
 }
 modalCancelBtn.addEventListener('click', closeModal);
@@ -393,8 +391,7 @@ modalInput.addEventListener('keydown', (e) => {
 modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
 
 function showLinkModal(title, link){
-  openPromptModal({
-    showTokenField: true, title, message: 'Copy this link to share it:', readOnlyValue: link, onConfirm: () => {} });
+  openPromptModal({ title, message: 'Copy this link to share it:', readOnlyValue: link, onConfirm: () => {} });
 }
 
 // ---------- State ----------
@@ -406,11 +403,6 @@ let githubToken = loadJSON('meridian:githubToken', '');
 let favorites = loadJSON('meridian:favorites', DEFAULT_FAVORITES.slice());
 let use24h = loadJSON('meridian:use24h', true);
 let theme = loadJSON('meridian:theme', 'dark');
-let lightBgColor = loadJSON('meridian:lightBgColor', '#F6F3EC');
-document.documentElement.style.setProperty('--light-bg-custom', lightBgColor);
-const colorPicker = document.getElementById('lightColorPicker');
-if(theme === 'light') colorPicker.style.display = 'inline-block';
-colorPicker.value = lightBgColor;
 let customCities = loadJSON('meridian:customCities', []);
 let events = loadJSON('meridian:events', null);
 if (!events || !Array.isArray(events)){
@@ -436,7 +428,7 @@ function persistFavorites(){ saveJSON('meridian:favorites', favorites); }
 function persistUse24h(){ saveJSON('meridian:use24h', use24h); }
 function persistTheme(){ saveJSON('meridian:theme', theme); }
 function persistCustomCities(){ saveJSON('meridian:customCities', customCities); }
-function persistEvents(){ saveJSON('meridian:events', events); saveJSON('meridian:activeEventId', activeEventId); }
+function persistEvents(){ saveJSON('meridian:events', events); saveJSON('meridian:activeEventId', activeEventId); if(typeof syncToGitHub === 'function' && githubToken) syncToGitHub(); }
 
 document.documentElement.setAttribute('data-theme', theme);
 
@@ -501,7 +493,6 @@ function addEventFromForm(){
   persistEvents();
   evTitleInput.value = '';
   renderAll();
-  if(githubToken) syncToGitHub();
   const flash = document.getElementById('applyFlash');
   flash.style.display = 'block';
   clearTimeout(addEventFromForm._t);
@@ -602,26 +593,10 @@ function syncFmtButtons(){
 }
 
 // ---------- Theme toggle ----------
-function updateThemeUI() {
-  document.documentElement.setAttribute('data-theme', theme);
-  colorPicker.style.display = (theme === 'light') ? 'inline-block' : 'none';
-  persistTheme();
-}
-
 document.getElementById('themeToggle').addEventListener('click', () => {
   theme = (theme === 'dark') ? 'light' : 'dark';
-  updateThemeUI();
-});
-
-document.getElementById('dayToggle').addEventListener('click', () => {
-  theme = 'light';
-  updateThemeUI();
-});
-
-colorPicker.addEventListener('input', (e) => {
-  lightBgColor = e.target.value;
-  document.documentElement.style.setProperty('--light-bg-custom', lightBgColor);
-  saveJSON('meridian:lightBgColor', lightBgColor);
+  document.documentElement.setAttribute('data-theme', theme);
+  persistTheme();
 });
 
 // ---------- Admin lock/unlock ----------
@@ -639,9 +614,7 @@ function syncAdminUI(){
   form.style.display = admin ? 'grid' : 'none';
   note.style.display = admin ? 'none' : 'block';
   importBtn.style.display = admin ? 'inline-block' : 'none';
-
-  const syncBtn = document.getElementById('syncBtn');
-  if (syncBtn) syncBtn.style.display = admin ? 'inline-block' : 'none';
+  const syncBtn = document.getElementById('syncBtn'); if (syncBtn) syncBtn.style.display = admin ? 'inline-block' : 'none';
 }
 document.getElementById('adminToggle').addEventListener('click', () => {
   if (isAdminUnlocked){
@@ -659,13 +632,12 @@ document.getElementById('adminToggle').addEventListener('click', () => {
     inputType: 'password',
     confirmLabel: 'Unlock',
     onConfirm: (val) => {
-        const tokenVal = document.getElementById('tokenInput').value;
+              const tokenVal = document.getElementById('tokenInput').value;
         if (tokenVal) {
           githubToken = tokenVal;
           saveJSON('meridian:githubToken', githubToken);
         }
-
-      if ((val || '').trim() === adminPin){
+        if ((val || '').trim() === adminPin){
         isAdminUnlocked = true;
         persistAdminUnlocked();
         closeModal();
@@ -750,6 +722,7 @@ document.addEventListener('click', (e) => {
 });
 
 
+function utob(str) { return btoa(unescape(encodeURIComponent(str))); }
 
 async function loadGlobalEvents() {
   try {
@@ -761,126 +734,45 @@ async function loadGlobalEvents() {
         if (events.length > 0 && (!activeEventId || !events.find(e => e.id === activeEventId))) {
           activeEventId = events[0].id;
         }
-        persistEvents();
+        saveJSON('meridian:events', events);
+        saveJSON('meridian:activeEventId', activeEventId);
         renderAll();
-        console.log('Global events loaded.');
       }
     }
-  } catch (e) {
-    console.error('Failed to load global events:', e);
-  }
+  } catch (e) { console.error('Failed to load global events:', e); }
 }
-
-        persistEvents();
-        renderAll();
-        console.log('Global events loaded.');
-      }
-    }
-  } catch (e) {
-    console.error('Failed to load global events:', e);
-  }
-}
-
 
 async function syncToGitHub() {
-  if (!githubToken) {
-    showError('Please provide a GitHub Token in the Admin menu to sync.');
-    return;
-  }
+  if (!githubToken) return;
   const btn = document.getElementById('syncBtn');
-  const originalText = btn.textContent;
-  if(btn) {
-    btn.textContent = '⌛ Syncing...';
-    btn.disabled = true;
-  }
-
+  const originalText = btn ? btn.textContent : '';
+  if(btn) { btn.textContent = '⌛ Syncing...'; btn.disabled = true; }
   try {
     const getUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`;
-    const getResp = await fetch(getUrl, {
-      headers: { 'Authorization': `token ${githubToken}` }
-    });
-    
+    const getResp = await fetch(getUrl, { headers: { 'Authorization': `token ${githubToken}` } });
     let sha = null;
-    if (getResp.ok) {
-      const data = await getResp.json();
-      sha = data.sha;
-    }
-
+    if (getResp.ok) { const data = await getResp.json(); sha = data.sha; }
     const putResp = await fetch(getUrl, {
       method: 'PUT',
-      headers: {
-        'Authorization': `token ${githubToken}`,
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         message: 'Update Meridian events from web UI',
         content: utob(JSON.stringify(events, null, 2)),
         sha: sha
       })
     });
-
     if (putResp.ok) {
       if(btn) btn.textContent = '✓ Synced';
       setTimeout(() => { if(btn) { btn.textContent = originalText; btn.disabled = false; } }, 2000);
-    } else {
-      const err = await putResp.json();
-      throw new Error(err.message || 'Failed to sync');
     }
-  } catch (e) {
-    showError('Sync failed: ' + e.message);
-    if(btn) {
-      btn.textContent = '❌ Failed';
-      setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 2000);
-    }
+  } catch (e) { 
+    console.error('Sync failed:', e); 
+    if(btn) { 
+      btn.textContent = '❌ Failed'; 
+      setTimeout(() => { if(btn) { btn.textContent = originalText; btn.disabled = false; } }, 2000); 
+    } 
   }
 }
-
-  const btn = document.getElementById('syncBtn');
-  const originalText = btn.textContent;
-  btn.textContent = '⌛ Syncing...';
-  btn.disabled = true;
-
-  try {
-    // 1. Get current file SHA
-    const getUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`;
-    const getResp = await fetch(getUrl, {
-      headers: { 'Authorization': `token ${githubToken}` }
-    });
-    
-    let sha = null;
-    if (getResp.ok) {
-      const data = await getResp.json();
-      sha = data.sha;
-    }
-
-    // 2. Update file
-    const putResp = await fetch(getUrl, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `token ${githubToken}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: 'Update Meridian events from web UI',
-        content: utob(JSON.stringify(events, null, 2)),
-        sha: sha
-      })
-    });
-
-    if (putResp.ok) {
-      btn.textContent = '✓ Synced';
-      setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 2000);
-    } else {
-      const err = await putResp.json();
-      throw new Error(err.message || 'Failed to sync');
-    }
-  } catch (e) {
-    showError('Sync failed: ' + e.message);
-    btn.textContent = '❌ Failed';
-    setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 2000);
-  }
-}
-function utob(str) { return btoa(unescape(encodeURIComponent(str))); }
 
 // ---------- Helpers ----------
 function buildEventInstant(ev){
@@ -1048,11 +940,8 @@ syncFmtButtons();
 syncAdminUI();
 renderAll();
 setInterval(renderAll, 1000);
-
-document.getElementById('syncBtn').addEventListener('click', syncToGitHub);
+const syncBtn = document.getElementById('syncBtn'); if(syncBtn) syncBtn.addEventListener('click', syncToGitHub);
 loadGlobalEvents();
 </script>
 </body>
 </html>
-
-<!-- Version: 1.0.3 - Fixed Toggle & Adjustable Light Mode -->
