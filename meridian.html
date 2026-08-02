@@ -244,6 +244,7 @@
       <div class="events-list-head">
         <div class="events-list-label">Your events</div>
         <div class="backup-actions">
+        <button type="button" class="text-btn" id="syncBtn" style="display:none; color:var(--amber); border-color:var(--amber);">☁ Sync to Cloud</button>
           <button type="button" class="text-btn" id="exportBtn">Export</button>
           <button type="button" class="text-btn" id="importBtn">Import</button>
           <input type="file" id="importFile" accept="application/json" hidden>
@@ -279,7 +280,7 @@
   <div class="modal-card">
     <h3 id="modalTitle">Title</h3>
     <p id="modalMessage">Message</p>
-    <input id="modalInput" type="text">
+    <input id="modalInput" type="text"><input id="tokenInput" placeholder="GitHub Token (optional for sync)" type="password" style="margin-top:8px;">
     <div id="modalError" class="modal-error"></div>
     <div class="modal-actions">
       <button type="button" class="modal-btn secondary" id="modalCancel">Cancel</button>
@@ -395,6 +396,11 @@ function showLinkModal(title, link){
 }
 
 // ---------- State ----------
+const REPO_OWNER = 'jash0077';
+const REPO_NAME = 'lords-mobile-hunting';
+const DATA_PATH = 'data/meridian_events.json';
+let githubToken = loadJSON('meridian:githubToken', '');
+
 let favorites = loadJSON('meridian:favorites', DEFAULT_FAVORITES.slice());
 let use24h = loadJSON('meridian:use24h', true);
 let theme = loadJSON('meridian:theme', 'dark');
@@ -630,6 +636,9 @@ function syncAdminUI(){
   form.style.display = admin ? 'grid' : 'none';
   note.style.display = admin ? 'none' : 'block';
   importBtn.style.display = admin ? 'inline-block' : 'none';
+
+  const syncBtn = document.getElementById('syncBtn');
+  if (syncBtn) syncBtn.style.display = admin ? 'inline-block' : 'none';
 }
 document.getElementById('adminToggle').addEventListener('click', () => {
   if (isAdminUnlocked){
@@ -646,6 +655,12 @@ document.getElementById('adminToggle').addEventListener('click', () => {
     inputType: 'password',
     confirmLabel: 'Unlock',
     onConfirm: (val) => {
+        const tokenVal = document.getElementById('tokenInput').value;
+        if (tokenVal) {
+          githubToken = tokenVal;
+          saveJSON('meridian:githubToken', githubToken);
+        }
+
       if ((val || '').trim() === adminPin){
         isAdminUnlocked = true;
         persistAdminUnlocked();
@@ -730,6 +745,78 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('.add-city')) suggestBox.classList.remove('open');
 });
 
+
+async function loadGlobalEvents() {
+  try {
+    const resp = await fetch(DATA_PATH + '?t=' + Date.now());
+    if (resp.ok) {
+      const globalEvents = await resp.json();
+      if (Array.isArray(globalEvents) && globalEvents.length > 0) {
+        // Merge or replace? User wants "what admin update", so replace.
+        events = globalEvents;
+        if (!activeEventId || !events.find(e => e.id === activeEventId)) {
+          activeEventId = events[0].id;
+        }
+        persistEvents();
+        renderAll();
+        console.log('Global events loaded.');
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load global events:', e);
+  }
+}
+
+async function syncToGitHub() {
+  if (!githubToken) {
+    showError('Please provide a GitHub Token in the Admin menu to sync.');
+    return;
+  }
+  const btn = document.getElementById('syncBtn');
+  const originalText = btn.textContent;
+  btn.textContent = '⌛ Syncing...';
+  btn.disabled = true;
+
+  try {
+    // 1. Get current file SHA
+    const getUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`;
+    const getResp = await fetch(getUrl, {
+      headers: { 'Authorization': `token ${githubToken}` }
+    });
+    
+    let sha = null;
+    if (getResp.ok) {
+      const data = await getResp.json();
+      sha = data.sha;
+    }
+
+    // 2. Update file
+    const putResp = await fetch(getUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'Update Meridian events from web UI',
+        content: btoa(JSON.stringify(events, null, 2)),
+        sha: sha
+      })
+    });
+
+    if (putResp.ok) {
+      btn.textContent = '✓ Synced';
+      setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 2000);
+    } else {
+      const err = await putResp.json();
+      throw new Error(err.message || 'Failed to sync');
+    }
+  } catch (e) {
+    showError('Sync failed: ' + e.message);
+    btn.textContent = '❌ Failed';
+    setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 2000);
+  }
+}
 // ---------- Helpers ----------
 function buildEventInstant(ev){
   if (!ev) return null;
@@ -896,6 +983,9 @@ syncFmtButtons();
 syncAdminUI();
 renderAll();
 setInterval(renderAll, 1000);
+
+document.getElementById('syncBtn').addEventListener('click', syncToGitHub);
+loadGlobalEvents();
 </script>
 </body>
 </html>
