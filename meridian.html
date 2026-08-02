@@ -354,7 +354,8 @@ function closeModal(){
   modalOnConfirm = null;
   modalErrorEl.textContent = '';
 }
-function openPromptModal({ title, message, placeholder = '', inputType = 'text', confirmLabel = 'OK', readOnlyValue = null, onConfirm }){
+function openPromptModal({
+    showTokenField: true, title, message, placeholder = '', inputType = 'text', confirmLabel = 'OK', readOnlyValue = null, showTokenField = false, onConfirm }){
   modalTitle.textContent = title;
   modalMessage.textContent = message;
   modalErrorEl.textContent = '';
@@ -375,7 +376,7 @@ function openPromptModal({ title, message, placeholder = '', inputType = 'text',
     modalCancelBtn.style.display = 'inline-block';
   }
   modalOnConfirm = onConfirm;
-  modalOverlay.classList.add('open');
+  const tInput = document.getElementById('tokenInput'); if(tInput) tInput.style.display = showTokenField ? 'block' : 'none'; if(showTokenField && tInput) tInput.value = githubToken || ''; modalOverlay.classList.add('open');
   setTimeout(() => { if (readOnlyValue !== null) modalInput.select(); else modalInput.focus(); }, 50);
 }
 modalCancelBtn.addEventListener('click', closeModal);
@@ -392,7 +393,8 @@ modalInput.addEventListener('keydown', (e) => {
 modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
 
 function showLinkModal(title, link){
-  openPromptModal({ title, message: 'Copy this link to share it:', readOnlyValue: link, onConfirm: () => {} });
+  openPromptModal({
+    showTokenField: true, title, message: 'Copy this link to share it:', readOnlyValue: link, onConfirm: () => {} });
 }
 
 // ---------- State ----------
@@ -499,6 +501,7 @@ function addEventFromForm(){
   persistEvents();
   evTitleInput.value = '';
   renderAll();
+  if(githubToken) syncToGitHub();
   const flash = document.getElementById('applyFlash');
   flash.style.display = 'block';
   clearTimeout(addEventFromForm._t);
@@ -649,6 +652,7 @@ document.getElementById('adminToggle').addEventListener('click', () => {
     return;
   }
   openPromptModal({
+    showTokenField: true,
     title: 'Admin unlock',
     message: 'Enter the admin PIN to add or remove events.',
     placeholder: 'PIN',
@@ -746,15 +750,15 @@ document.addEventListener('click', (e) => {
 });
 
 
+
 async function loadGlobalEvents() {
   try {
     const resp = await fetch(DATA_PATH + '?t=' + Date.now());
     if (resp.ok) {
       const globalEvents = await resp.json();
-      if (Array.isArray(globalEvents) && globalEvents.length > 0) {
-        // Merge or replace? User wants "what admin update", so replace.
+      if (Array.isArray(globalEvents)) {
         events = globalEvents;
-        if (!activeEventId || !events.find(e => e.id === activeEventId)) {
+        if (events.length > 0 && (!activeEventId || !events.find(e => e.id === activeEventId))) {
           activeEventId = events[0].id;
         }
         persistEvents();
@@ -767,11 +771,70 @@ async function loadGlobalEvents() {
   }
 }
 
+        persistEvents();
+        renderAll();
+        console.log('Global events loaded.');
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load global events:', e);
+  }
+}
+
+
 async function syncToGitHub() {
   if (!githubToken) {
     showError('Please provide a GitHub Token in the Admin menu to sync.');
     return;
   }
+  const btn = document.getElementById('syncBtn');
+  const originalText = btn.textContent;
+  if(btn) {
+    btn.textContent = '⌛ Syncing...';
+    btn.disabled = true;
+  }
+
+  try {
+    const getUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`;
+    const getResp = await fetch(getUrl, {
+      headers: { 'Authorization': `token ${githubToken}` }
+    });
+    
+    let sha = null;
+    if (getResp.ok) {
+      const data = await getResp.json();
+      sha = data.sha;
+    }
+
+    const putResp = await fetch(getUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'Update Meridian events from web UI',
+        content: utob(JSON.stringify(events, null, 2)),
+        sha: sha
+      })
+    });
+
+    if (putResp.ok) {
+      if(btn) btn.textContent = '✓ Synced';
+      setTimeout(() => { if(btn) { btn.textContent = originalText; btn.disabled = false; } }, 2000);
+    } else {
+      const err = await putResp.json();
+      throw new Error(err.message || 'Failed to sync');
+    }
+  } catch (e) {
+    showError('Sync failed: ' + e.message);
+    if(btn) {
+      btn.textContent = '❌ Failed';
+      setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 2000);
+    }
+  }
+}
+
   const btn = document.getElementById('syncBtn');
   const originalText = btn.textContent;
   btn.textContent = '⌛ Syncing...';
@@ -799,7 +862,7 @@ async function syncToGitHub() {
       },
       body: JSON.stringify({
         message: 'Update Meridian events from web UI',
-        content: btoa(JSON.stringify(events, null, 2)),
+        content: utob(JSON.stringify(events, null, 2)),
         sha: sha
       })
     });
@@ -817,6 +880,8 @@ async function syncToGitHub() {
     setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 2000);
   }
 }
+function utob(str) { return btoa(unescape(encodeURIComponent(str))); }
+
 // ---------- Helpers ----------
 function buildEventInstant(ev){
   if (!ev) return null;
