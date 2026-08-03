@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "id": "init",
+    "title": "Example event",
+    "dateStr": "2026-08-02",
+    "timeStr": "14:00",
+    "zoneId": "kolkata"
+  }
+]
