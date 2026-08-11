@@ -1,9 +1,16 @@
 [
   {
-    "id": "ev_msh4swyqu6fbu",
+    "id": "ev_dragon_arena",
     "title": "DRAGON ARENA🐲",
     "dateStr": "2026-08-08",
     "timeStr": "20:30",
+    "zoneId": "kolkata"
+  },
+  {
+    "id": "ev_kvk",
+    "title": "KvK Battle",
+    "dateStr": "2026-08-15",
+    "timeStr": "12:00",
     "zoneId": "kolkata"
   }
 ]

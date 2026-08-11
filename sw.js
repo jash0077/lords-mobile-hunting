@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lords-mobile-hub-cache-v4';
+const CACHE_NAME = 'lords-mobile-hub-cache-v5';
 const urlsToCache = [
   '/lords-mobile-hunting/',
   '/lords-mobile-hunting/index.html',

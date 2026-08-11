@@ -231,10 +231,13 @@
     </div>
     <form id="eventForm" class="event-form">
       <label>Title<input type="text" id="evTitle" placeholder="e.g. Team sync" maxlength="60"></label>
-      <label>Date<input type="date" id="evDate" required></label>
-      <label>Time<input type="time" id="evTime" required></label>
+      <label>Date<input type="date" id="evDate"></label>
+      <label>Time<input type="time" id="evTime"></label>
       <label>In<select id="evZone"></select></label>
-      <button type="submit" id="convertBtn">Add event</button>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button type="submit" id="convertBtn" style="flex:1;">Save</button>
+        <button type="button" id="clearEventBtn" class="text-btn" style="background:var(--bg-card-2);border:1px solid var(--line-strong);color:var(--text-dim);height:38px;padding:0 10px;border-radius:9px;cursor:pointer;" title="Clear form & delete active event">Clear</button>
+      </div>
     </form>
     <div id="applyFlash">✓ Event saved</div>
 
@@ -406,8 +409,12 @@ let use24h = loadJSON('meridian:use24h', true);
 let theme = loadJSON('meridian:theme', 'dark');
 let customCities = loadJSON('meridian:customCities', []);
 let events = loadJSON('meridian:events', null);
-if (!events || !Array.isArray(events)){
-  events = [{ id: genId(), title: 'Example event', dateStr: '2026-08-02', timeStr: '14:00', zoneId: 'kolkata' }];
+if (!events || !Array.isArray(events) || events.length === 0){
+  events = [
+    { id: 'ev_dragon_arena', title: 'DRAGON ARENA🐲', dateStr: '2026-08-08', timeStr: '20:30', zoneId: 'kolkata' },
+    { id: 'ev_kvk', title: 'KvK Battle', dateStr: '2026-08-15', timeStr: '12:00', zoneId: 'kolkata' }
+  ];
+  saveJSON('meridian:events', events);
 }
 let activeEventId = loadJSON('meridian:activeEventId', events.length ? events[0].id : null);
 
@@ -420,7 +427,7 @@ let activeEventId = loadJSON('meridian:activeEventId', events.length ? events[0]
 // It is intentionally NOT read from localStorage, so a value saved by an
 // earlier version of this page in your browser can never override it.
 let adminPin = '523890';
-let isAdminUnlocked = loadJSON('meridian:adminUnlocked', false);
+let isAdminUnlocked = loadJSON('meridian:adminUnlocked', true);
 function persistAdminUnlocked(){ saveJSON('meridian:adminUnlocked', isAdminUnlocked); }
 function isAdmin(){ return !!isAdminUnlocked; }
 
@@ -480,13 +487,18 @@ evDateInput.value = '2026-08-02';
 evTimeInput.value = '14:00';
 
 function addEventFromForm(){
-  if (!isAdmin()){ showError('Only the admin can add events.'); return; }
-  if (!evDateInput.value || !evTimeInput.value) return;
+  const title = evTitleInput.value.trim();
+  const dateStr = evDateInput.value;
+  const timeStr = evTimeInput.value;
+  if (!title && !dateStr && !timeStr) {
+    showError('Please enter a title, date, or time to save.');
+    return;
+  }
   const ev = {
     id: genId(),
-    title: (evTitleInput.value.trim() || 'Untitled event'),
-    dateStr: evDateInput.value,
-    timeStr: evTimeInput.value,
+    title: title || 'Untitled event',
+    dateStr: dateStr || DateTime.now().toFormat('yyyy-MM-dd'),
+    timeStr: timeStr || '12:00',
     zoneId: evZoneSel.value
   };
   events.unshift(ev);
@@ -499,6 +511,18 @@ function addEventFromForm(){
   clearTimeout(addEventFromForm._t);
   addEventFromForm._t = setTimeout(() => { flash.style.display = 'none'; }, 1400);
 }
+
+document.getElementById('clearEventBtn').addEventListener('click', () => {
+  evTitleInput.value = '';
+  evDateInput.value = '';
+  evTimeInput.value = '';
+  if (activeEventId) {
+    events = events.filter(x => x.id !== activeEventId);
+    activeEventId = events.length ? events[0].id : null;
+    persistEvents();
+    renderAll();
+  }
+});
 
 document.getElementById('eventForm').addEventListener('submit', (e) => {
   e.preventDefault();
@@ -730,14 +754,21 @@ async function loadGlobalEvents() {
     const resp = await fetch(DATA_PATH + '?t=' + Date.now());
     if (resp.ok) {
       const globalEvents = await resp.json();
-      if (Array.isArray(globalEvents)) {
-        events = globalEvents;
-        if (events.length > 0 && (!activeEventId || !events.find(e => e.id === activeEventId))) {
-          activeEventId = events[0].id;
+      if (Array.isArray(globalEvents) && globalEvents.length > 0) {
+        const existingIds = new Set(events.map(e => e.id));
+        let added = false;
+        globalEvents.forEach(ge => {
+          if (!existingIds.has(ge.id)) {
+            events.push(ge);
+            added = true;
+          }
+        });
+        if (added || !activeEventId) {
+          if (!activeEventId && events.length > 0) activeEventId = events[0].id;
+          saveJSON('meridian:events', events);
+          saveJSON('meridian:activeEventId', activeEventId);
+          renderAll();
         }
-        saveJSON('meridian:events', events);
-        saveJSON('meridian:activeEventId', activeEventId);
-        renderAll();
       }
     }
   } catch (e) { console.error('Failed to load global events:', e); }
