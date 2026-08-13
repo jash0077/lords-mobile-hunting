@@ -46,7 +46,20 @@
         .set-tab.active{border-color:var(--amber);color:var(--amber);background:rgba(232,179,78,0.08);box-shadow:0 0 10px rgba(232,179,78,0.15);}
 
         .simulator-layout{display:grid;grid-template-columns:1fr 360px;gap:20px;}
-        @media(max-width:880px){.simulator-layout{grid-template-columns:1fr;}}
+        @media(max-width:880px){
+            .simulator-layout{grid-template-columns:1fr;}
+            body{padding:10px 10px 60px;}
+            .slots-grid{grid-template-columns:repeat(3, 1fr);gap:10px;}
+            .slot{width:74px; height:74px;}
+            .hero-box{padding:14px;}
+            .stats-panel, .filter-section{padding:14px;}
+        }
+        @media(max-width:420px){
+            .slots-grid{grid-template-columns:repeat(3, 1fr);gap:8px;}
+            .slot{width:68px; height:68px;}
+            .slot i{font-size:18px;}
+            .slot span{font-size:8px;}
+        }
 
         /* Hero visual & Slots */
         .hero-box{background:var(--bg-card);border:1px solid var(--line);border-radius:20px;padding:20px;position:relative;}
@@ -311,7 +324,7 @@
             let statsStr = Object.entries(item.stats).map(([k,v]) => `${k}: +${v}%`).join(' · ');
             html += `
                 <div class="item-card" onclick="selectItem('${slotName}', '${item.name}')">
-                    <img src="${item.image}" alt="${item.name}" onerror="this.src='https://static.wikia.nocookie.net/lordsmobile/images/3/30/Shadow_Helmet.png'">
+                    <img src="${item.image}" alt="${item.name}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2300ffcc%22 stroke-width=%222%22><path d=%22M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5%22/></svg>'">
                     <div class="item-info">
                         <div class="item-title">${item.name}</div>
                         <div class="item-stats">${statsStr}</div>
@@ -353,7 +366,7 @@
                 if (item && item.name) {
                     slot.classList.add('has-item');
                     slot.innerHTML = `
-                        <img src="${item.image || ''}" alt="${item.name}" onerror="this.src='https://static.wikia.nocookie.net/lordsmobile/images/3/30/Shadow_Helmet.png'">
+                        <img src="${item.image || ''}" alt="${item.name}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2300ffcc%22 stroke-width=%222%22><path d=%22M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5%22/></svg>'">
                         <span class="slot-name">${item.name}</span>
                     `;
                 } else {
