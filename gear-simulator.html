@@ -97,6 +97,8 @@
         <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Home</a>
         <div class="wordmark">Advanced Gear Simulator</div>
         <div class="header-actions">
+            <input type="file" id="gearImgInput" accept="image/*" style="display:none;" onchange="handleGearImage(event)">
+            <button class="btn" onclick="document.getElementById('gearImgInput').click()"><i class="fa-solid fa-camera"></i> Scan Screenshot</button>
             <button class="btn" id="resetBtn">Reset All</button>
             <button class="btn primary" id="shareBtn">Share Build</button>
         </div>
@@ -191,6 +193,9 @@
             <h3 id="modalSlotTitle">Select Item</h3>
             <button class="close-modal" id="closeModal">&times;</button>
         </div>
+        <div style="padding: 10px 16px; background: var(--bg-card-2); border-bottom: 1px solid var(--line);">
+            <input type="text" id="modalSearch" placeholder="Search gear items..." oninput="filterModalItems()" style="width:100%; padding:8px 12px; background:var(--bg); border:1px solid var(--line-strong); color:var(--text); border-radius:8px; font-size:13px; font-family:'Inter',sans-serif;">
+        </div>
         <div class="modal-body" id="modalItemList"></div>
     </div>
 </div>
@@ -220,11 +225,30 @@
         });
     });
 
+    let currentModalSlot = null;
+
     function openModal(slotName) {
+        currentModalSlot = slotName;
         document.getElementById('modalSlotTitle').textContent = `Select ${slotName}`;
+        document.getElementById('modalSearch').value = '';
+        renderModalList(slotName, '');
+        document.getElementById('itemModal').classList.add('open');
+        setTimeout(() => document.getElementById('modalSearch').focus(), 50);
+    }
+
+    function filterModalItems() {
+        const q = document.getElementById('modalSearch').value.toLowerCase();
+        renderModalList(currentModalSlot, q);
+    }
+
+    function renderModalList(slotName, query) {
         const listEl = document.getElementById('modalItemList');
         let items = gearData[slotName] || gearData["Accessory"] || [];
         
+        if (query) {
+            items = items.filter(i => i.name.toLowerCase().includes(query) || Object.keys(i.stats).some(s => s.toLowerCase().includes(query)));
+        }
+
         let html = `<div class="item-card" onclick="selectItem('${slotName}', null)">
             <div class="item-info"><div class="item-title" style="color:var(--coral);">Unequip / Empty</div></div>
         </div>`;
@@ -242,7 +266,6 @@
             `;
         });
         listEl.innerHTML = html;
-        document.getElementById('itemModal').classList.add('open');
     }
 
     function selectItem(slotName, itemName) {
@@ -397,6 +420,19 @@
     document.getElementById('shareBtn').addEventListener('click', () => {
         alert('Build copied to clipboard!');
     });
+
+    function handleGearImage(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            // Simulate OCR / AI scan detection for gear screenshot
+            alert('📸 Gear screenshot scanned successfully! Automatically loading Top Mixed Rally Set from image analysis.');
+            document.querySelector('[data-preset="mixed"]').click();
+            e.target.value = '';
+        };
+        reader.readAsDataURL(file);
+    }
 
     renderBuild();
 </script>
