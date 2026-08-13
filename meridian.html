@@ -526,9 +526,13 @@ function saveEventFromForm(){
   
   persistEvents();
   renderAll();
+
+  if (githubToken && typeof syncToGitHub === 'function') {
+    syncToGitHub();
+  }
   
   const flash = document.getElementById('applyFlash');
-  flash.textContent = '✓ Event saved successfully';
+  flash.textContent = githubToken ? '✓ Event saved & syncing to cloud...' : '✓ Event saved locally (Unlock Admin & add token once to sync across phones)';
   flash.style.display = 'block';
   clearTimeout(saveEventFromForm._t);
   saveEventFromForm._t = setTimeout(() => { flash.style.display = 'none'; }, 1600);
