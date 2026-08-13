@@ -1,35 +1,31 @@
 :root {
     /* ===== CYBERPUNK FUTURISTIC THEME ===== */
     /* Primary dark background - deep space black/blue */
-    --bg-primary: #060612;
-    --bg-secondary: #0a0a1a;
-    --bg-surface: #0d0d24;
-    --bg-elevated: #12122e;
-    --bg-card: linear-gradient(145deg, rgba(10, 10, 30, 0.95) 0%, rgba(15, 15, 45, 0.95) 100%);
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-surface: #ffffff;
+    --bg-elevated: #f1f3f5;
+    --bg-card: #ffffff;
 
-    /* Neon accent colors - purple/blue/cyan */
-    --neon-purple: #a855f7;
-    --neon-blue: #3b82f6;
-    --neon-cyan: #06b6d4;
-    --neon-pink: #ec4899;
-    --neon-green: #22c55e;
-    --neon-gold: #f5a623;
+    --neon-purple: #000000;
+    --neon-blue: #000000;
+    --neon-cyan: #000000;
+    --neon-pink: #000000;
+    --neon-green: #000000;
+    --neon-gold: #000000;
 
-    /* Glow colors */
-    --glow-purple: rgba(168, 85, 247, 0.4);
-    --glow-blue: rgba(59, 130, 246, 0.3);
-    --glow-cyan: rgba(6, 182, 212, 0.3);
-    --glow-gold: rgba(245, 166, 35, 0.3);
+    --glow-purple: rgba(0, 0, 0, 0.1);
+    --glow-blue: rgba(0, 0, 0, 0.1);
+    --glow-cyan: rgba(0, 0, 0, 0.1);
+    --glow-gold: rgba(0, 0, 0, 0.1);
 
-    /* Text colors */
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-muted: #666666;
 
-    /* Borders */
-    --border-primary: rgba(168, 85, 247, 0.3);
-    --border-secondary: rgba(59, 130, 246, 0.2);
-    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-primary: #000000;
+    --border-secondary: #000000;
+    --border-subtle: #cccccc;
 
     /* Category Accent Colors */
     --accent-green: #3fb950;
