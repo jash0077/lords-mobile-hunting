@@ -72,23 +72,19 @@
     
 
     <!-- Hero Section with HEM Logo -->
-    <!-- Theme Color Customizer Bar -->
-    <div style="background:var(--bg-surface);border:1px solid var(--border-primary);border-radius:14px;padding:12px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--text-primary);">
-            <i class="fas fa-palette" style="color:var(--neon-purple);"></i> Guild Theme Color:
+    <!-- Black & White Minimalist Theme & Backup Bar -->
+    <div style="background:#ffffff;border:2px solid #000000;border-radius:12px;padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 6px 0px #000000;color:#000000;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;">
+            <i class="fas fa-adjust" style="color:#000000;"></i> Minimalist Black & White Theme
         </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-            <button onclick="setThemeAccent('#a855f7', '#3b82f6')" title="Cyberpunk Purple" style="width:24px;height:24px;border-radius:50%;background:#a855f7;border:2px solid #fff;cursor:pointer;"></button>
-            <button onclick="setThemeAccent('#f5a623', '#f97316')" title="Imperial Gold" style="width:24px;height:24px;border-radius:50%;background:#f5a623;border:2px solid #fff;cursor:pointer;"></button>
-            <button onclick="setThemeAccent('#06b6d4', '#3b82f6')" title="Neon Cyan" style="width:24px;height:24px;border-radius:50%;background:#06b6d4;border:2px solid #fff;cursor:pointer;"></button>
-            <button onclick="setThemeAccent('#22c55e', '#10b981')" title="Emerald Citadel" style="width:24px;height:24px;border-radius:50%;background:#22c55e;border:2px solid #fff;cursor:pointer;"></button>
-            <button onclick="setThemeAccent('#ec4899', '#db2777')" title="Ruby Crimson" style="width:24px;height:24px;border-radius:50%;background:#ec4899;border:2px solid #fff;cursor:pointer;"></button>
-            <a href="/home/ubuntu/lords_mobile_hub_backup_full.zip" download style="margin-left:12px;background:var(--neon-purple);color:#fff;padding:6px 12px;border-radius:8px;font-size:11px;text-decoration:none;font-weight:600;display:flex;align-items:center;gap:6px;"><i class="fas fa-download"></i> Backup Guild ZIP</a>
+        <div style="display:flex;gap:10px;align-items:center;">
+            <button onclick="toggleBlackWhiteTheme()" id="bwToggleBtn" style="background:#000000;color:#ffffff;border:2px solid #000000;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="fas fa-circle-half-stroke"></i> Switch to Pure B&W Mode</button>
+            <a href="/home/ubuntu/lords_mobile_hub_backup_full.zip" download style="background:#ffffff;color:#000000;border:2px solid #000000;padding:8px 16px;border-radius:8px;font-size:12px;text-decoration:none;font-weight:700;display:flex;align-items:center;gap:6px;"><i class="fas fa-download"></i> Backup Guild ZIP</a>
         </div>
     </div>
 
     <!-- Hero Section with HEM Logo -->
-    <div class="hero-section hero-main">
+    <div class="hero-section hero-main" id="heroMainBox">
         <div class="hero-layout">
             <div class="hero-text">
                 <div class="hero-label">WELCOME COMMANDER</div>
@@ -106,18 +102,42 @@
         </div>
     </div>
 
+    <style>
+    body.bw-mode {
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+    body.bw-mode header {
+        background: #000000 !important;
+        border-bottom: 2px solid #000000 !important;
+    }
+    body.bw-mode header .logo, body.bw-mode header nav a, body.bw-mode header .lang-switcher-btn {
+        color: #ffffff !important;
+    }
+    body.bw-mode .hero-section, body.bw-mode .search-container, body.bw-mode .tool-card, body.bw-mode .card {
+        background: #f8f9fa !important;
+        border: 2px solid #000000 !important;
+        color: #000000 !important;
+        box-shadow: 4px 4px 0px #000000 !important;
+    }
+    body.bw-mode h1, body.bw-mode h2, body.bw-mode h3, body.bw-mode .section-title, body.bw-mode p, body.bw-mode span {
+        color: #000000 !important;
+    }
+    </style>
+
     <script>
-    function setThemeAccent(primary, secondary) {
-        document.documentElement.style.setProperty('--neon-purple', primary);
-        document.documentElement.style.setProperty('--neon-blue', secondary);
-        document.documentElement.style.setProperty('--border-primary', primary + '4d');
-        localStorage.setItem('hem_theme_primary', primary);
-        localStorage.setItem('hem_theme_secondary', secondary);
+    function toggleBlackWhiteTheme() {
+        document.body.classList.toggle('bw-mode');
+        const isBW = document.body.classList.contains('bw-mode');
+        localStorage.setItem('hem_bw_mode', isBW ? 'true' : 'false');
+        document.getElementById('bwToggleBtn').innerHTML = isBW ? '<i class="fas fa-moon"></i> Switch to Dark Mode' : '<i class="fas fa-circle-half-stroke"></i> Switch to Pure B&W Mode';
     }
     window.addEventListener('DOMContentLoaded', () => {
-        const savedP = localStorage.getItem('hem_theme_primary');
-        const savedS = localStorage.getItem('hem_theme_secondary');
-        if (savedP && savedS) setThemeAccent(savedP, savedS);
+        if (localStorage.getItem('hem_bw_mode') === 'true') {
+            document.body.classList.add('bw-mode');
+            const btn = document.getElementById('bwToggleBtn');
+            if (btn) btn.innerHTML = '<i class="fas fa-moon"></i> Switch to Dark Mode';
+        }
     });
     </script>
 
