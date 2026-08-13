@@ -47,7 +47,7 @@
     <div class="logo" data-translate-key="app_title">Lords Mobile Hub</div>
     <div class="header-actions">
         <button id="refreshBtn" title="Refresh Data">🔄</button>
-        <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Dark/Light Mode"><i class="fas fa-moon"></i></button>
+        <button class="theme-toggle" id="themeToggleBtn" onclick="cycleTheme()" title="Switch Theme"><i class="fas fa-adjust"></i> Theme</button>
         <div class="hamburger" onclick="toggleMenu()">☰</div>
     </div>
     <nav class="nav-links" id="navLinks">
@@ -93,42 +93,35 @@
         </div>
     </div>
 
-    <style>
-    body.bw-mode {
-        background: #ffffff !important;
-        color: #000000 !important;
-    }
-    body.bw-mode header {
-        background: #000000 !important;
-        border-bottom: 2px solid #000000 !important;
-    }
-    body.bw-mode header .logo, body.bw-mode header nav a, body.bw-mode header .lang-switcher-btn {
-        color: #ffffff !important;
-    }
-    body.bw-mode .hero-section, body.bw-mode .search-container, body.bw-mode .tool-card, body.bw-mode .card {
-        background: #f8f9fa !important;
-        border: 2px solid #000000 !important;
-        color: #000000 !important;
-        box-shadow: 4px 4px 0px #000000 !important;
-    }
-    body.bw-mode h1, body.bw-mode h2, body.bw-mode h3, body.bw-mode .section-title, body.bw-mode p, body.bw-mode span {
-        color: #000000 !important;
-    }
-    </style>
-
     <script>
-    function toggleBlackWhiteTheme() {
-        document.body.classList.toggle('bw-mode');
-        const isBW = document.body.classList.contains('bw-mode');
-        localStorage.setItem('hem_bw_mode', isBW ? 'true' : 'false');
-        document.getElementById('bwToggleBtn').innerHTML = isBW ? '<i class="fas fa-moon"></i> Switch to Dark Mode' : '<i class="fas fa-circle-half-stroke"></i> Switch to Pure B&W Mode';
+    function cycleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        let next = 'light';
+        if (current === 'dark') next = 'light';
+        else if (current === 'light') next = 'bw';
+        else next = 'dark';
+
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('hem_current_theme', next);
+        updateThemeButton(next);
     }
-    window.addEventListener('DOMContentLoaded', () => {
-        if (localStorage.getItem('hem_bw_mode') === 'true') {
-            document.body.classList.add('bw-mode');
-            const btn = document.getElementById('bwToggleBtn');
-            if (btn) btn.innerHTML = '<i class="fas fa-moon"></i> Switch to Dark Mode';
+
+    function updateThemeButton(theme) {
+        const btn = document.getElementById('themeToggleBtn');
+        if (!btn) return;
+        if (theme === 'dark') {
+            btn.innerHTML = '<i class="fas fa-moon"></i> Dark';
+        } else if (theme === 'light') {
+            btn.innerHTML = '<i class="fas fa-sun"></i> Light';
+        } else {
+            btn.innerHTML = '<i class="fas fa-circle-half-stroke"></i> B&W';
         }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('hem_current_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeButton(savedTheme);
     });
     </script>
 
