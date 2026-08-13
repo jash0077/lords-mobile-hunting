@@ -1438,3 +1438,28 @@ h1::after, h2::after {
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== ELITE ROYAL TACTICAL THEME ===== */
+[data-theme="tactical"] {
+    --bg-primary: #0A0F1D;
+    --bg-secondary: #111827;
+    --bg-surface: #1E293B;
+    --bg-elevated: #334155;
+    --bg-card: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+    --neon-purple: #F59E0B;
+    --neon-blue: #38BDF8;
+    --neon-cyan: #2DD4BF;
+    --neon-pink: #F43F5E;
+    --neon-green: #4ADE80;
+    --neon-gold: #FBBF24;
+    --glow-purple: rgba(245, 158, 11, 0.4);
+    --glow-blue: rgba(56, 189, 248, 0.4);
+    --glow-cyan: rgba(45, 212, 191, 0.4);
+    --glow-gold: rgba(251, 191, 36, 0.4);
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
+    --border-primary: rgba(245, 158, 11, 0.4);
+    --border-secondary: rgba(56, 189, 248, 0.3);
+    --border-subtle: rgba(255, 255, 255, 0.08);
+}

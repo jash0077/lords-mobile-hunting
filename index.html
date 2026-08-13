@@ -96,11 +96,7 @@
     <script>
     function cycleTheme() {
         const current = document.documentElement.getAttribute('data-theme') || 'dark';
-        let next = 'light';
-        if (current === 'dark') next = 'light';
-        else if (current === 'light') next = 'bw';
-        else next = 'dark';
-
+        let next = (current === 'dark' || current === '') ? 'tactical' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('hem_current_theme', next);
         updateThemeButton(next);
@@ -109,12 +105,10 @@
     function updateThemeButton(theme) {
         const btn = document.getElementById('themeToggleBtn');
         if (!btn) return;
-        if (theme === 'dark') {
-            btn.innerHTML = '<i class="fas fa-moon"></i> Dark';
-        } else if (theme === 'light') {
-            btn.innerHTML = '<i class="fas fa-sun"></i> Light';
+        if (theme === 'tactical') {
+            btn.innerHTML = '<i class="fas fa-crown" style="color:#FBBF24;"></i> Royal Tactical';
         } else {
-            btn.innerHTML = '<i class="fas fa-circle-half-stroke"></i> B&W';
+            btn.innerHTML = '<i class="fas fa-robot" style="color:#A855F7;"></i> Cyberpunk';
         }
     }
 
