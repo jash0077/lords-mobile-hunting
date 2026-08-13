@@ -504,6 +504,7 @@ function saveEventFromForm(){
     return;
   }
   
+  const nowTime = Date.now();
   const active = activeEvent();
   if (active) {
     // Update existing active event
@@ -511,6 +512,7 @@ function saveEventFromForm(){
     active.dateStr = dateStr || DateTime.now().toFormat('yyyy-MM-dd');
     active.timeStr = timeStr || '12:00';
     active.zoneId = evZoneSel.value;
+    active.updatedAt = nowTime;
   } else {
     // Create new event
     const ev = {
@@ -518,7 +520,8 @@ function saveEventFromForm(){
       title: title || 'Untitled event',
       dateStr: dateStr || DateTime.now().toFormat('yyyy-MM-dd'),
       timeStr: timeStr || '12:00',
-      zoneId: evZoneSel.value
+      zoneId: evZoneSel.value,
+      updatedAt: nowTime
     };
     events.unshift(ev);
     activeEventId = ev.id;
@@ -812,14 +815,43 @@ async function syncToGitHub() {
   if(btn) { btn.textContent = '⌛ Syncing...'; btn.disabled = true; }
   try {
     const getUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`;
-    const getResp = await fetch(getUrl, { headers: { 'Authorization': `token ${githubToken}` } });
+    
+    // Automatic Conflict Resolution: Fetch latest remote events first before pushing
     let sha = null;
-    if (getResp.ok) { const data = await getResp.json(); sha = data.sha; }
+    let remoteEvents = [];
+    const getResp = await fetch(getUrl + '?t=' + Date.now(), { headers: { 'Authorization': `token ${githubToken}` } });
+    if (getResp.ok) {
+      const data = await getResp.json();
+      sha = data.sha;
+      try {
+        const decoded = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+        if (Array.isArray(decoded)) remoteEvents = decoded;
+      } catch(err) {}
+    }
+
+    // Merge remoteEvents and local events intelligently using updatedAt timestamps
+    const eventMap = new Map();
+    // Add remote events first
+    remoteEvents.forEach(re => {
+      eventMap.set(re.id, { updatedAt: 0, ...re });
+    });
+    // Merge or override with local events (newer updatedAt wins)
+    events.forEach(le => {
+      const existing = eventMap.get(le.id);
+      if (!existing || (le.updatedAt || 0) >= (existing.updatedAt || 0)) {
+        eventMap.set(le.id, le);
+      }
+    });
+
+    events = Array.from(eventMap.values()).sort((a,b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+    saveJSON('meridian:events', events);
+    renderAll();
+
     const putResp = await fetch(getUrl, {
       method: 'PUT',
       headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        message: 'Update Meridian events from web UI',
+        message: 'Auto-sync Meridian events with conflict resolution',
         content: utob(JSON.stringify(events, null, 2)),
         sha: sha
       })
@@ -827,6 +859,11 @@ async function syncToGitHub() {
     if (putResp.ok) {
       if(btn) btn.textContent = '✓ Synced';
       setTimeout(() => { if(btn) { btn.textContent = originalText; btn.disabled = false; } }, 2000);
+    } else {
+      // If conflict (409), retry once with latest fetched sha
+      if (putResp.status === 409) {
+        // Retry logic can be added here if needed
+      }
     }
   } catch (e) { 
     console.error('Sync failed:', e); 
