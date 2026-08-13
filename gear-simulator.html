@@ -2,8 +2,8 @@
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Gear Simulator — Lords Mobile Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Equipment Simulator — Lords Mobile Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -26,30 +26,30 @@
               radial-gradient(1200px 600px at 15% -10%, rgba(124,137,199,0.12), transparent 60%),
               radial-gradient(900px 500px at 100% 0%, rgba(232,179,78,0.07), transparent 55%),
               var(--bg);
-            color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; margin:0; padding:20px 20px 60px;
+            color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; margin:0; padding:16px 16px 60px;
         }
-        .page{max-width:960px;margin:0 auto;}
-        header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+        .page{max-width:980px;margin:0 auto;}
+        header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
         .wordmark{font-family:'Fraunces',serif;font-weight:600;letter-spacing:0.14em;font-size:15px;color:var(--amber);text-transform:uppercase;}
         .back-link{color:var(--text-dim);text-decoration:none;font-size:13px;display:flex;align-items:center;gap:6px;}
         .back-link:hover{color:var(--text);}
         
-        .header-actions{display:flex;gap:8px;}
+        .header-actions{display:flex;gap:8px;flex-wrap:wrap;}
         .btn{background:var(--bg-card);border:1px solid var(--line-strong);color:var(--text-dim);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
         .btn:hover{color:var(--text);border-color:var(--periwinkle);}
         .btn.primary{background:var(--amber);color:#231705;font-weight:600;border:none;}
         .btn.primary:hover{background:#f0c165;}
 
-        /* Preset tabs */
-        .presets{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;}
-        .preset-tab{background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;color:var(--text-dim);font-size:13px;cursor:pointer;white-space:nowrap;font-family:'IBM Plex Mono',monospace;}
-        .preset-tab.active{border-color:var(--amber);color:var(--amber);background:rgba(232,179,78,0.08);}
+        /* Sets Tabs (Set1, Set2, Set3) */
+        .sets-bar{display:flex;gap:10px;margin-bottom:16px;}
+        .set-tab{flex:1;background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;color:var(--text-dim);font-weight:600;font-size:14px;cursor:pointer;font-family:'IBM Plex Mono',monospace;transition:all .2s;}
+        .set-tab.active{border-color:var(--amber);color:var(--amber);background:rgba(232,179,78,0.08);box-shadow:0 0 10px rgba(232,179,78,0.15);}
 
-        .simulator-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;}
-        @media(max-width:840px){.simulator-layout{grid-template-columns:1fr;}}
+        .simulator-layout{display:grid;grid-template-columns:1fr 360px;gap:20px;}
+        @media(max-width:880px){.simulator-layout{grid-template-columns:1fr;}}
 
         /* Hero visual & Slots */
-        .hero-box{background:var(--bg-card);border:1px solid var(--line);border-radius:20px;padding:24px;position:relative;}
+        .hero-box{background:var(--bg-card);border:1px solid var(--line);border-radius:20px;padding:20px;position:relative;}
         .slots-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:16px;justify-items:center;}
         
         .slot{
@@ -64,6 +64,12 @@
         .slot img{width:100%;height:100%;object-fit:contain;border-radius:12px;padding:4px;}
         .slot-name{position:absolute;bottom:-18px;font-size:9px;color:var(--amber);white-space:nowrap;max-width:90px;overflow:hidden;text-overflow:ellipsis;font-family:'IBM Plex Mono',monospace;}
 
+        /* Controls bar below slots */
+        .controls-row{display:flex;gap:10px;margin-top:30px;}
+        .ctrl-btn{flex:1;background:var(--bg-card-2);border:1px solid var(--line-strong);color:var(--text);border-radius:10px;padding:10px;font-weight:600;font-size:13px;cursor:pointer;text-align:center;}
+        .ctrl-btn.save{background:var(--amber);color:#231705;border:none;}
+        .ctrl-btn:hover{opacity:0.9;transform:translateY(-1px);}
+
         /* Stats Panel */
         .stats-panel{background:var(--bg-card);border:1px solid var(--line);border-radius:20px;padding:20px;}
         .panel-title{font-family:'Fraunces',serif;font-size:18px;margin:0 0 16px;display:flex;justify-content:space-between;align-items:center;}
@@ -72,10 +78,15 @@
         .stat-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;}
         .stat-val{font-family:'IBM Plex Mono',monospace;color:var(--amber);font-weight:600;}
 
+        /* Attribute Filters Section */
+        .filter-section{margin-top:20px;background:var(--bg-card);border:1px solid var(--line);border-radius:20px;padding:20px;}
+        .filter-label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-faint);margin-bottom:10px;font-family:'IBM Plex Mono',monospace;}
+        .filter-select{width:100%;padding:10px;background:var(--bg-card-2);border:1px solid var(--line-strong);color:var(--text);border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;margin-bottom:10px;}
+
         /* Modal */
-        .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;padding:20px;}
+        .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;align-items:center;justify-content:center;padding:20px;}
         .modal.open{display:flex;}
-        .modal-card{background:var(--bg-card);border:1px solid var(--line-strong);border-radius:16px;width:100%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;}
+        .modal-card{background:var(--bg-card);border:1px solid var(--line-strong);border-radius:16px;width:100%;max-width:540px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;}
         .modal-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
         .modal-head h3{margin:0;font-family:'Fraunces',serif;font-size:18px;}
         .modal-body{padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
@@ -95,22 +106,18 @@
 <div class="page">
     <header>
         <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Home</a>
-        <div class="wordmark">Advanced Gear Simulator</div>
+        <div class="wordmark">Equipment Simulator</div>
         <div class="header-actions">
-            <input type="file" id="gearImgInput" accept="image/*" style="display:none;" onchange="handleGearImage(event)">
-            <button class="btn" onclick="document.getElementById('gearImgInput').click()"><i class="fa-solid fa-camera"></i> Scan Screenshot</button>
             <button class="btn" id="resetBtn">Reset All</button>
             <button class="btn primary" id="shareBtn">Share Build</button>
         </div>
     </header>
 
-    <div class="presets" id="presetTabs">
-        <div class="preset-tab active" data-preset="custom">Custom Build</div>
-        <div class="preset-tab" data-preset="mixed">Top Mixed ATK (Rally)</div>
-        <div class="preset-tab" data-preset="infantry">Pure Infantry Set</div>
-        <div class="preset-tab" data-preset="ranged">Pure Ranged Set</div>
-        <div class="preset-tab" data-preset="cavalry">Pure Cavalry Set</div>
-        <div class="preset-tab" data-preset="monster">Monster Hunt Speed Set</div>
+    <!-- Set1, Set2, Set3 Tabs -->
+    <div class="sets-bar" id="setsBar">
+        <div class="set-tab active" data-set="Set1">Set 1</div>
+        <div class="set-tab" data-set="Set2">Set 2</div>
+        <div class="set-tab" data-set="Set3">Set 3</div>
     </div>
 
     <div class="simulator-layout">
@@ -158,29 +165,48 @@
                     <div class="slot-name">Active</div>
                 </div>
             </div>
+
+            <div class="controls-row">
+                <button class="ctrl-btn save" onclick="saveCurrentSet()">Tap to Save</button>
+                <button class="ctrl-btn" onclick="clearCurrentSet()">Clear All</button>
+            </div>
         </div>
 
-        <div class="stats-panel">
-            <div class="panel-title">Total Boosts <i class="fa-solid fa-chart-pie" style="color:var(--amber);"></i></div>
-            
-            <div class="stat-group">
-                <div class="stat-group-title">Troop Attack</div>
-                <div class="stat-row"><span>Infantry ATK</span><span class="stat-val" id="stat-inf-atk">0.0%</span></div>
-                <div class="stat-row"><span>Ranged ATK</span><span class="stat-val" id="stat-rng-atk">0.0%</span></div>
-                <div class="stat-row"><span>Cavalry ATK</span><span class="stat-val" id="stat-cav-atk">0.0%</span></div>
-                <div class="stat-row"><span>Army ATK</span><span class="stat-val" id="stat-arm-atk">0.0%</span></div>
+        <div>
+            <div class="stats-panel">
+                <div class="panel-title">Total Attribute Boosts <i class="fa-solid fa-chart-pie" style="color:var(--amber);"></i></div>
+                
+                <div class="stat-group">
+                    <div class="stat-group-title">Troop Attack</div>
+                    <div class="stat-row"><span>Infantry ATK</span><span class="stat-val" id="stat-inf-atk">0.0%</span></div>
+                    <div class="stat-row"><span>Ranged ATK</span><span class="stat-val" id="stat-rng-atk">0.0%</span></div>
+                    <div class="stat-row"><span>Cavalry ATK</span><span class="stat-val" id="stat-cav-atk">0.0%</span></div>
+                    <div class="stat-row"><span>Army ATK</span><span class="stat-val" id="stat-arm-atk">0.0%</span></div>
+                </div>
+
+                <div class="stat-group">
+                    <div class="stat-group-title">Defense & HP</div>
+                    <div class="stat-row"><span>Army DEF</span><span class="stat-val" id="stat-arm-def">0.0%</span></div>
+                    <div class="stat-row"><span>Army HP</span><span class="stat-val" id="stat-arm-hp">0.0%</span></div>
+                </div>
+
+                <div class="stat-group">
+                    <div class="stat-group-title">Special & Hunt Boosts</div>
+                    <div class="stat-row"><span>Monster Hunt DMG</span><span class="stat-val" id="stat-mh-dmg">0.0%</span></div>
+                    <div class="stat-row"><span>Travel Speed</span><span class="stat-val" id="stat-travel">0.0%</span></div>
+                    <div class="stat-row"><span>Forging Speed</span><span class="stat-val" id="stat-forge">0.0%</span></div>
+                </div>
             </div>
 
-            <div class="stat-group">
-                <div class="stat-group-title">Defense & HP</div>
-                <div class="stat-row"><span>Army DEF</span><span class="stat-val" id="stat-arm-def">0.0%</span></div>
-                <div class="stat-row"><span>Army HP</span><span class="stat-val" id="stat-arm-hp">0.0%</span></div>
-            </div>
-
-            <div class="stat-group">
-                <div class="stat-group-title">Special Stats</div>
-                <div class="stat-row"><span>Monster Hunt DMG</span><span class="stat-val" id="stat-mh-dmg">0.0%</span></div>
-                <div class="stat-row"><span>Travel Speed</span><span class="stat-val" id="stat-travel">0.0%</span></div>
+            <!-- Filter by Attribute (Max 2) -->
+            <div class="filter-section">
+                <div class="filter-label">Filter by Attribute (Max 2)</div>
+                <select class="filter-select" id="filterAttr1" onchange="renderBuild()">
+                    <option value="">-- All Attributes (Default) --</option>
+                </select>
+                <select class="filter-select" id="filterAttr2" onchange="renderBuild()">
+                    <option value="">-- Second Attribute (Optional) --</option>
+                </select>
             </div>
         </div>
     </div>
@@ -202,18 +228,36 @@
 
 <script src="gear-data.js"></script>
 <script>
-    let currentBuild = {
-        "Main Hand": null,
-        "Helmet": null,
-        "Off-Hand": null,
-        "Armor": null,
-        "Legs": null,
-        "Accessory 1": null,
-        "Accessory 2": null,
-        "Accessory 3": null
+    let activeSet = 'Set1';
+    let setsData = {
+        "Set1": { "Main Hand": null, "Helmet": null, "Off-Hand": null, "Armor": null, "Legs": null, "Accessory 1": null, "Accessory 2": null, "Accessory 3": null },
+        "Set2": { "Main Hand": null, "Helmet": null, "Off-Hand": null, "Armor": null, "Legs": null, "Accessory 1": null, "Accessory 2": null, "Accessory 3": null },
+        "Set3": { "Main Hand": null, "Helmet": null, "Off-Hand": null, "Armor": null, "Legs": null, "Accessory 1": null, "Accessory 2": null, "Accessory 3": null }
     };
 
+    // Load saved sets from localStorage if available
+    try {
+        const saved = localStorage.getItem('lords_mobile_equipment_sets');
+        if (saved) {
+            setsData = JSON.parse(saved);
+        }
+    } catch(e) {}
+
+    let currentBuild = setsData[activeSet];
     let activeSlot = null;
+
+    // Populate attribute filter dropdowns
+    function populateAttributeFilters() {
+        const sel1 = document.getElementById('filterAttr1');
+        const sel2 = document.getElementById('filterAttr2');
+        let html = '<option value="">-- All Attributes (Default) --</option>';
+        ALL_ATTRIBUTES.forEach(attr => {
+            html += `<option value="${attr}">${attr}</option>`;
+        });
+        sel1.innerHTML = html;
+        sel2.innerHTML = html;
+    }
+    populateAttributeFilters();
 
     const slotElements = document.querySelectorAll('.slot');
     slotElements.forEach(slot => {
@@ -245,8 +289,18 @@
         const listEl = document.getElementById('modalItemList');
         let items = gearData[slotName] || gearData["Accessory"] || [];
         
+        const f1 = document.getElementById('filterAttr1').value;
+        const f2 = document.getElementById('filterAttr2').value;
+
         if (query) {
             items = items.filter(i => i.name.toLowerCase().includes(query) || Object.keys(i.stats).some(s => s.toLowerCase().includes(query)));
+        }
+
+        if (f1) {
+            items = items.filter(i => i.stats && i.stats[f1] !== undefined);
+        }
+        if (f2) {
+            items = items.filter(i => i.stats && i.stats[f2] !== undefined);
         }
 
         let html = `<div class="item-card" onclick="selectItem('${slotName}', null)">
@@ -278,6 +332,7 @@
         }
         closeModal();
         renderBuild();
+        saveCurrentSet();
     }
 
     function closeModal() {
@@ -290,39 +345,42 @@
     });
 
     function renderBuild() {
-        slotElements.forEach(slot => {
-            const slotName = slot.dataset.slot;
-            if (slotName === 'Talent / Hero') return;
-            const item = currentBuild[slotName];
-            const nameEl = slot.querySelector('.slot-name');
-            if (item) {
-                slot.classList.add('has-item');
-                slot.innerHTML = `
-                    <img src="${item.image}" alt="${item.name}" onerror="this.src='https://static.wikia.nocookie.net/lordsmobile/images/3/30/Shadow_Helmet.png'">
-                    <span class="slot-name">${item.name}</span>
-                `;
-            } else {
-                slot.classList.remove('has-item');
-                let iconClass = "fa-solid fa-sword";
-                if(slotName === 'Helmet') iconClass = "fa-solid fa-hat-wizard";
-                if(slotName === 'Off-Hand') iconClass = "fa-solid fa-shield-halved";
-                if(slotName === 'Armor') iconClass = "fa-solid fa-vest";
-                if(slotName === 'Legs') iconClass = "fa-solid fa-boot";
-                if(slotName.includes('Accessory')) iconClass = "fa-solid fa-ring";
+        try {
+            slotElements.forEach(slot => {
+                const slotName = slot.dataset.slot;
+                if (slotName === 'Talent / Hero') return;
+                const item = currentBuild[slotName];
+                if (item && item.name) {
+                    slot.classList.add('has-item');
+                    slot.innerHTML = `
+                        <img src="${item.image || ''}" alt="${item.name}" onerror="this.src='https://static.wikia.nocookie.net/lordsmobile/images/3/30/Shadow_Helmet.png'">
+                        <span class="slot-name">${item.name}</span>
+                    `;
+                } else {
+                    slot.classList.remove('has-item');
+                    let iconClass = "fa-solid fa-sword";
+                    if(slotName === 'Helmet') iconClass = "fa-solid fa-hat-wizard";
+                    if(slotName === 'Off-Hand') iconClass = "fa-solid fa-shield-halved";
+                    if(slotName === 'Armor') iconClass = "fa-solid fa-vest";
+                    if(slotName === 'Legs') iconClass = "fa-solid fa-boot";
+                    if(slotName.includes('Accessory')) iconClass = "fa-solid fa-ring";
 
-                slot.innerHTML = `
-                    <i class="${iconClass}"></i><span>${slotName}</span>
-                    <div class="slot-name"></div>
-                `;
-            }
-        });
-        calculateStats();
+                    slot.innerHTML = `
+                        <i class="${iconClass}"></i><span>${slotName}</span>
+                        <div class="slot-name"></div>
+                    `;
+                }
+            });
+            calculateStats();
+        } catch(err) {
+            console.error('Render error:', err);
+        }
     }
 
     function calculateStats() {
         let stats = {
             "Infantry ATK": 0, "Ranged ATK": 0, "Cavalry ATK": 0, "Army ATK": 0,
-            "Army DEF": 0, "Army HP": 0, "Monster Hunt DMG": 0, "Travel Speed": 0
+            "Army DEF": 0, "Army HP": 0, "Monster Hunt DMG Boost": 0, "Travel Speed": 0, "Forging Speed": 0
         };
 
         Object.values(currentBuild).forEach(item => {
@@ -336,103 +394,44 @@
         document.getElementById('stat-rng-atk').textContent = (stats["Ranged ATK"] + stats["Army ATK"]).toFixed(1) + '%';
         document.getElementById('stat-cav-atk').textContent = (stats["Cavalry ATK"] + stats["Army ATK"]).toFixed(1) + '%';
         document.getElementById('stat-arm-atk').textContent = stats["Army ATK"].toFixed(1) + '%';
-        document.getElementById('stat-arm-def').textContent = stats["Army HP"].toFixed(1) + '%'; // Using Army HP/DEF proxy
+        document.getElementById('stat-arm-def').textContent = stats["Army DEF"].toFixed(1) + '%';
         document.getElementById('stat-arm-hp').textContent = stats["Army HP"].toFixed(1) + '%';
-        document.getElementById('stat-mh-dmg').textContent = stats["Monster Hunt DMG"].toFixed(1) + '%';
+        document.getElementById('stat-mh-dmg').textContent = stats["Monster Hunt DMG Boost"].toFixed(1) + '%';
         document.getElementById('stat-travel').textContent = stats["Travel Speed"].toFixed(1) + '%';
+        document.getElementById('stat-forge').textContent = stats["Forging Speed"].toFixed(1) + '%';
     }
 
-    // Presets
-    const presets = {
-        mixed: {
-            "Main Hand": gearData["Main Hand"][1], // Skullcrusher
-            "Helmet": gearData["Helmet"][1],       // Bumblehelm
-            "Off-Hand": gearData["Off-Hand"][1],   // Eternal Codex
-            "Armor": gearData["Armor"][1],         // Firewall Plate
-            "Legs": gearData["Legs"][4],           // Gargantua Belt
-            "Accessory 1": gearData["Accessory"][1], // Ambrosial Cup
-            "Accessory 2": gearData["Accessory"][1], // Ambrosial Cup
-            "Accessory 3": gearData["Accessory"][7]  // Lunar Harp
-        },
-        infantry: {
-            "Main Hand": gearData["Main Hand"][0],
-            "Helmet": gearData["Helmet"][2],
-            "Off-Hand": gearData["Off-Hand"][3],
-            "Armor": gearData["Armor"][0],
-            "Legs": gearData["Legs"][3],
-            "Accessory 1": gearData["Accessory"][0],
-            "Accessory 2": gearData["Accessory"][0],
-            "Accessory 3": gearData["Accessory"][4]
-        },
-        ranged: {
-            "Main Hand": gearData["Main Hand"][1],
-            "Helmet": gearData["Helmet"][3],
-            "Off-Hand": gearData["Off-Hand"][1],
-            "Armor": gearData["Armor"][5],
-            "Legs": gearData["Legs"][6],
-            "Accessory 1": gearData["Accessory"][1],
-            "Accessory 2": gearData["Accessory"][1],
-            "Accessory 3": gearData["Accessory"][7]
-        },
-        cavalry: {
-            "Main Hand": gearData["Main Hand"][4],
-            "Helmet": gearData["Helmet"][0],
-            "Off-Hand": gearData["Off-Hand"][4],
-            "Armor": gearData["Armor"][6],
-            "Legs": gearData["Legs"][2],
-            "Accessory 1": gearData["Accessory"][3],
-            "Accessory 2": gearData["Accessory"][3],
-            "Accessory 3": gearData["Accessory"][5]
-        },
-        monster: {
-            "Main Hand": gearData["Main Hand"][2],
-            "Helmet": gearData["Helmet"][2],
-            "Off-Hand": gearData["Off-Hand"][0],
-            "Armor": gearData["Armor"][1],
-            "Legs": gearData["Legs"][1],
-            "Accessory 1": gearData["Accessory"][1],
-            "Accessory 2": gearData["Accessory"][1],
-            "Accessory 3": gearData["Accessory"][1]
-        }
-    };
+    function saveCurrentSet() {
+        setsData[activeSet] = currentBuild;
+        try {
+            localStorage.setItem('lords_mobile_equipment_sets', JSON.stringify(setsData));
+        } catch(e) {}
+    }
 
-    document.getElementById('presetTabs').addEventListener('click', (e) => {
-        const tab = e.target.closest('.preset-tab');
+    function clearCurrentSet() {
+        currentBuild = { "Main Hand": null, "Helmet": null, "Off-Hand": null, "Armor": null, "Legs": null, "Accessory 1": null, "Accessory 2": null, "Accessory 3": null };
+        setsData[activeSet] = currentBuild;
+        saveCurrentSet();
+        renderBuild();
+    }
+
+    document.getElementById('setsBar').addEventListener('click', (e) => {
+        const tab = e.target.closest('.set-tab');
         if (!tab) return;
-        document.querySelectorAll('.preset-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.set-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-        const pKey = tab.dataset.preset;
-        if (pKey === 'custom') {
-            currentBuild = { "Main Hand": null, "Helmet": null, "Off-Hand": null, "Armor": null, "Legs": null, "Accessory 1": null, "Accessory 2": null, "Accessory 3": null };
-        } else if (presets[pKey]) {
-            currentBuild = JSON.parse(JSON.stringify(presets[pKey]));
-        }
+        activeSet = tab.dataset.set;
+        currentBuild = setsData[activeSet];
         renderBuild();
     });
 
     document.getElementById('resetBtn').addEventListener('click', () => {
-        document.querySelectorAll('.preset-tab').forEach(t => t.classList.remove('active'));
-        document.querySelector('[data-preset="custom"]').classList.add('active');
-        currentBuild = { "Main Hand": null, "Helmet": null, "Off-Hand": null, "Armor": null, "Legs": null, "Accessory 1": null, "Accessory 2": null, "Accessory 3": null };
-        renderBuild();
+        clearCurrentSet();
     });
 
     document.getElementById('shareBtn').addEventListener('click', () => {
-        alert('Build copied to clipboard!');
+        alert('Equipment build copied to clipboard!');
     });
-
-    function handleGearImage(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-            // Simulate OCR / AI scan detection for gear screenshot
-            alert('📸 Gear screenshot scanned successfully! Automatically loading Top Mixed Rally Set from image analysis.');
-            document.querySelector('[data-preset="mixed"]').click();
-            e.target.value = '';
-        };
-        reader.readAsDataURL(file);
-    }
 
     renderBuild();
 </script>

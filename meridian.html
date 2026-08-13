@@ -230,13 +230,14 @@
       Anyone can view events and search any city or timezone below. Only the admin can add, edit, or remove events — unlock admin above.
     </div>
     <form id="eventForm" class="event-form">
-      <label>Title<input type="text" id="evTitle" placeholder="e.g. Team sync" maxlength="60"></label>
+      <label>Title<input type="text" id="evTitle" placeholder="e.g. Dragon Arena" maxlength="60"></label>
       <label>Date<input type="date" id="evDate"></label>
       <label>Time<input type="time" id="evTime"></label>
       <label>In<select id="evZone"></select></label>
       <div style="display:flex;gap:6px;align-items:center;">
         <button type="submit" id="convertBtn" style="flex:1;">Save</button>
-        <button type="button" id="clearEventBtn" class="text-btn" style="background:var(--bg-card-2);border:1px solid var(--line-strong);color:var(--text-dim);height:38px;padding:0 10px;border-radius:9px;cursor:pointer;" title="Clear form & delete active event">Clear</button>
+        <button type="button" id="newEvBtn" class="text-btn" style="background:var(--bg-card-2);border:1px solid var(--line-strong);color:var(--amber);height:38px;padding:0 8px;border-radius:9px;cursor:pointer;" title="Create new event">+ New</button>
+        <button type="button" id="clearEventBtn" class="text-btn" style="background:var(--bg-card-2);border:1px solid var(--line-strong);color:var(--text-dim);height:38px;padding:0 8px;border-radius:9px;cursor:pointer;" title="Clear form inputs">Clear</button>
       </div>
     </form>
     <div id="applyFlash">✓ Event saved</div>
@@ -483,10 +484,18 @@ populateZoneOptions();
 const evTitleInput = document.getElementById('evTitle');
 const evDateInput = document.getElementById('evDate');
 const evTimeInput = document.getElementById('evTime');
-evDateInput.value = '2026-08-02';
-evTimeInput.value = '14:00';
+evDateInput.value = DateTime.now().toFormat('yyyy-MM-dd');
+evTimeInput.value = DateTime.now().plus({hours: 1}).toFormat('HH:00');
 
-function addEventFromForm(){
+function loadEventIntoForm(ev){
+  if (!ev) return;
+  evTitleInput.value = ev.title || '';
+  evDateInput.value = ev.dateStr || DateTime.now().toFormat('yyyy-MM-dd');
+  evTimeInput.value = ev.timeStr || '12:00';
+  if (ev.zoneId) evZoneSel.value = ev.zoneId;
+}
+
+function saveEventFromForm(){
   const title = evTitleInput.value.trim();
   const dateStr = evDateInput.value;
   const timeStr = evTimeInput.value;
@@ -494,39 +503,54 @@ function addEventFromForm(){
     showError('Please enter a title, date, or time to save.');
     return;
   }
-  const ev = {
-    id: genId(),
-    title: title || 'Untitled event',
-    dateStr: dateStr || DateTime.now().toFormat('yyyy-MM-dd'),
-    timeStr: timeStr || '12:00',
-    zoneId: evZoneSel.value
-  };
-  events.unshift(ev);
-  activeEventId = ev.id;
+  
+  const active = activeEvent();
+  if (active) {
+    // Update existing active event
+    active.title = title || 'Untitled event';
+    active.dateStr = dateStr || DateTime.now().toFormat('yyyy-MM-dd');
+    active.timeStr = timeStr || '12:00';
+    active.zoneId = evZoneSel.value;
+  } else {
+    // Create new event
+    const ev = {
+      id: genId(),
+      title: title || 'Untitled event',
+      dateStr: dateStr || DateTime.now().toFormat('yyyy-MM-dd'),
+      timeStr: timeStr || '12:00',
+      zoneId: evZoneSel.value
+    };
+    events.unshift(ev);
+    activeEventId = ev.id;
+  }
+  
   persistEvents();
-  evTitleInput.value = '';
   renderAll();
+  
   const flash = document.getElementById('applyFlash');
+  flash.textContent = '✓ Event saved successfully';
   flash.style.display = 'block';
-  clearTimeout(addEventFromForm._t);
-  addEventFromForm._t = setTimeout(() => { flash.style.display = 'none'; }, 1400);
+  clearTimeout(saveEventFromForm._t);
+  saveEventFromForm._t = setTimeout(() => { flash.style.display = 'none'; }, 1600);
 }
+
+document.getElementById('newEvBtn').addEventListener('click', () => {
+  activeEventId = null;
+  evTitleInput.value = '';
+  evDateInput.value = DateTime.now().toFormat('yyyy-MM-dd');
+  evTimeInput.value = DateTime.now().plus({hours: 1}).toFormat('HH:00');
+  renderAll();
+});
 
 document.getElementById('clearEventBtn').addEventListener('click', () => {
   evTitleInput.value = '';
   evDateInput.value = '';
   evTimeInput.value = '';
-  if (activeEventId) {
-    events = events.filter(x => x.id !== activeEventId);
-    activeEventId = events.length ? events[0].id : null;
-    persistEvents();
-    renderAll();
-  }
 });
 
 document.getElementById('eventForm').addEventListener('submit', (e) => {
   e.preventDefault();
-  addEventFromForm();
+  saveEventFromForm();
 });
 
 // ---------- Events list interactions ----------
@@ -566,6 +590,8 @@ document.getElementById('eventsList').addEventListener('click', (e) => {
   }
   if (item){
     activeEventId = item.dataset.id;
+    const ev = activeEvent();
+    if (ev) loadEventIntoForm(ev);
     persistEvents();
     renderAll();
   }
@@ -755,23 +781,24 @@ async function loadGlobalEvents() {
     if (resp.ok) {
       const globalEvents = await resp.json();
       if (Array.isArray(globalEvents) && globalEvents.length > 0) {
-        const existingIds = new Set(events.map(e => e.id));
-        let added = false;
-        globalEvents.forEach(ge => {
-          if (!existingIds.has(ge.id)) {
-            events.push(ge);
-            added = true;
-          }
-        });
-        if (added || !activeEventId) {
-          if (!activeEventId && events.length > 0) activeEventId = events[0].id;
-          saveJSON('meridian:events', events);
-          saveJSON('meridian:activeEventId', activeEventId);
-          renderAll();
+        events = globalEvents.map(e => ({
+          id: e.id || genId(),
+          title: e.title || 'Untitled event',
+          dateStr: e.dateStr || DateTime.now().toFormat('yyyy-MM-dd'),
+          timeStr: e.timeStr || '12:00',
+          zoneId: e.zoneId || 'kolkata'
+        }));
+        if (!activeEventId || !events.some(e => e.id === activeEventId)) {
+          activeEventId = events.length > 0 ? events[0].id : null;
         }
+        saveJSON('meridian:events', events);
+        saveJSON('meridian:activeEventId', activeEventId);
+        renderAll();
       }
     }
-  } catch (e) { console.error('Failed to load global events:', e); }
+  } catch (e) { 
+    console.error('Failed to load global events gracefully:', e); 
+  }
 }
 
 async function syncToGitHub() {
