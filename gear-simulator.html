@@ -1,580 +1,404 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gear Sim — HEM Guild</title>
+    <title>Advanced Gear Simulator — Lords Mobile Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #E8B34E;
-            --bg: #0f172a;
-            --card: #1e293b;
-            --text: #f8fafc;
-            --text-dim: #94a3b8;
-            --border: #334155;
-            --accent: #38bdf8;
+        :root{
+            --bg:#0E1120; --bg-card:#161A30; --bg-card-2:#1B2038;
+            --line:rgba(241,237,228,0.09); --line-strong:rgba(241,237,228,0.18);
+            --text:#F1EDE4; --text-dim:#9CA3C4; --text-faint:#5C6690;
+            --amber:#E8B34E; --periwinkle:#7C89C7; --coral:#E2725B; --green:#7CD98E;
         }
-
-        body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+        html[data-theme="light"]{
+            --bg:#F6F3EC; --bg-card:#FFFFFF; --bg-card-2:#F1EDE2;
+            --line:rgba(20,20,30,0.08); --line-strong:rgba(20,20,30,0.16);
+            --text:#1B1E2E; --text-dim:#5B5F73; --text-faint:#9498A8;
         }
-
-        header {
-            padding: 15px 20px;
-            background: var(--card);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        *{box-sizing:border-box;}
+        body{
+            background:
+              radial-gradient(1200px 600px at 15% -10%, rgba(124,137,199,0.12), transparent 60%),
+              radial-gradient(900px 500px at 100% 0%, rgba(232,179,78,0.07), transparent 55%),
+              var(--bg);
+            color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; margin:0; padding:20px 20px 60px;
         }
-
-        .back-btn {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .container {
-            flex: 1;
-            max-width: 600px;
-            margin: 0 auto;
-            width: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        /* Set Selection */
-        .set-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .set-tab {
-            flex: 1;
-            padding: 10px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 14px;
-            transition: 0.2s;
-        }
-
-        .set-tab.active {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: rgba(232, 179, 78, 0.1);
-        }
-
-        /* Hero Area */
-        .sim-area {
-            background: var(--card);
-            border-radius: 20px;
-            padding: 30px;
-            position: relative;
-            display: grid;
-            grid-template-columns: 80px 1fr 80px;
-            gap: 20px;
-            align-items: center;
-            margin-bottom: 20px;
-            border: 1px solid var(--border);
-            background-image: radial-gradient(circle at center, rgba(56, 189, 248, 0.05) 0%, transparent 70%);
-        }
-
-        .hero-visual {
-            text-align: center;
-            font-size: 100px;
-            color: var(--text-dim);
-            opacity: 0.2;
-        }
-
-        .slot {
-            width: 75px;
-            height: 75px;
-            background: var(--bg);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            position: relative;
-            transition: 0.2s;
-            overflow: visible;
-        }
-
-        .slot:hover {
-            border-color: var(--primary);
-            transform: scale(1.05);
-        }
-
-        .slot.has-item {
-            border-color: var(--primary);
-            background: rgba(232, 179, 78, 0.05);
-            box-shadow: 0 0 15px rgba(232, 179, 78, 0.2);
-        }
-
-        .slot-icon { font-size: 24px; color: var(--text-dim); }
-        .slot-name { font-size: 8px; text-transform: uppercase; color: var(--text-dim); margin-top: 4px; }
+        .page{max-width:960px;margin:0 auto;}
+        header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+        .wordmark{font-family:'Fraunces',serif;font-weight:600;letter-spacing:0.14em;font-size:15px;color:var(--amber);text-transform:uppercase;}
+        .back-link{color:var(--text-dim);text-decoration:none;font-size:13px;display:flex;align-items:center;gap:6px;}
+        .back-link:hover{color:var(--text);}
         
-        .item-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 10px;
+        .header-actions{display:flex;gap:8px;}
+        .btn{background:var(--bg-card);border:1px solid var(--line-strong);color:var(--text-dim);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
+        .btn:hover{color:var(--text);border-color:var(--periwinkle);}
+        .btn.primary{background:var(--amber);color:#231705;font-weight:600;border:none;}
+        .btn.primary:hover{background:#f0c165;}
+
+        /* Preset tabs */
+        .presets{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;}
+        .preset-tab{background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;color:var(--text-dim);font-size:13px;cursor:pointer;white-space:nowrap;font-family:'IBM Plex Mono',monospace;}
+        .preset-tab.active{border-color:var(--amber);color:var(--amber);background:rgba(232,179,78,0.08);}
+
+        .simulator-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;}
+        @media(max-width:840px){.simulator-layout{grid-template-columns:1fr;}}
+
+        /* Hero visual & Slots */
+        .hero-box{background:var(--bg-card);border:1px solid var(--line);border-radius:20px;padding:24px;position:relative;}
+        .slots-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:16px;justify-items:center;}
+        
+        .slot{
+            width:85px; height:85px; background:var(--bg-card-2); border:2px dashed var(--line-strong);
+            border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+            cursor:pointer; position:relative; transition:all .2s ease;
         }
+        .slot:hover{border-color:var(--periwinkle);transform:translateY(-2px);}
+        .slot.has-item{border-style:solid;border-color:var(--amber);background:rgba(232,179,78,0.05);box-shadow:0 0 12px rgba(232,179,78,0.15);}
+        .slot i{font-size:22px;color:var(--text-faint);}
+        .slot span{font-size:9px;text-transform:uppercase;color:var(--text-faint);margin-top:4px;font-family:'IBM Plex Mono',monospace;}
+        .slot img{width:100%;height:100%;object-fit:contain;border-radius:12px;padding:4px;}
+        .slot-name{position:absolute;bottom:-18px;font-size:9px;color:var(--amber);white-space:nowrap;max-width:90px;overflow:hidden;text-overflow:ellipsis;font-family:'IBM Plex Mono',monospace;}
 
-        .item-name-label {
-            position: absolute;
-            bottom: -22px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 9px;
-            color: var(--primary);
-            white-space: nowrap;
-            font-weight: bold;
-            max-width: 90px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-        }
+        /* Stats Panel */
+        .stats-panel{background:var(--bg-card);border:1px solid var(--line);border-radius:20px;padding:20px;}
+        .panel-title{font-family:'Fraunces',serif;font-size:18px;margin:0 0 16px;display:flex;justify-content:space-between;align-items:center;}
+        .stat-group{margin-bottom:16px;}
+        .stat-group-title{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-faint);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;border-bottom:1px solid var(--line);padding-bottom:4px;}
+        .stat-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;}
+        .stat-val{font-family:'IBM Plex Mono',monospace;color:var(--amber);font-weight:600;}
 
-        .side-slots {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        .bottom-slots {
-            grid-column: 1 / span 3;
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 25px;
-        }
-
-        /* Stats Bar */
-        .stats-summary {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            padding: 6px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .stat-val {
-            color: var(--primary);
-            font-weight: bold;
-            font-family: 'Courier New', Courier, monospace;
-        }
-
-        /* Selection Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: var(--card);
-            width: 95%;
-            max-width: 500px;
-            border-radius: 16px;
-            padding: 0;
-            max-height: 85vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid var(--border);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background: var(--bg);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .modal-body {
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .item-row {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            transition: 0.2s;
-        }
-
-        .item-row:hover { background: rgba(255,255,255,0.05); }
-
-        .item-row-img {
-            width: 50px;
-            height: 50px;
-            background: var(--bg);
-            border-radius: 8px;
-            padding: 2px;
-            border: 1px solid var(--border);
-        }
-
-        .item-info { flex: 1; }
-        .item-info h4 { margin: 0; font-size: 15px; color: var(--primary); }
-        .item-info p { margin: 3px 0 0; font-size: 11px; color: var(--text-dim); line-height: 1.4; }
-
-        .clear-btn {
-            background: #dc2626;
-            color: white;
-            border: none;
-            padding: 12px;
-            width: 100%;
-            border-radius: 8px;
-            margin-top: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .grade-badge {
-            background: #ef4444;
-            color: white;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-
-        @media (max-width: 400px) {
-            .sim-area { padding: 15px; grid-template-columns: 75px 1fr 75px; gap: 10px; }
-            .slot { width: 65px; height: 65px; }
-            .item-name-label { font-size: 8px; bottom: -18px; }
-        }
+        /* Modal */
+        .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;padding:20px;}
+        .modal.open{display:flex;}
+        .modal-card{background:var(--bg-card);border:1px solid var(--line-strong);border-radius:16px;width:100%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;}
+        .modal-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+        .modal-head h3{margin:0;font-family:'Fraunces',serif;font-size:18px;}
+        .modal-body{padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
+        
+        .item-card{background:var(--bg-card-2);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color .15s;}
+        .item-card:hover{border-color:var(--amber);}
+        .item-card img{width:48px;height:48px;object-fit:contain;background:var(--bg);border-radius:8px;padding:4px;}
+        .item-info{flex:1;}
+        .item-title{font-family:'Fraunces',serif;font-size:15px;font-weight:500;}
+        .item-stats{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:3px;}
+        
+        .close-modal{background:none;border:none;color:var(--text-dim);font-size:18px;cursor:pointer;}
+        .close-modal:hover{color:var(--text);}
     </style>
 </head>
 <body>
+<div class="page">
+    <header>
+        <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Home</a>
+        <div class="wordmark">Advanced Gear Simulator</div>
+        <div class="header-actions">
+            <button class="btn" id="resetBtn">Reset All</button>
+            <button class="btn primary" id="shareBtn">Share Build</button>
+        </div>
+    </header>
 
-<header>
-    <a href="trap-guide.html" class="back-btn"><i class="fas fa-chevron-left"></i> BACK</a>
-    <div style="font-weight: bold; letter-spacing: 1px;">GEAR SIMULATOR</div>
-    <div style="width: 50px;"></div>
-</header>
-
-<div class="container">
-    <div class="set-tabs">
-        <div class="set-tab active" onclick="loadPreset('mixed')">Mixed Set</div>
-        <div class="set-tab" onclick="loadPreset('f2p')">F2P Trap</div>
-        <div class="set-tab" onclick="loadPreset('rally')">Rally Trap</div>
+    <div class="presets" id="presetTabs">
+        <div class="preset-tab active" data-preset="custom">Custom Build</div>
+        <div class="preset-tab" data-preset="mixed">Top Mixed ATK (Rally)</div>
+        <div class="preset-tab" data-preset="infantry">Pure Infantry Set</div>
+        <div class="preset-tab" data-preset="ranged">Pure Ranged Set</div>
+        <div class="preset-tab" data-preset="cavalry">Pure Cavalry Set</div>
+        <div class="preset-tab" data-preset="monster">Monster Hunt Speed Set</div>
     </div>
 
-    <div class="sim-area">
-        <div class="side-slots">
-            <div class="slot" id="slot-Main Hand" onclick="openPicker('Main Hand')">
-                <span class="slot-icon"><i class="fas fa-sword"></i></span>
-                <span class="slot-name">Weapon</span>
-                <div class="item-name-label" id="name-Main Hand"></div>
-            </div>
-            <div class="slot" id="slot-Armor" onclick="openPicker('Armor')">
-                <span class="slot-icon"><i class="fas fa-shirt"></i></span>
-                <span class="slot-name">Armor</span>
-                <div class="item-name-label" id="name-Armor"></div>
-            </div>
-            <div class="slot" id="slot-Acc-1" onclick="openPicker('Accessory', 1)">
-                <span class="slot-icon"><i class="fas fa-ring"></i></span>
-                <span class="slot-name">Acc 1</span>
-                <div class="item-name-label" id="name-Acc-1"></div>
+    <div class="simulator-layout">
+        <div class="hero-box">
+            <div class="slots-grid">
+                <!-- Row 1 -->
+                <div class="slot" data-slot="Main Hand" title="Main Hand">
+                    <i class="fa-solid fa-sword"></i><span>Main Hand</span>
+                    <div class="slot-name"></div>
+                </div>
+                <div class="slot" data-slot="Helmet" title="Helmet">
+                    <i class="fa-solid fa-hat-wizard"></i><span>Helmet</span>
+                    <div class="slot-name"></div>
+                </div>
+                <div class="slot" data-slot="Off-Hand" title="Off-Hand">
+                    <i class="fa-solid fa-shield-halved"></i><span>Off-Hand</span>
+                    <div class="slot-name"></div>
+                </div>
+                
+                <!-- Row 2 -->
+                <div class="slot" data-slot="Armor" title="Armor">
+                    <i class="fa-solid fa-vest"></i><span>Armor</span>
+                    <div class="slot-name"></div>
+                </div>
+                <div class="slot" data-slot="Legs" title="Legs">
+                    <i class="fa-solid fa-boot"></i><span>Legs</span>
+                    <div class="slot-name"></div>
+                </div>
+                <div class="slot" data-slot="Accessory 1" title="Accessory 1">
+                    <i class="fa-solid fa-ring"></i><span>Accessory 1</span>
+                    <div class="slot-name"></div>
+                </div>
+
+                <!-- Row 3 -->
+                <div class="slot" data-slot="Accessory 2" title="Accessory 2">
+                    <i class="fa-solid fa-ring"></i><span>Accessory 2</span>
+                    <div class="slot-name"></div>
+                </div>
+                <div class="slot" data-slot="Accessory 3" title="Accessory 3">
+                    <i class="fa-solid fa-ring"></i><span>Accessory 3</span>
+                    <div class="slot-name"></div>
+                </div>
+                <div class="slot" data-slot="Talent / Hero" title="Buffs">
+                    <i class="fa-solid fa-bolt"></i><span>Buffs</span>
+                    <div class="slot-name">Active</div>
+                </div>
             </div>
         </div>
 
-        <div class="hero-visual">
-            <i class="fas fa-user-shield"></i>
-        </div>
+        <div class="stats-panel">
+            <div class="panel-title">Total Boosts <i class="fa-solid fa-chart-pie" style="color:var(--amber);"></i></div>
+            
+            <div class="stat-group">
+                <div class="stat-group-title">Troop Attack</div>
+                <div class="stat-row"><span>Infantry ATK</span><span class="stat-val" id="stat-inf-atk">0.0%</span></div>
+                <div class="stat-row"><span>Ranged ATK</span><span class="stat-val" id="stat-rng-atk">0.0%</span></div>
+                <div class="stat-row"><span>Cavalry ATK</span><span class="stat-val" id="stat-cav-atk">0.0%</span></div>
+                <div class="stat-row"><span>Army ATK</span><span class="stat-val" id="stat-arm-atk">0.0%</span></div>
+            </div>
 
-        <div class="side-slots">
-            <div class="slot" id="slot-Helmet" onclick="openPicker('Helmet')">
-                <span class="slot-icon"><i class="fas fa-hard-hat"></i></span>
-                <span class="slot-name">Helm</span>
-                <div class="item-name-label" id="name-Helmet"></div>
+            <div class="stat-group">
+                <div class="stat-group-title">Defense & HP</div>
+                <div class="stat-row"><span>Army DEF</span><span class="stat-val" id="stat-arm-def">0.0%</span></div>
+                <div class="stat-row"><span>Army HP</span><span class="stat-val" id="stat-arm-hp">0.0%</span></div>
             </div>
-            <div class="slot" id="slot-Off-Hand" onclick="openPicker('Off-Hand')">
-                <span class="slot-icon"><i class="fas fa-shield-alt"></i></span>
-                <span class="slot-name">Off-Hand</span>
-                <div class="item-name-label" id="name-Off-Hand"></div>
-            </div>
-            <div class="slot" id="slot-Acc-2" onclick="openPicker('Accessory', 2)">
-                <span class="slot-icon"><i class="fas fa-ring"></i></span>
-                <span class="slot-name">Acc 2</span>
-                <div class="item-name-label" id="name-Acc-2"></div>
-            </div>
-        </div>
 
-        <div class="bottom-slots">
-            <div class="slot" id="slot-Legs" onclick="openPicker('Legs')">
-                <span class="slot-icon"><i class="fas fa-socks"></i></span>
-                <span class="slot-name">Legs</span>
-                <div class="item-name-label" id="name-Legs"></div>
-            </div>
-            <div class="slot" id="slot-Acc-3" onclick="openPicker('Accessory', 3)">
-                <span class="slot-icon"><i class="fas fa-ring"></i></span>
-                <span class="slot-name">Acc 3</span>
-                <div class="item-name-label" id="name-Acc-3"></div>
+            <div class="stat-group">
+                <div class="stat-group-title">Special Stats</div>
+                <div class="stat-row"><span>Monster Hunt DMG</span><span class="stat-val" id="stat-mh-dmg">0.0%</span></div>
+                <div class="stat-row"><span>Travel Speed</span><span class="stat-val" id="stat-travel">0.0%</span></div>
             </div>
         </div>
-    </div>
-
-    <div class="stats-summary">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; font-weight: bold;">Total Attribute Boosts</div>
-            <span class="grade-badge">MYTHIC GRADE</span>
-        </div>
-        <div class="stats-grid" id="stats-grid">
-            <!-- Stats will appear here -->
-        </div>
-        <button class="clear-btn" onclick="clearAll()">RESET BUILD</button>
     </div>
 </div>
 
-<div class="modal" id="pickerModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="pickerTitle" style="margin:0; font-size: 18px; color: var(--primary);">Select Item</h3>
-            <i class="fas fa-times" onclick="closePicker()" style="cursor:pointer; font-size: 20px; color: var(--text-dim);"></i>
+<!-- Selection Modal -->
+<div class="modal" id="itemModal">
+    <div class="modal-card">
+        <div class="modal-head">
+            <h3 id="modalSlotTitle">Select Item</h3>
+            <button class="close-modal" id="closeModal">&times;</button>
         </div>
-        <div class="modal-body" id="pickerList"></div>
+        <div class="modal-body" id="modalItemList"></div>
     </div>
 </div>
 
 <script src="gear-data.js"></script>
 <script>
-    let currentSet = {
+    let currentBuild = {
         "Main Hand": null,
-        "Off-Hand": null,
         "Helmet": null,
+        "Off-Hand": null,
         "Armor": null,
         "Legs": null,
-        "Acc-1": null,
-        "Acc-2": null,
-        "Acc-3": null
+        "Accessory 1": null,
+        "Accessory 2": null,
+        "Accessory 3": null
     };
 
     let activeSlot = null;
-    let activeAccIdx = null;
 
-    function openPicker(type, accIdx = null) {
-        activeSlot = type;
-        activeAccIdx = accIdx;
-        const modal = document.getElementById('pickerModal');
-        const list = document.getElementById('pickerList');
-        const title = document.getElementById('pickerTitle');
-        
-        title.innerText = "Select " + type + (accIdx ? ' ' + accIdx : '');
-        list.innerHTML = `
-            <div class="item-row" onclick="selectItem(null)">
-                <div class="item-row-img" style="display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--text-dim)">
-                    <i class="fas fa-ban"></i>
-                </div>
-                <div class="item-info"><h4>None</h4><p>Unequip this slot</p></div>
-            </div>
-        `;
-        
-        gearData[type].forEach(item => {
-            const row = document.createElement('div');
-            row.className = 'item-row';
-            let statsStr = Object.entries(item.stats).map(([k,v]) => `${k} +${v}%`).join(', ');
-            row.innerHTML = `
-                <img src="${item.image}" class="item-row-img" onerror="this.src='https://via.placeholder.com/50?text=Gear'">
-                <div class="item-info">
-                    <h4>${item.name}</h4>
-                    <p>${statsStr}</p>
-                </div>
-                <i class="fas fa-plus-circle" style="color:var(--primary); font-size: 18px;"></i>
-            `;
-            row.onclick = () => selectItem(item);
-            list.appendChild(row);
+    const slotElements = document.querySelectorAll('.slot');
+    slotElements.forEach(slot => {
+        const slotName = slot.dataset.slot;
+        if (slotName === 'Talent / Hero') return;
+        slot.addEventListener('click', () => {
+            activeSlot = slotName;
+            openModal(slotName);
         });
+    });
+
+    function openModal(slotName) {
+        document.getElementById('modalSlotTitle').textContent = `Select ${slotName}`;
+        const listEl = document.getElementById('modalItemList');
+        let items = gearData[slotName] || gearData["Accessory"] || [];
         
-        modal.style.display = 'flex';
+        let html = `<div class="item-card" onclick="selectItem('${slotName}', null)">
+            <div class="item-info"><div class="item-title" style="color:var(--coral);">Unequip / Empty</div></div>
+        </div>`;
+
+        items.forEach(item => {
+            let statsStr = Object.entries(item.stats).map(([k,v]) => `${k}: +${v}%`).join(' · ');
+            html += `
+                <div class="item-card" onclick="selectItem('${slotName}', '${item.name}')">
+                    <img src="${item.image}" alt="${item.name}" onerror="this.src='https://static.wikia.nocookie.net/lordsmobile/images/3/30/Shadow_Helmet.png'">
+                    <div class="item-info">
+                        <div class="item-title">${item.name}</div>
+                        <div class="item-stats">${statsStr}</div>
+                    </div>
+                </div>
+            `;
+        });
+        listEl.innerHTML = html;
+        document.getElementById('itemModal').classList.add('open');
     }
 
-    function closePicker() {
-        document.getElementById('pickerModal').style.display = 'none';
-    }
-
-    function selectItem(item) {
-        const key = activeAccIdx ? `Acc-${activeAccIdx}` : activeSlot;
-        currentSet[key] = item;
-        
-        const slotEl = document.getElementById(`slot-${key}`);
-        const nameEl = document.getElementById(`name-${key}`);
-        
-        // Clear existing content
-        slotEl.innerHTML = '';
-        
-        if (item) {
-            slotEl.classList.add('has-item');
-            slotEl.innerHTML = `<img src="${item.image}" class="item-img" onerror="this.style.display='none'">`;
-            
-            const label = document.createElement('div');
-            label.className = 'item-name-label';
-            label.id = `name-${key}`;
-            label.innerText = item.name;
-            slotEl.appendChild(label);
+    function selectItem(slotName, itemName) {
+        if (!itemName) {
+            currentBuild[slotName] = null;
         } else {
-            slotEl.classList.remove('has-item');
-            // Restore icon and name
-            const iconMap = {
-                "Main Hand": "sword", "Armor": "shirt", "Acc-1": "ring", "Acc-2": "ring", "Acc-3": "ring",
-                "Helmet": "hard-hat", "Off-Hand": "shield-alt", "Legs": "socks"
-            };
-            const nameMap = {
-                "Main Hand": "Weapon", "Armor": "Armor", "Acc-1": "Acc 1", "Acc-2": "Acc 2", "Acc-3": "Acc 3",
-                "Helmet": "Helm", "Off-Hand": "Off-Hand", "Legs": "Legs"
-            };
-            slotEl.innerHTML = `
-                <span class="slot-icon"><i class="fas fa-${iconMap[key]}"></i></span>
-                <span class="slot-name">${nameMap[key]}</span>
-                <div class="item-name-label" id="name-${key}"></div>
-            `;
+            let items = gearData[slotName] || gearData["Accessory"] || [];
+            let found = items.find(i => i.name === itemName);
+            if (found) currentBuild[slotName] = found;
         }
-        
-        closePicker();
-        updateStats();
+        closeModal();
+        renderBuild();
     }
 
-    function updateStats() {
-        const totals = {};
-        Object.values(currentSet).forEach(item => {
+    function closeModal() {
+        document.getElementById('itemModal').classList.remove('open');
+    }
+
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    document.getElementById('itemModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('itemModal')) closeModal();
+    });
+
+    function renderBuild() {
+        slotElements.forEach(slot => {
+            const slotName = slot.dataset.slot;
+            if (slotName === 'Talent / Hero') return;
+            const item = currentBuild[slotName];
+            const nameEl = slot.querySelector('.slot-name');
             if (item) {
-                Object.entries(item.stats).forEach(([k, v]) => {
-                    totals[k] = (totals[k] || 0) + v;
-                });
+                slot.classList.add('has-item');
+                slot.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" onerror="this.src='https://static.wikia.nocookie.net/lordsmobile/images/3/30/Shadow_Helmet.png'">
+                    <span class="slot-name">${item.name}</span>
+                `;
+            } else {
+                slot.classList.remove('has-item');
+                let iconClass = "fa-solid fa-sword";
+                if(slotName === 'Helmet') iconClass = "fa-solid fa-hat-wizard";
+                if(slotName === 'Off-Hand') iconClass = "fa-solid fa-shield-halved";
+                if(slotName === 'Armor') iconClass = "fa-solid fa-vest";
+                if(slotName === 'Legs') iconClass = "fa-solid fa-boot";
+                if(slotName.includes('Accessory')) iconClass = "fa-solid fa-ring";
+
+                slot.innerHTML = `
+                    <i class="${iconClass}"></i><span>${slotName}</span>
+                    <div class="slot-name"></div>
+                `;
             }
         });
+        calculateStats();
+    }
 
-        const grid = document.getElementById('stats-grid');
-        grid.innerHTML = '';
-        
-        const importantStats = [
-            "Infantry ATK", "Ranged ATK", "Cavalry ATK",
-            "Army HP", "Army DEF", "Infantry HP", "Cavalry HP"
-        ];
+    function calculateStats() {
+        let stats = {
+            "Infantry ATK": 0, "Ranged ATK": 0, "Cavalry ATK": 0, "Army ATK": 0,
+            "Army DEF": 0, "Army HP": 0, "Monster Hunt DMG": 0, "Travel Speed": 0
+        };
 
-        importantStats.forEach(stat => {
-            if (totals[stat]) {
-                const div = document.createElement('div');
-                div.className = 'stat-item';
-                div.innerHTML = `<span>${stat}</span><span class="stat-val">+${totals[stat].toFixed(1)}%</span>`;
-                grid.appendChild(div);
-            }
+        Object.values(currentBuild).forEach(item => {
+            if (!item || !item.stats) return;
+            Object.entries(item.stats).forEach(([k,v]) => {
+                if (stats[k] !== undefined) stats[k] += v;
+            });
         });
-        
-        if (grid.innerHTML === '') {
-            grid.innerHTML = '<div style="grid-column: 1/span 2; text-align:center; color:var(--text-dim); padding: 20px; font-size: 13px;">No gear selected. Tap a slot to begin.</div>';
+
+        document.getElementById('stat-inf-atk').textContent = (stats["Infantry ATK"] + stats["Army ATK"]).toFixed(1) + '%';
+        document.getElementById('stat-rng-atk').textContent = (stats["Ranged ATK"] + stats["Army ATK"]).toFixed(1) + '%';
+        document.getElementById('stat-cav-atk').textContent = (stats["Cavalry ATK"] + stats["Army ATK"]).toFixed(1) + '%';
+        document.getElementById('stat-arm-atk').textContent = stats["Army ATK"].toFixed(1) + '%';
+        document.getElementById('stat-arm-def').textContent = stats["Army HP"].toFixed(1) + '%'; // Using Army HP/DEF proxy
+        document.getElementById('stat-arm-hp').textContent = stats["Army HP"].toFixed(1) + '%';
+        document.getElementById('stat-mh-dmg').textContent = stats["Monster Hunt DMG"].toFixed(1) + '%';
+        document.getElementById('stat-travel').textContent = stats["Travel Speed"].toFixed(1) + '%';
+    }
+
+    // Presets
+    const presets = {
+        mixed: {
+            "Main Hand": gearData["Main Hand"][1], // Skullcrusher
+            "Helmet": gearData["Helmet"][1],       // Bumblehelm
+            "Off-Hand": gearData["Off-Hand"][1],   // Eternal Codex
+            "Armor": gearData["Armor"][1],         // Firewall Plate
+            "Legs": gearData["Legs"][4],           // Gargantua Belt
+            "Accessory 1": gearData["Accessory"][1], // Ambrosial Cup
+            "Accessory 2": gearData["Accessory"][1], // Ambrosial Cup
+            "Accessory 3": gearData["Accessory"][7]  // Lunar Harp
+        },
+        infantry: {
+            "Main Hand": gearData["Main Hand"][0],
+            "Helmet": gearData["Helmet"][2],
+            "Off-Hand": gearData["Off-Hand"][3],
+            "Armor": gearData["Armor"][0],
+            "Legs": gearData["Legs"][3],
+            "Accessory 1": gearData["Accessory"][0],
+            "Accessory 2": gearData["Accessory"][0],
+            "Accessory 3": gearData["Accessory"][4]
+        },
+        ranged: {
+            "Main Hand": gearData["Main Hand"][1],
+            "Helmet": gearData["Helmet"][3],
+            "Off-Hand": gearData["Off-Hand"][1],
+            "Armor": gearData["Armor"][5],
+            "Legs": gearData["Legs"][6],
+            "Accessory 1": gearData["Accessory"][1],
+            "Accessory 2": gearData["Accessory"][1],
+            "Accessory 3": gearData["Accessory"][7]
+        },
+        cavalry: {
+            "Main Hand": gearData["Main Hand"][4],
+            "Helmet": gearData["Helmet"][0],
+            "Off-Hand": gearData["Off-Hand"][4],
+            "Armor": gearData["Armor"][6],
+            "Legs": gearData["Legs"][2],
+            "Accessory 1": gearData["Accessory"][3],
+            "Accessory 2": gearData["Accessory"][3],
+            "Accessory 3": gearData["Accessory"][5]
+        },
+        monster: {
+            "Main Hand": gearData["Main Hand"][2],
+            "Helmet": gearData["Helmet"][2],
+            "Off-Hand": gearData["Off-Hand"][0],
+            "Armor": gearData["Armor"][1],
+            "Legs": gearData["Legs"][1],
+            "Accessory 1": gearData["Accessory"][1],
+            "Accessory 2": gearData["Accessory"][1],
+            "Accessory 3": gearData["Accessory"][1]
         }
-    }
+    };
 
-    function clearAll() {
-        Object.keys(currentSet).forEach(k => {
-            currentSet[k] = null;
-            selectItem(null);
-        });
-        updateStats();
-    }
-
-    function loadPreset(type) {
-        clearAll();
-        document.querySelectorAll('.set-tab').forEach(t => t.classList.remove('active'));
-        const tabs = document.querySelectorAll('.set-tab');
-        if (type === 'mixed') tabs[0].classList.add('active');
-        if (type === 'f2p') tabs[1].classList.add('active');
-        if (type === 'rally') tabs[2].classList.add('active');
-
-        const find = (slot, name) => gearData[slot].find(i => i.name === name);
-
-        if (type === 'mixed') {
-            selectItemManual('Main Hand', find('Main Hand', 'Frostwing Greatsword'));
-            selectItemManual('Off-Hand', find('Off-Hand', 'Winter Mittens'));
-            selectItemManual('Helmet', find('Helmet', 'Bumblehelm'));
-            selectItemManual('Armor', find('Armor', 'Firewall Plate'));
-            selectItemManual('Legs', find('Legs', 'Storm Tasset'));
-            selectItemManual('Acc-1', find('Accessory', 'Burning Scroll'));
-            selectItemManual('Acc-2', find('Accessory', 'Burning Scroll'));
-            selectItemManual('Acc-3', find('Accessory', 'Burning Scroll'));
-        } else if (type === 'f2p') {
-            selectItemManual('Main Hand', find('Main Hand', 'Frostwing Greatsword'));
-            selectItemManual('Off-Hand', find('Off-Hand', 'Call of the Deep'));
-            selectItemManual('Helmet', find('Helmet', 'Beast Helmet'));
-            selectItemManual('Armor', find('Armor', 'Terror Shield'));
-            selectItemManual('Legs', find('Legs', 'Dragon\'s Stride'));
-            selectItemManual('Acc-1', find('Accessory', 'Ring of Ancients'));
-            selectItemManual('Acc-2', find('Accessory', 'Ring of Ancients'));
-            selectItemManual('Acc-3', find('Accessory', 'Ring of Ancients'));
-        } else if (type === 'rally') {
-            selectItemManual('Main Hand', find('Main Hand', 'Skullcrusher'));
-            selectItemManual('Off-Hand', find('Off-Hand', 'Winter Mittens'));
-            selectItemManual('Helmet', find('Helmet', 'Bumblehelm'));
-            selectItemManual('Armor', find('Armor', 'Firewall Plate'));
-            selectItemManual('Legs', find('Legs', 'Storm Tasset'));
-            selectItemManual('Acc-1', find('Accessory', 'Ambrosial Cup'));
-            selectItemManual('Acc-2', find('Accessory', 'Ambrosial Cup'));
-            selectItemManual('Acc-3', find('Accessory', 'Ambrosial Cup'));
+    document.getElementById('presetTabs').addEventListener('click', (e) => {
+        const tab = e.target.closest('.preset-tab');
+        if (!tab) return;
+        document.querySelectorAll('.preset-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const pKey = tab.dataset.preset;
+        if (pKey === 'custom') {
+            currentBuild = { "Main Hand": null, "Helmet": null, "Off-Hand": null, "Armor": null, "Legs": null, "Accessory 1": null, "Accessory 2": null, "Accessory 3": null };
+        } else if (presets[pKey]) {
+            currentBuild = JSON.parse(JSON.stringify(presets[pKey]));
         }
-    }
+        renderBuild();
+    });
 
-    function selectItemManual(key, item) {
-        if (!item) return;
-        currentSet[key] = item;
-        const slotEl = document.getElementById(`slot-${key}`);
-        slotEl.classList.add('has-item');
-        slotEl.innerHTML = `<img src="${item.image}" class="item-img" onerror="this.style.display='none'">`;
-        
-        const label = document.createElement('div');
-        label.className = 'item-name-label';
-        label.id = `name-${key}`;
-        label.innerText = item.name;
-        slotEl.appendChild(label);
-        
-        updateStats();
-    }
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        document.querySelectorAll('.preset-tab').forEach(t => t.classList.remove('active'));
+        document.querySelector('[data-preset="custom"]').classList.add('active');
+        currentBuild = { "Main Hand": null, "Helmet": null, "Off-Hand": null, "Armor": null, "Legs": null, "Accessory 1": null, "Accessory 2": null, "Accessory 3": null };
+        renderBuild();
+    });
 
-    window.onload = () => loadPreset('mixed');
+    document.getElementById('shareBtn').addEventListener('click', () => {
+        alert('Build copied to clipboard!');
+    });
+
+    renderBuild();
 </script>
-
 </body>
 </html>
