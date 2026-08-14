@@ -12,122 +12,126 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         .simulator-container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 20px;
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 15px;
         }
         .set-tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
+            gap: 8px;
+            margin-bottom: 20px;
             justify-content: center;
         }
         .set-tab {
             background: var(--bg-surface);
             border: 1px solid var(--border-primary);
             color: var(--text-primary);
-            padding: 10px 24px;
-            border-radius: 8px;
+            padding: 8px 20px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         .set-tab.active {
             background: var(--neon-blue);
             color: #fff;
             border-color: var(--neon-blue);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
         }
-        .sim-layout {
+        .sim-grid {
             display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 25px;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
         }
-        @media (max-width: 900px) {
-            .sim-layout {
+        @media (max-width: 850px) {
+            .sim-grid {
                 grid-template-columns: 1fr;
             }
         }
-        .slots-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 20px;
+        .gear-slots-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
-        .gear-slot-card {
+        .gear-slot-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            position: relative;
-            transition: all 0.3s ease;
+            border-radius: 10px;
+            padding: 12px 18px;
+            transition: all 0.2s ease;
         }
-        .gear-slot-card:hover {
+        .gear-slot-row:hover {
             border-color: var(--neon-purple);
-            box-shadow: 0 0 15px var(--glow-purple);
         }
-        .slot-title {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .slot-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        .slot-box {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 12px;
+        .slot-icon-box {
+            width: 55px;
+            height: 55px;
             background: var(--bg-secondary);
             border: 2px dashed var(--border-primary);
-            border-radius: 10px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            transition: all 0.2s ease;
         }
-        .slot-box:hover {
-            border-color: var(--neon-cyan);
-            background: var(--bg-elevated);
-        }
-        .slot-box img {
-            max-width: 80%;
-            max-height: 80%;
+        .slot-icon-box img {
+            max-width: 85%;
+            max-height: 85%;
             object-fit: contain;
         }
-        .slot-box .plus-icon {
-            font-size: 24px;
+        .slot-icon-box .plus-sign {
+            font-size: 20px;
             color: var(--text-muted);
         }
-        .equipped-name {
-            font-size: 0.95rem;
+        .slot-label-name {
             font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 1rem;
         }
-        .remove-gear-btn {
-            background: transparent;
-            border: none;
-            color: #ef4444;
+        .slot-equipped-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .slot-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-slot-action {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 0.85rem;
-            margin-top: 5px;
+            transition: all 0.2s ease;
+        }
+        .btn-slot-action:hover {
+            border-color: var(--neon-blue);
+        }
+        .stats-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
         .stats-panel {
             background: var(--bg-surface);
             border: 1px solid var(--border-primary);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
+            border-radius: 10px;
+            padding: 15px;
         }
         .stats-panel h3 {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
+            font-size: 1rem;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -137,8 +141,8 @@
         .stat-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
         }
         .stat-label {
             color: var(--text-secondary);
@@ -147,26 +151,19 @@
             color: var(--neon-green);
             font-weight: 600;
         }
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .btn-action {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .btn-reset {
+        .btn-reset-set {
+            width: 100%;
             background: rgba(239, 68, 68, 0.1);
             color: #ef4444;
             border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 15px;
         }
-        .btn-reset:hover {
+        .btn-reset-set:hover {
             background: rgba(239, 68, 68, 0.2);
         }
         /* Modal */
@@ -178,7 +175,7 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            padding: 20px;
+            padding: 15px;
         }
         .modal-overlay.active {
             display: flex;
@@ -186,9 +183,9 @@
         .modal-content {
             background: var(--bg-surface);
             border: 1px solid var(--border-primary);
-            border-radius: 14px;
+            border-radius: 12px;
             width: 100%;
-            max-width: 600px;
+            max-width: 550px;
             max-height: 80vh;
             display: flex;
             flex-direction: column;
@@ -196,14 +193,11 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .modal-header {
-            padding: 15px 20px;
+            padding: 12px 18px;
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        .modal-header h3 {
-            font-size: 1.2rem;
         }
         .modal-close {
             background: none;
@@ -213,29 +207,29 @@
             cursor: pointer;
         }
         .modal-body {
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
         }
         .gear-search-input {
             width: 100%;
-            padding: 10px 15px;
+            padding: 10px 14px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
             color: var(--text-primary);
-            margin-bottom: 15px;
-            font-size: 1rem;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
         }
         .gear-list {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
         .gear-item-row {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 10px;
+            gap: 12px;
+            padding: 8px 12px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
@@ -247,21 +241,9 @@
             background: var(--bg-elevated);
         }
         .gear-item-icon {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             object-fit: contain;
-        }
-        .gear-item-info {
-            flex: 1;
-        }
-        .gear-item-title {
-            font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 3px;
-        }
-        .gear-item-stats {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
         }
     </style>
 </head>
@@ -276,60 +258,52 @@
     <nav class="nav-links" id="navLinks">
         <a href="index.html">Home</a>
         <a href="calculator.html">Speedup Calculator</a>
+        <a href="gear-simulator.html" style="color: var(--neon-blue);">Gear Simulator</a>
         <a href="hunting.html">Monster Hunting</a>
         <a href="training.html">Training Calculator</a>
-        <a href="composition.html">Troop Composition</a>
-        <a href="leaderboard.html">⚔️ War</a>
-        <a href="comparison.html">Comparison</a>
-        <a href="migration.html">Migration Guide</a>
-        <a href="research.html">Research & Construction</a>
-        <a href="festival.html">Guild Festival</a>
         <a href="meridian.html">Meridian</a>
-        <a href="trap-guide.html">Trap Guide</a>
     </nav>
 </header>
 
 <div class="simulator-container">
     <div style="text-align: center; margin-bottom: 20px;">
-        <h1 style="font-size: 2rem; margin-bottom: 5px;">Advanced Gear Simulator</h1>
-        <p style="color: var(--text-secondary);">Equip items across sets and simulate total combat, economy, and sigil bonuses.</p>
+        <h1 style="font-size: 1.8rem; margin-bottom: 5px;">Gear Simulator</h1>
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">Select equipment for each slot across Set 1, 2, and 3 to simulate stats.</p>
     </div>
 
-    <!-- Set Tabs -->
+    <!-- Set Tabs exactly matching reference -->
     <div class="set-tabs">
         <button class="set-tab active" onclick="switchSet('set1')">Set 1</button>
         <button class="set-tab" onclick="switchSet('set2')">Set 2</button>
         <button class="set-tab" onclick="switchSet('set3')">Set 3</button>
     </div>
 
-    <div class="action-buttons">
-        <button class="btn-action btn-reset" onclick="resetCurrentSet()">🔄 Reset Entire Set</button>
-    </div>
-
-    <div class="sim-layout">
-        <!-- Slots Grid -->
-        <div class="slots-grid" id="slotsGrid">
+    <div class="sim-grid">
+        <!-- Left: Slots matching reference order (Legs, Armor, Helmet, Main-Hand, Off-Hand, Accessory 1, 2, 3) -->
+        <div class="gear-slots-container" id="gearSlotsContainer">
             <!-- Rendered dynamically -->
         </div>
 
-        <!-- Stats Panels -->
-        <div>
+        <!-- Right: Stats Sidebar -->
+        <div class="stats-sidebar">
+            <button class="btn-reset-set" onclick="resetCurrentSet()">🔄 Reset Entire Set</button>
+
             <div class="stats-panel">
-                <h3>⚔️ Combat Stats</h3>
+                <h3>⚔️ Combat</h3>
                 <div id="combatStatsList">
                     <div class="stat-item"><span class="stat-label">No Combat Stats Active</span></div>
                 </div>
             </div>
 
             <div class="stats-panel">
-                <h3>🛡️ Economy Stats</h3>
+                <h3>🛡️ Economy</h3>
                 <div id="economyStatsList">
                     <div class="stat-item"><span class="stat-label">No Economy Stats Active</span></div>
                 </div>
             </div>
 
             <div class="stats-panel">
-                <h3>✧ Sigil Stats</h3>
+                <h3>✧ Sigils</h3>
                 <div id="sigilStatsList">
                     <div class="stat-item"><span class="stat-label">No Sigil Stats Active</span></div>
                 </div>
@@ -338,18 +312,16 @@
     </div>
 </div>
 
-<!-- Gear Selection Modal -->
+<!-- Modal -->
 <div class="modal-overlay" id="gearModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 id="modalTitle">Select Gear</h3>
+            <h3 id="modalTitle">Select Equipment</h3>
             <button class="modal-close" onclick="closeModal()">×</button>
         </div>
         <div class="modal-body">
-            <input type="text" class="gear-search-input" id="gearSearchInput" placeholder="Search gear by name..." oninput="filterGearList()">
-            <div class="gear-list" id="gearListContainer">
-                <!-- Dynamically populated gear list -->
-            </div>
+            <input type="text" class="gear-search-input" id="gearSearchInput" placeholder="Search gear..." oninput="filterGearList()">
+            <div class="gear-list" id="gearListContainer"></div>
         </div>
     </div>
 </div>
@@ -359,11 +331,10 @@
     let currentSet = 'set1';
     let currentActiveSlot = null;
 
-    // Load sets from localStorage or initialize
     let gearSets = JSON.parse(localStorage.getItem('hem_gear_sets')) || {
-        set1: { helmet: null, armor: null, legs: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null },
-        set2: { helmet: null, armor: null, legs: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null },
-        set3: { helmet: null, armor: null, legs: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null }
+        set1: { legs: null, armor: null, helmet: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null },
+        set2: { legs: null, armor: null, helmet: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null },
+        set3: { legs: null, armor: null, helmet: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null }
     };
 
     const slotDefinitions = [
@@ -378,24 +349,31 @@
     ];
 
     function renderSimulator() {
-        const grid = document.getElementById('slotsGrid');
-        grid.innerHTML = '';
+        const container = document.getElementById('gearSlotsContainer');
+        container.innerHTML = '';
 
         slotDefinitions.forEach(slot => {
             const equippedId = gearSets[currentSet][slot.key];
-            const equippedItem = findItemById(equippedId, slot.category);
+            const item = findItemById(equippedId, slot.category);
 
-            const card = document.createElement('div');
-            card.className = 'gear-slot-card';
-            card.innerHTML = `
-                <div class="slot-title">${slot.name}</div>
-                <div class="slot-box" onclick="openModal('${slot.key}', '${slot.category}', '${slot.name}')">
-                    ${equippedItem ? `<img src="${equippedItem.image}" alt="${equippedItem.name}">` : `<i class="fas fa-plus plus-icon"></i>`}
+            const row = document.createElement('div');
+            row.className = 'gear-slot-row';
+            row.innerHTML = `
+                <div class="slot-info">
+                    <div class="slot-icon-box" onclick="openModal('${slot.key}', '${slot.category}', '${slot.name}')">
+                        ${item ? `<img src="${item.image}" alt="${item.name}">` : `<i class="fas fa-plus plus-sign"></i>`}
+                    </div>
+                    <div>
+                        <div class="slot-label-name">${slot.name}</div>
+                        <div class="slot-equipped-desc">${item ? `${item.name} (${item.rarity} Lvl ${item.level})` : 'Click + to equip'}</div>
+                    </div>
                 </div>
-                <div class="equipped-name">${equippedItem ? equippedItem.name : 'Empty'}</div>
-                ${equippedItem ? `<button class="remove-gear-btn" onclick="unequipSlot('${slot.key}')">Remove</button>` : ''}
+                <div class="slot-actions">
+                    <button class="btn-slot-action" onclick="openModal('${slot.key}', '${slot.category}', '${slot.name}')">Select</button>
+                    ${item ? `<button class="btn-slot-action" style="color:#ef4444;" onclick="unequipSlot('${slot.key}')">X</button>` : ''}
+                </div>
             `;
-            grid.appendChild(card);
+            container.appendChild(row);
         });
 
         calculateStats();
@@ -403,18 +381,18 @@
 
     function findItemById(id, category) {
         if (!id || !gearData[category]) return null;
-        return gearData[category].find(item => item.id === id) || null;
+        return gearData[category].find(i => i.id === id) || null;
     }
 
     function switchSet(setName) {
         currentSet = setName;
-        document.querySelectorAll('.set-tab').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.set-tab').forEach(b => b.classList.remove('active'));
         event.target.classList.add('active');
         renderSimulator();
     }
 
     function resetCurrentSet() {
-        gearSets[currentSet] = { helmet: null, armor: null, legs: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null };
+        gearSets[currentSet] = { legs: null, armor: null, helmet: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null };
         saveAndRender();
     }
 
@@ -441,14 +419,14 @@
     }
 
     function renderGearList(category, filterText = '') {
-        const container = document.getElementById('gearListContainer');
-        container.innerHTML = '';
+        const listContainer = document.getElementById('gearListContainer');
+        listContainer.innerHTML = '';
 
         const items = gearData[category] || [];
-        const filtered = items.filter(item => item.name.toLowerCase().includes(filterText.toLowerCase()));
+        const filtered = items.filter(i => i.name.toLowerCase().includes(filterText.toLowerCase()));
 
         if (filtered.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-secondary);">No gear found</div>`;
+            listContainer.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-secondary);">No gear found</div>`;
             return;
         }
 
@@ -457,107 +435,70 @@
             row.className = 'gear-item-row';
             row.onclick = () => selectGear(item.id);
 
-            // Format stats preview
-            let statsText = '';
-            if (item.stats.combat) {
-                statsText += Object.entries(item.stats.combat).map(([k, v]) => `${k}: +${v}%`).join(', ');
-            }
-            if (item.stats.economy) {
-                statsText += (statsText ? ' | ' : '') + Object.entries(item.stats.economy).map(([k, v]) => `${k}: +${v}%`).join(', ');
-            }
+            let statsStr = '';
+            if (item.stats.combat) statsStr += Object.entries(item.stats.combat).map(([k,v])=>`${k}: +${v}%`).join(', ');
 
             row.innerHTML = `
                 <img src="${item.image}" class="gear-item-icon" alt="${item.name}">
-                <div class="gear-item-info">
-                    <div class="gear-item-title">${item.name} <span style="font-size:0.8rem; color:var(--neon-gold);">(${item.rarity} Lvl ${item.level})</span></div>
-                    <div class="gear-item-stats">${statsText || 'No stats'}</div>
+                <div style="flex:1;">
+                    <div style="font-weight:600;">${item.name} <span style="font-size:0.8rem; color:var(--neon-gold);">(${item.rarity})</span></div>
+                    <div style="font-size:0.8rem; color:var(--text-secondary);">${statsStr || 'No combat stats'}</div>
                 </div>
             `;
-            container.appendChild(row);
+            listContainer.appendChild(row);
         });
     }
 
     function filterGearList() {
-        const query = document.getElementById('gearSearchInput').value;
-        if (currentActiveSlot) {
-            renderGearList(currentActiveSlot.category, query);
-        }
+        const q = document.getElementById('gearSearchInput').value;
+        if (currentActiveSlot) renderGearList(currentActiveSlot.category, q);
     }
 
-    function selectGear(itemId) {
+    function selectGear(id) {
         if (!currentActiveSlot) return;
-        gearSets[currentSet][currentActiveSlot.slotKey] = itemId;
+        gearSets[currentSet][currentActiveSlot.slotKey] = id;
         closeModal();
         saveAndRender();
     }
 
     function calculateStats() {
         const set = gearSets[currentSet];
-        const combatTotals = {};
-        const economyTotals = {};
-        const sigilTotals = {};
+        const combat = {};
+        const economy = {};
+        const sigil = {};
 
         slotDefinitions.forEach(slot => {
-            const itemId = set[slot.key];
-            const item = findItemById(itemId, slot.category);
+            const item = findItemById(set[slot.key], slot.category);
             if (!item || !item.stats) return;
 
             if (item.stats.combat) {
-                for (const [stat, val] of Object.entries(item.stats.combat)) {
-                    combatTotals[stat] = (combatTotals[stat] || 0) + val;
-                }
+                for (const [k, v] of Object.entries(item.stats.combat)) combat[k] = (combat[k] || 0) + v;
             }
             if (item.stats.economy) {
-                for (const [stat, val] of Object.entries(item.stats.economy)) {
-                    economyTotals[stat] = (economyTotals[stat] || 0) + val;
-                }
+                for (const [k, v] of Object.entries(item.stats.economy)) economy[k] = (economy[k] || 0) + v;
             }
             if (item.stats.sigils) {
-                for (const [stat, val] of Object.entries(item.stats.sigils)) {
-                    sigilTotals[stat] = (sigilTotals[stat] || 0) + val;
-                }
+                for (const [k, v] of Object.entries(item.stats.sigils)) sigil[k] = (sigil[k] || 0) + v;
             }
         });
 
-        // Render Combat Stats
-        const combatContainer = document.getElementById('combatStatsList');
-        if (Object.keys(combatTotals).length === 0) {
-            combatContainer.innerHTML = `<div class="stat-item"><span class="stat-label">No Combat Stats Active</span></div>`;
-        } else {
-            combatContainer.innerHTML = '';
-            for (const [stat, val] of Object.entries(combatTotals)) {
-                combatContainer.innerHTML += `<div class="stat-item"><span class="stat-label">${formatStatName(stat)}</span><span class="stat-value">+${val}%</span></div>`;
-            }
-        }
+        renderStatsBox('combatStatsList', combat);
+        renderStatsBox('economyStatsList', economy);
+        renderStatsBox('sigilStatsList', sigil);
+    }
 
-        // Render Economy Stats
-        const ecoContainer = document.getElementById('economyStatsList');
-        if (Object.keys(economyTotals).length === 0) {
-            ecoContainer.innerHTML = `<div class="stat-item"><span class="stat-label">No Economy Stats Active</span></div>`;
-        } else {
-            ecoContainer.innerHTML = '';
-            for (const [stat, val] of Object.entries(economyTotals)) {
-                ecoContainer.innerHTML += `<div class="stat-item"><span class="stat-label">${formatStatName(stat)}</span><span class="stat-value">+${val}%</span></div>`;
-            }
+    function renderStatsBox(elementId, statsObj) {
+        const el = document.getElementById(elementId);
+        if (Object.keys(statsObj).length === 0) {
+            el.innerHTML = `<div class="stat-item"><span class="stat-label">No Active Stats</span></div>`;
+            return;
         }
-
-        // Render Sigil Stats
-        const sigilContainer = document.getElementById('sigilStatsList');
-        if (Object.keys(sigilTotals).length === 0) {
-            sigilContainer.innerHTML = `<div class="stat-item"><span class="stat-label">No Sigil Stats Active</span></div>`;
-        } else {
-            sigilContainer.innerHTML = '';
-            for (const [stat, val] of Object.entries(sigilTotals)) {
-                sigilContainer.innerHTML += `<div class="stat-item"><span class="stat-label">${formatStatName(stat)}</span><span class="stat-value">+${val}%</span></div>`;
-            }
+        el.innerHTML = '';
+        for (const [k, v] of Object.entries(statsObj)) {
+            el.innerHTML += `<div class="stat-item"><span class="stat-label">${k.replace(/_/g, ' ').toUpperCase()}</span><span class="stat-value">+${v}%</span></div>`;
         }
     }
 
-    function formatStatName(key) {
-        return key.split('_').map(w => w.toUpperCase()).join(' ');
-    }
-
-    // Theme toggle
     function cycleTheme() {
         const current = document.documentElement.getAttribute('data-theme') || 'dark';
         let next = (current === 'dark' || current === '') ? 'tactical' : 'dark';
