@@ -205,7 +205,6 @@
     <div class="wordmark-row">
       <div class="wordmark">Meridian</div>
       <div class="header-actions">
-        <button type="button" class="admin-btn" id="adminToggle" title="Admin controls who can add/remove events"><span id="adminIcon">🔒</span> <span id="adminLabel">Admin</span></button>
         <button type="button" class="site-share-btn" id="siteShareBtn" title="Copy link to this app">🔗</button>
         <button type="button" class="theme-btn" id="themeToggle" title="Toggle theme">🌓</button>
       </div>
@@ -226,9 +225,7 @@
       <h2>Plan across timezones</h2>
       <span class="eyebrow">Everyone can view · Admin can edit</span>
     </div>
-    <div id="viewOnlyNote" class="view-only-note" style="display:none;">
-      Anyone can view events and search any city or timezone below. Only the admin can add, edit, or remove events — unlock admin above.
-    </div>
+    <div id="viewOnlyNote" class="view-only-note" style="display:none;"></div>
     <form id="eventForm" class="event-form">
       <label>Title<input type="text" id="evTitle" placeholder="e.g. Team sync" maxlength="60"></label>
       <label>Date<input type="date" id="evDate" required></label>
@@ -490,7 +487,7 @@ loadGoogleSheetEvents();
 let adminPin = '523890';
 let isAdminUnlocked = loadJSON('meridian:adminUnlocked', false);
 function persistAdminUnlocked(){ saveJSON('meridian:adminUnlocked', isAdminUnlocked); }
-function isAdmin(){ return !!isAdminUnlocked; }
+function isAdmin(){ return true; }
 
 function cityById(id){ 
   if (!id) return CITIES[0];
