@@ -361,7 +361,7 @@
             row.innerHTML = `
                 <div class="slot-info">
                     <div class="slot-icon-box" onclick="openModal('${slot.key}', '${slot.category}', '${slot.name}')">
-                        ${item ? `<img src="${item.image}" alt="${item.name}">` : `<i class="fas fa-plus plus-sign"></i>`}
+                        ${item ? `<img src="${item.image}" alt="${item.name}" onerror="this.onerror=null;this.src='assets/gear/${slot.category}.svg';">` : `<i class="fas fa-plus plus-sign"></i>`}
                     </div>
                     <div>
                         <div class="slot-label-name">${slot.name}</div>
@@ -439,7 +439,7 @@
             if (item.stats.combat) statsStr += Object.entries(item.stats.combat).map(([k,v])=>`${k}: +${v}%`).join(', ');
 
             row.innerHTML = `
-                <img src="${item.image}" class="gear-item-icon" alt="${item.name}">
+                <img src="${item.image}" class="gear-item-icon" alt="${item.name}" onerror="this.onerror=null;this.src='assets/gear/${category}.svg';">
                 <div style="flex:1;">
                     <div style="font-weight:600;">${item.name} <span style="font-size:0.8rem; color:var(--neon-gold);">(${item.rarity})</span></div>
                     <div style="font-size:0.8rem; color:var(--text-secondary);">${statsStr || 'No combat stats'}</div>
