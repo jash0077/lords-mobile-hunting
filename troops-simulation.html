@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#060612">
+    <title>Troops Simulation - Lords Mobile Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 950px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .sim-card {
+            background: #0d0f1d;
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .sim-title {
+            text-align: center;
+            font-size: 1.8rem;
+            color: var(--neon-blue);
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+        .summary-bar {
+            display: flex;
+            justify-content: space-around;
+            background: #14172d;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        @media(max-width: 768px) {
+            .config-grid { grid-template-columns: 1fr; }
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .input-group input {
+            background: #15182e;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+        }
+        .tier-section {
+            margin-bottom: 25px;
+            background: #14172d;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .tier-header {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--neon-gold);
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 6px;
+        }
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        @media(max-width: 768px) {
+            .tier-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .troop-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #1a1e36;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 10px;
+            gap: 8px;
+        }
+        .troop-img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            border-radius: 6px;
+            background: #0a0b14;
+            border: 1px solid var(--border-primary);
+        }
+        .troop-input {
+            width: 100%;
+            background: #15182e;
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 6px;
+            text-align: center;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .btn-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .btn-calc {
+            flex: 2;
+            background: #22c55e;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-calc:hover { background: #16a34a; }
+        .btn-reset {
+            flex: 1;
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-reset:hover { background: #dc2626; }
+        .result-modal {
+            margin-top: 20px;
+            background: #15182e;
+            border: 1px solid var(--neon-blue);
+            border-radius: 10px;
+            padding: 15px;
+            display: none;
+        }
+        .result-modal h4 { color: var(--neon-gold); margin-bottom: 10px; }
+        .res-row { display: flex; justify-content: space-between; font-size: 0.9rem; padding: 4px 0; color: var(--text-secondary); }
+        .res-row span:last-child { color: var(--text-primary); font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">Lords Mobile Hub</div>
+    <div class="header-actions">
+        <button class="theme-toggle" id="themeToggleBtn" onclick="cycleTheme()"><i class="fas fa-adjust"></i> Theme</button>
+        <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </div>
+    <nav class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="calculator.html">Speedup Calculator</a>
+        <a href="training.html">Training Calculator</a>
+        <a href="troops-simulation.html" style="color: var(--neon-blue);">Troops Simulation</a>
+        <a href="chaos-arena.html">Chaos Arena</a>
+        <a href="meridian.html">Meridian</a>
+    </nav>
+</header>
+
+<div class="container">
+    <div style="margin-bottom: 15px;">
+        <a href="index.html" class="btn-back" style="background:var(--bg-surface); border:1px solid var(--border-primary); color:var(--text-primary); padding:6px 14px; border-radius:6px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:0.85rem;"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+
+    <div class="sim-card">
+        <div class="sim-title">Troops Simulation & Calculator</div>
+
+        <div class="summary-bar">
+            <div class="summary-item"><i class="fas fa-users" style="color:var(--neon-blue);"></i> Total Army: <span id="totalArmy">0</span></div>
+            <div class="summary-item"><i class="fas fa-shield-alt" style="color:var(--neon-gold);"></i> Total Might: <span id="totalMight">0</span></div>
+        </div>
+
+        <div class="config-grid">
+            <div class="input-group">
+                <label for="tSpeed">Training Speed %</label>
+                <input type="number" id="tSpeed" placeholder="0" oninput="calculateTroops()">
+            </div>
+            <div class="input-group">
+                <label for="s12">T1/T2 Sub % (Max 40)</label>
+                <input type="number" id="s12" placeholder="0" max="40" oninput="calculateTroops()">
+            </div>
+            <div class="input-group">
+                <label for="s34">T3/T4 Sub % (Max 30)</label>
+                <input type="number" id="s34" placeholder="0" max="30" oninput="calculateTroops()">
+            </div>
+            <div class="input-group" style="flex-direction:row; align-items:center; gap:10px; margin-top:20px;">
+                <input type="checkbox" id="troopEvent" style="width:20px; height:20px;" onchange="calculateTroops()">
+                <label for="troopEvent" style="font-size:1rem; color:var(--text-primary); cursor:pointer;">120% Event Active</label>
+            </div>
+        </div>
+
+        <!-- TIER 1 -->
+        <div class="tier-section">
+            <div class="tier-header">TIER 1</div>
+            <div class="tier-grid">
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Grunt.jpg" class="troop-img" alt="T1 Infantry" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Infantry</span>
+                    <input type="number" class="troop-input t-input" data-tier="1" data-type="infantry" placeholder="0" oninput="calculateTroops()">
+                </div>
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Archer.jpg" class="troop-img" alt="T1 Range" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Range</span>
+                    <input type="number" class="troop-input t-input" data-tier="1" data-type="range" placeholder="0" oninput="calculateTroops()">
+                </div>
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Cataphract.jpg" class="troop-img" alt="T1 Cavalry" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Cavalry</span>
+                    <input type="number" class="troop-input t-input" data-tier="1" data-type="cavalry" placeholder="0" oninput="calculateTroops()">
+                </div>
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Balista.jpg" class="troop-img" alt="T1 Siege" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Siege</span>
+                    <input type="number" class="troop-input t-input" data-tier="1" data-type="siege" placeholder="0" oninput="calculateTroops()">
+                </div>
+            </div>
+        </div>
+
+        <!-- TIER 2 -->
+        <div class="tier-section">
+            <div class="tier-header">TIER 2</div>
+            <div class="tier-grid">
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Gladiator.jpg" class="troop-img" alt="T2 Infantry" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Infantry</span>
+                    <input type="number" class="troop-input t-input" data-tier="2" data-type="infantry" placeholder="0" oninput="calculateTroops()">
+                </div>
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/SharpShooter.jpg" class="troop-img" alt="T2 Range" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Range</span>
+                    <input type="number" class="troop-input t-input" data-tier="2" data-type="range" placeholder="0" oninput="calculateTroops()">
+                </div>
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Reptalian.jpg" class="troop-img" alt="T2 Cavalry" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Cavalry</span>
+                    <input type="number" class="troop-input t-input" data-tier="2" data-type="cavalry" placeholder="0" oninput="calculateTroops()">
+                </div>
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Catapult.jpg" class="troop-img" alt="T2 Siege" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Siege</span>
+                    <input type="number" class="troop-input t-input" data-tier="2" data-type="siege" placeholder="0" oninput="calculateTroops()">
+                </div>
+            </div>
+        </div>
+
+        <!-- TIER 3 -->
+        <div class="tier-section">
+            <div class="tier-header">TIER 3</div>
+            <div class="tier-grid">
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Royal%20Guard.jpg" class="troop-img" alt="T3 Infantry" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Infantry</span>
+                    <input type="number" class="troop-input t-input" data-tier="3" data-type="infantry" placeholder="0" oninput="calculateTroops()">
+                </div>
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Stealth%20Sniper.jpg" class="troop-img" alt="T3 Range" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Range</span>
+                    <input type="number" class="troop-input t-input" data-tier="3" data-type="range" placeholder="0" oninput="calculateTroops()">
+                </div>
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Royal%20Cavalry.jpg" class="troop-img" alt="T3 Cavalry" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Cavalry</span>
+                    <input type="number" class="troop-input t-input" data-tier="3" data-type="cavalry" placeholder="0" oninput="calculateTroops()">
+                </div>
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Destroyer.jpg" class="troop-img" alt="T3 Siege" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Siege</span>
+                    <input type="number" class="troop-input t-input" data-tier="3" data-type="siege" placeholder="0" oninput="calculateTroops()">
+                </div>
+            </div>
+        </div>
+
+        <!-- TIER 4 -->
+        <div class="tier-section">
+            <div class="tier-header">TIER 4</div>
+            <div class="tier-grid">
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Heroic%20Figther.jpg" class="troop-img" alt="T4 Infantry" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Infantry</span>
+                    <input type="number" class="troop-input t-input" data-tier="4" data-type="infantry" placeholder="0" oninput="calculateTroops()">
+                </div>
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Heroic%20Canooneer.jpg" class="troop-img" alt="T4 Range" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Range</span>
+                    <input type="number" class="troop-input t-input" data-tier="4" data-type="range" placeholder="0" oninput="calculateTroops()">
+                </div>
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Ancient%20Drake%20Rider.jpg" class="troop-img" alt="T4 Cavalry" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Cavalry</span>
+                    <input type="number" class="troop-input t-input" data-tier="4" data-type="cavalry" placeholder="0" oninput="calculateTroops()">
+                </div>
+                <div class="troop-box">
+                    <img src="https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/Destroyer.jpg" class="troop-img" alt="T4 Siege" onerror="this.src='icons/icon-troop.png'">
+                    <span style="font-size:0.8rem;">Siege</span>
+                    <input type="number" class="troop-input t-input" data-tier="4" data-type="siege" placeholder="0" oninput="calculateTroops()">
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn-calc" onclick="calculateResourcesAction()">CALCULATE RESOURCES</button>
+            <button class="btn-reset" onclick="resetAllTroops()">Reset All</button>
+        </div>
+
+        <div class="result-modal" id="resourceModal">
+            <h4>Resource & Time Requirement Breakdown</h4>
+            <div class="res-row"><span>Food Required:</span> <span id="resFood">0</span></div>
+            <div class="res-row"><span>Stone Required:</span> <span id="resStone">0</span></div>
+            <div class="res-row"><span>Wood Required:</span> <span id="resWood">0</span></div>
+            <div class="res-row"><span>Ore Required:</span> <span id="resOre">0</span></div>
+            <div class="res-row"><span>Gold Required:</span> <span id="resGold">0</span></div>
+            <div class="res-row" style="margin-top:8px; border-top:1px solid var(--border-subtle); padding-top:6px;"><span>Estimated Training Time:</span> <span id="resTime">0h 0m</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const mightTable = { 1: 1, 2: 2, 3: 4, 4: 8 };
+    // Base resource costs per troop roughly by tier
+    const resTable = {
+        1: { food: 10, stone: 0, wood: 10, ore: 0, gold: 0, timeSec: 15 },
+        2: { food: 25, stone: 10, wood: 25, ore: 10, gold: 0, timeSec: 45 },
+        3: { food: 60, stone: 30, wood: 60, ore: 30, gold: 10, timeSec: 120 },
+        4: { food: 150, stone: 80, wood: 150, ore: 80, gold: 40, timeSec: 300 }
+    };
+
+    function calculateTroops() {
+        let totalTroops = 0;
+        let totalMight = 0;
+
+        document.querySelectorAll('.t-input').forEach(input => {
+            const qty = parseInt(input.value) || 0;
+            const tier = parseInt(input.dataset.tier);
+            totalTroops += qty;
+            totalMight += qty * (mightTable[tier] || 1);
+        });
+
+        document.getElementById('totalArmy').innerText = totalTroops.toLocaleString();
+        document.getElementById('totalMight').innerText = totalMight.toLocaleString();
+    }
+
+    function calculateResourcesAction() {
+        let food = 0, stone = 0, wood = 0, ore = 0, gold = 0, totalSeconds = 0;
+
+        const tSpeed = parseFloat(document.getElementById('tSpeed').value) || 0;
+        const s12 = Math.min(40, parseFloat(document.getElementById('s12').value) || 0);
+        const s34 = Math.min(30, parseFloat(document.getElementById('s34').value) || 0);
+        const is120 = document.getElementById('troopEvent').checked;
+
+        document.querySelectorAll('.t-input').forEach(input => {
+            const qty = parseInt(input.value) || 0;
+            if (qty <= 0) return;
+            const tier = parseInt(input.dataset.tier);
+            const base = resTable[tier];
+
+            food += qty * base.food;
+            stone += qty * base.stone;
+            wood += qty * base.wood;
+            ore += qty * base.ore;
+            gold += qty * base.gold;
+
+            let subBoost = (tier <= 2) ? s12 : s34;
+            let netSpeed = 1 + (tSpeed + subBoost) / 100;
+            if (is120) netSpeed *= 1.2;
+
+            totalSeconds += (qty * base.timeSec) / netSpeed;
+        });
+
+        document.getElementById('resFood').innerText = formatLargeNum(food);
+        document.getElementById('resStone').innerText = formatLargeNum(stone);
+        document.getElementById('resWood').innerText = formatLargeNum(wood);
+        document.getElementById('resOre').innerText = formatLargeNum(ore);
+        document.getElementById('resGold').innerText = formatLargeNum(gold);
+
+        const hours = Math.floor(totalSeconds / 3600);
+        const mins = Math.floor((totalSeconds % 3600) / 60);
+        document.getElementById('resTime').innerText = `${hours}h ${mins}m`;
+
+        document.getElementById('resourceModal').style.display = 'block';
+    }
+
+    function formatLargeNum(n) {
+        if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+        if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+        if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+        return n.toLocaleString();
+    }
+
+    function resetAllTroops() {
+        document.querySelectorAll('.t-input').forEach(i => i.value = '');
+        document.getElementById('tSpeed').value = '';
+        document.getElementById('s12').value = '';
+        document.getElementById('s34').value = '';
+        document.getElementById('troopEvent').checked = false;
+        document.getElementById('resourceModal').style.display = 'none';
+        calculateTroops();
+    }
+
+    function cycleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        let next = (current === 'dark' || current === '') ? 'tactical' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('hem_theme', next);
+    }
+
+    window.onload = () => {
+        const savedTheme = localStorage.getItem('hem_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    };
+</script>
+</body>
+</html>
