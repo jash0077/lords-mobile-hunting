@@ -1,0 +1,1330 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+<meta name="description" content="Tools HUB for Lords Mobile players featuring a speed up calculator, gem prediction, troops calculator, gear simulator, army colosseum rotation tools.">
+
+  
+  <!-- Website Lauch-->
+   
+  <meta name="google-site-verification" content="FlGR6pQWPwSldSOyh68fLYy2WbwQmTDo-DkGMigi-EI" />
+  
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FL3JQFY6NF"></script>
+
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-FL3JQFY6NF');
+</script>
+
+
+  <title>
+    Lords Mobile Tool | Gear Simulator |Army Colosseum Rotation | Troops Calculator | Speed Up Calculator
+  </title>
+  
+<style>
+    /* =========================================
+       1. GLOBAL TOOLKIT STYLES (Light Theme)
+       ========================================= */
+    * { box-sizing: border-box; }
+    html, body { overflow-x: hidden; width: 100%; }
+    body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: #f4f4f4; text-align: center; margin: 0; padding: 10px; color: #333; }
+    
+    .container { max-width: 900px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    h1 { margin-top: 5px; font-size: 24px; color: #222; }
+    h2 { margin-top: 5px; color: #444; }
+    
+    .menu-btn { display: block; width: 100%; max-width: 280px; margin: 10px auto; padding: 12px; border: none; border-radius: 8px; background: #007bff; color: white; cursor: pointer; font-weight: bold; font-size: 15px; transition: background 0.2s, transform 0.1s; }
+    .menu-btn:hover { background: #0056b3; transform: translateY(-1px); }
+    .menu-btn:active { transform: translateY(1px); }
+    
+    .tool-input, .tool-select { display: block; width: 100%; max-width: 280px; margin: 10px auto; padding: 12px; border: 1px solid #ccc; border-radius: 6px; text-align: center; font-size: 14px; transition: border-color 0.2s; }
+    .tool-input:focus, .tool-select:focus { outline: none; border-color: #007bff; }
+    
+    .tool { display: none; width: 100%; padding-bottom: 10px; }
+    .guide { display: none; background: #eef; padding: 15px; border-radius: 6px; margin: 15px auto; font-size: 14px; max-width: 280px; border: 1px solid #ccd; text-align: left; }
+
+    /* Expandable Sub-menus for Gem Tool */
+    .adv-group { display: none; background: #fdfdfd; padding: 10px; border-radius: 6px; margin: -5px auto 15px auto; max-width: 280px; border: 1px dashed #bbb; animation: fadeIn 0.3s ease; }
+    .adv-label { display: block; font-size: 11px; color: #888; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .adv-group .tool-input { margin: 6px auto; padding: 10px; }
+
+    /* =========================================
+       2. TROOP & CALC CSS
+       ========================================= */
+    .game-icon { height: 20px; width: auto; vertical-align: middle; background: #eee; border-radius: 3px; }
+    .sticky-stats { position: sticky; top: 0; z-index: 10; background: #fff; padding: 10px 0; display: flex; justify-content: space-around; border-bottom: 2px solid #eee; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .stat-item { display: flex; align-items: center; font-weight: 800; font-size: 16px; gap: 6px; color: #333; }
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; background: #f9f9f9; padding: 12px; border-radius: 8px; border: 1px solid #eee; }
+    .input-group { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; text-align: left; }
+    .input-group label { font-size: 10px; font-weight: 800; color: #666; text-transform: uppercase; margin-bottom: 4px; }
+    .input-group input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; margin: 0; }
+    .input-group input[type="checkbox"] { width: 20px; height: 20px; margin: 8px 0; cursor: pointer; }
+    .tier-row { border-bottom: 1px solid #eee; padding: 15px 0; }
+    .tier-header { font-weight: 800; color: #007bff; margin-bottom: 10px; font-size: 14px; text-align: center; letter-spacing: 1px; } 
+    .tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .troop-box input { width: 100%; padding: 8px 4px; margin: 0; font-size: 13px; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
+    .troop-box label { display: block; font-size: 10px; font-weight: bold; color: #888; text-align: center; margin-bottom: 3px; }
+    .troop-img { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; background: #eaeaea; display: block; margin: 0 auto 5px auto; border: 1px solid #ddd; }
+
+    /* Result Overlay */
+    .resultTab { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 1000; padding: 15px; animation: fadeIn 0.3s ease; }
+    .resultBox { background: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 360px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+    .closeBtn { position: absolute; right: 15px; top: 10px; font-weight: bold; cursor: pointer; color: red; font-size: 20px; transition: transform 0.2s; }
+    .closeBtn:hover { transform: scale(1.1); }
+    .resultGrid { display: grid; grid-template-columns: 1fr auto; row-gap: 8px; margin-top: 15px; font-size: 15px; }
+    .resultGrid div { text-align: left; display: flex; align-items: center; gap: 8px; font-weight: 500;}
+    .totalRow { margin-top: 15px; padding-top: 10px; border-top: 2px solid #ccc; font-weight: 800; display: grid; grid-template-columns: 1fr auto; color: #007bff; font-size: 18px; }
+    .precise-time { font-family: monospace; background: #222; color: #00ffcc; padding: 12px; border-radius: 6px; margin: 10px 0; font-size: 18px; text-align: center; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
+
+    /* =========================================
+       3. CHAOS ARENA CSS
+       ========================================= */
+    #chaosResult { margin-top:15px; text-align:left; background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #ccc; max-height:350px; overflow-y:auto; display:none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+    #chaosResult ul { list-style-type: none; padding-left: 0; margin: 10px 0; }
+    #chaosResult li { padding: 6px 0; border-bottom: 1px solid #e0e0e0; font-size: 13px; color: #444; display: flex; justify-content: space-between; }
+    #chaosResult h3 { margin-top: 0; color: #8e44ad; border-bottom: 2px solid #8e44ad; padding-bottom: 5px; font-size: 16px;}
+    .chaos-summary { background: #e8f4fd; padding: 10px; border-radius: 6px; margin-top: 10px; border: 1px solid #bce0fd; }
+    .chaos-summary strong { display: block; color: #0056b3; font-size: 14px; margin-bottom: 4px; }
+
+    /* =========================================
+       4. GEAR SIMULATOR CSS
+       ========================================= */
+    #gearTool {
+      --bg: #0b0e17; --panel: #161b2e; --panel-2: #1e2540; --text: #e2e8f0; 
+      --muted: #8e9bb0; --accent: #4da6ff; --accent-glow: rgba(77, 166, 255, 0.4); --border: rgba(255,255,255,0.08);
+      --danger: #ff4d4d; --danger-dark: #cc0000; --sigil: #b08dff;
+      background: var(--bg); color: var(--text); padding: 20px 15px; border-radius: 12px; margin-top: 10px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    }
+    #gearTool .wrap { max-width: 1000px; margin: 0 auto; }
+    #gearTool .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+    #gearTool .tabs { display: flex; gap: 8px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 8px;}
+    #gearTool .tab { padding: 8px 18px; background: transparent; border: none; color: var(--muted); border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size:14px; font-weight: 600; font-family: inherit;}
+    #gearTool .tab:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    #gearTool .tab.active { background: var(--accent); color: #000; box-shadow: 0 0 10px var(--accent-glow); }
+    #gearTool .reset-all-btn { background: rgba(255, 77, 77, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: all 0.2s; font-family: inherit;}
+    #gearTool .reset-all-btn:hover { background: var(--danger); color: white; box-shadow: 0 0 10px rgba(255, 77, 77, 0.4); }
+    
+    #gearTool .stats-container { background: var(--panel); border-radius: 10px; padding: 18px; margin-bottom: 20px; border: 1px solid var(--border); display: flex; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    #gearTool .stat-col { flex: 1; text-align: left; }
+    #gearTool .stat-col-divider { width: 1px; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent); }
+    #gearTool .stat-header { font-weight: 800; color: var(--accent); margin-bottom: 12px; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px; text-align: center; letter-spacing: 1px;}
+    #gearTool .stat-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px; }
+    #gearTool .stat-row span { color: var(--muted); }
+    #gearTool .stat-row strong { color: #fff; }
+    
+    #gearTool .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+    #gearTool .slot { background: var(--panel); border-radius: 10px; padding: 12px; text-align: center; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); height: 100%; min-height: 160px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); position: relative; overflow: hidden;}
+    #gearTool .slot-label { color: var(--muted); font-weight: bold; text-transform: uppercase; font-size: 10px; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; letter-spacing: 0.5px;}
+    #gearTool .img-box { width: 100%; aspect-ratio: 1/1; background: #1c223a; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); margin: 0 auto; position: relative; flex: 0 0 auto; transition: all 0.2s;}
+    #gearTool .img-box img { width: 100%; height: 100%; object-fit: cover; }
+    #gearTool .slot:has(img) .img-box { border-color: rgba(77, 166, 255, 0.3); box-shadow: 0 0 15px rgba(77, 166, 255, 0.1); }
+    #gearTool .slot:has(img) .slot-label { color: var(--accent); }
+    #gearTool .img-box.empty-box { cursor: pointer; border: 1px dashed rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); }
+    #gearTool .img-box.empty-box:hover { border-color: var(--accent); background: rgba(77, 166, 255, 0.05); transform: scale(1.02); }
+    
+    #gearTool .btn { cursor: pointer; border: none; border-radius: 5px; padding: 7px; font-size: 11px; font-weight: bold; color: #fff; background: #2c3558; transition: all 0.2s; width: 100%; margin:0; font-family: inherit;}
+    #gearTool .btn:hover { background: #3d4975; transform: translateY(-1px); }
+    #gearTool .btn:active { transform: translateY(0); }
+    #gearTool .btn-plus { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); font-size: 24px; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: all 0.2s;}
+    #gearTool .empty-box:hover .btn-plus { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow);}
+    
+    #gearTool .actions-group { display: flex; flex-direction: column; gap: 5px; margin-top: auto; padding-top: 10px; width: 100%; }
+    #gearTool .btn-clear { background: transparent; color: var(--danger); border: 1px solid rgba(255, 77, 77, 0.3); }
+    #gearTool .btn-clear:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+    /* Temper Select Dropdown Styling */
+    #gearTool .temper-select { width: 100%; padding: 5px; border-radius: 4px; background: #1c223a; color: #4da6ff; border: 1px solid rgba(77, 166, 255, 0.3); font-size: 11px; font-family: inherit; font-weight: bold; cursor: pointer; outline: none; transition: all 0.2s;}
+    #gearTool .temper-select:hover { border-color: #4da6ff; background: #222a46; }
+    #gearTool .temper-select option { background: #121726; color: #fff; }
+
+    /* Gear Modal CSS */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .g-modal-wrap { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; z-index: 2000; padding: 20px; align-items: center; justify-content: center; font-family: 'Segoe UI', Tahoma, sans-serif; backdrop-filter: blur(3px); animation: fadeIn 0.2s ease;}
+    .g-modal-wrap.open { display: flex; }
+    .g-modal-box { background: #121726; width: 100%; max-width: 500px; max-height: 85vh; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; color:#fff; text-align: left; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);}
+    .g-modal-header { padding: 18px 20px; background: #181e33; display: flex; justify-content: space-between; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);}
+    .g-modal-body { padding: 15px 20px; overflow-y: auto; flex: 1; }
+    
+    .g-modal-body::-webkit-scrollbar { width: 6px; }
+    .g-modal-body::-webkit-scrollbar-track { background: transparent; }
+    .g-modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    .g-modal-body::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+    .g-modal-body .card { background: #1c223a; padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: flex-start; gap: 15px; cursor: pointer; transition: all 0.2s; }
+    .g-modal-body .card:hover { border-color: var(--accent); background: #222a46; transform: translateX(2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2);}
+    .g-modal-body .card img { width: 60px; height: 60px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); margin-top: 2px; object-fit: cover;}
+    .g-modal-body .preview-area { background: #161b2e; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--accent); font-size: 14px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);}
+    .g-modal-body .jewel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .g-modal-body .sigil-box { display: flex; justify-content: center; margin-top: 5px; }
+    .g-modal-body .socket { background: #1c223a; padding: 12px 8px; border-radius: 8px; font-size: 11px; cursor: pointer; text-align: center; border: 1px solid rgba(255,255,255,0.05); transition: all 0.2s; font-weight: 600;}
+    .g-modal-body .socket:hover { border-color: var(--accent); background: #222a46; transform: translateY(-2px);}
+    .g-modal-body .btn { cursor: pointer; border: none; border-radius: 6px; padding: 10px; font-size: 12px; font-weight: bold; color: white; background: #2c3558; width: 100%; transition: all 0.2s;}
+    .g-modal-body .btn:hover { background: #3d4975; }
+
+    /* Toast Notification */
+    .toast-notif { position: fixed; top: 70%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 23, 38, 0.95); color: #4da6ff; padding: 15px 30px; border-radius: 30px; font-weight: 800; font-size: 16px; z-index: 3000; pointer-events: none; opacity: 0; transition: opacity 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border: 2px solid #4da6ff; letter-spacing: 1px;}
+    .toast-notif.show { opacity: 1; }
+
+    /* =========================================
+/* =========================================
+   5. COLOSSEUM ROTATION CSS
+   ========================================= */
+.colo-card { background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 15px; text-align: left; }
+.colo-card-title { font-size: 12px; font-weight: bold; color: #888; text-transform: uppercase; margin-bottom: 5px; }
+.colo-card-value { font-size: 20px; font-weight: 800; color: #fd7e14; margin-bottom: 10px; }
+.colo-timers { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.colo-timers .timer-box { flex: 1; min-width: 120px; background: #222; color: #00ffcc; padding: 12px; border-radius: 6px; text-align: center; font-family: monospace; font-size: 16px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
+.colo-timers .timer-box span { display: block; font-size: 10px; color: #aaa; text-transform: uppercase; margin-bottom: 3px; font-family: 'Segoe UI', sans-serif;}
+.colo-list { list-style: none; padding: 0; margin: 15px 0 0 0; border: 1px solid #eee; border-radius: 8px; background: #f9f9f9; overflow: hidden; text-align: left; }
+.colo-list li { padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 14px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;}
+.colo-list li:last-child { border-bottom: none; }
+.colo-list li.active { background: #fd7e14; color: white; font-weight: bold; transform: scale(1.02); box-shadow: 0 4px 10px rgba(253, 126, 20, 0.3); border-radius: 6px;}
+.colo-list li.active span { color: white; }
+.colo-list li span { color: #666; font-size: 12px; font-weight: bold; }
+
+    
+    
+    
+
+    /* Mobile overrides */
+    @media (max-width: 600px) {
+        .container { padding: 10px; border-radius: 0; box-shadow: none; }
+        .tier-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        #gearTool { padding: 12px; }
+        #gearTool .top-bar { justify-content: center; }
+        #gearTool .stats-container { flex-direction: column; gap: 10px; padding: 12px;}
+        #gearTool .stat-col-divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent); margin: 5px 0; }
+        #gearTool .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+        #gearTool .slot { padding: 8px; min-height: 130px; border-radius: 8px;}
+        #gearTool .slot-label { font-size: 8px; margin-bottom: 6px; letter-spacing: 0;}
+        #gearTool .img-box { border-radius: 6px; }
+        #gearTool .btn { padding: 6px 2px; font-size: 9px; border-radius: 4px;}
+        #gearTool .btn-plus { width: 30px; height: 30px; font-size: 20px; }
+        #gearTool .actions-group { gap: 4px; padding-top: 6px;}
+        .g-modal-box { max-height: 90vh; }
+        .g-modal-body { padding: 12px; }
+        
+/* =========================================
+   6. ADMIN SYNC PANEL CSS
+   ========================================= */
+.admin-btn { background: #dc3545; color: white; margin-top: 20px; width: 100%; padding: 12px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
+.admin-panel { background: #f8d7da; border-color: #dc3545; margin-top: 10px; }
+.admin-label { font-size: 12px; font-weight: bold; margin-top: 10px; display: block; color: #333; }
+.admin-input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box; }
+.admin-save-btn { background: #28a745; color: white; width: 100%; padding: 12px; border-radius: 6px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; }
+
+        
+    }
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+    <h1 id="mainTitle">Lords Mobile Tools</h1>
+
+    <div id="toolsMenu">
+        <h2>Select a Tool</h2>
+        <button class="menu-btn" onclick="openTool('speedTool')">Speed Up Calculator</button>
+        
+        <button class="menu-btn" onclick="openTool('gemTool')">Gem Prediction</button>
+        
+        <button class="menu-btn" onclick="openTool('troopTool')" style="background:#28a745">Troops Simulation</button>
+        
+        <button class="menu-btn" onclick="openTool('chaosTool')" style="background:#8e44ad">Chaos Arena Quest</button>
+        
+        <button class="menu-btn" onclick="openTool('gearTool')" style="background:#161b2e; border: 2px solid #4da6ff; color:#4da6ff;">Gear Simulator</button>
+        
+        <button class="menu-btn" onclick="openTool('coloTool')" style="background:#fd7e14; border: 2px solid #e86c00; color:white;">Army Colosseum Rotation</button>
+        
+    </div>
+
+<div id="coloTool" class="tool">
+    <button class="menu-btn" onclick="backTools()" style="background:#6c757d; max-width:120px; margin: 0 auto 15px 0;">← Back</button>
+    
+    <h2 style="color: #fd7e14; margin-bottom: 15px;">Army Colosseum Rotation</h2>
+    
+    <div class="colo-card">
+        <div class="colo-card-title">Current Constellation / Formation</div>
+        <div class="colo-card-value" id="c-current-buff">Loading...</div>
+        
+        <div class="colo-card-title">Troops Information</div>
+        
+        <div style="font-size: 15px; font-weight: 600; color:#333; margin-bottom: 15px;" id="c-current-troop">Loading...</div>
+        
+        <div class="colo-timers">
+            <div class="timer-box" style="flex: 100%;">
+                <span>Next Rotation In</span>
+                <div id="c-timer-next">--d --h --m --s</div>
+            </div>
+        </div>
+        
+        
+    <button class="admin-btn" onclick="toggleAdminPanel()">⚙️ Admin: Sync Rotation</button>
+        
+    <div id="coloAdminPanel" class="colo-card admin-panel" style="display: none;">
+        <div class="colo-card-title" style="color:#dc3545;">Sync Current Live Data</div>
+        
+        <label class="admin-label">Current Live Formation:</label>
+        <select id="adminPhaseSelect" class="admin-input">
+            <option value="0">Infantry Wedge (100 INFANTRY)</option>
+            <option value="1">Infantry Phalanx (50/50 INFANTRY RANGE)</option>
+            <option value="2">Range Wedge (100 RANGE)</option>
+            <option value="3">Range Phalanx (50/50 RANGE CAVALRY)</option>
+            <option value="4">Cavalry Wedge (100 CAVALRY)</option>
+            <option value="5">Cavalry Phalanx (50/50 INFANTRY CAVALRY)</option>
+            <option value="6">Range Phalanx (50/50 INFANTRY RANGE)</option>
+        </select>
+
+        <label class="admin-label">Time Remaining In Game:</label>
+        <div style="display: flex; gap: 5px; margin-bottom:15px;">
+            <input type="number" id="adminDays" class="admin-input" placeholder="Days" min="0" max="5">
+            <input type="number" id="adminHours" class="admin-input" placeholder="Hrs" min="0" max="23">
+            <input type="number" id="adminMins" class="admin-input" placeholder="Mins" min="0" max="59">
+        </div>
+
+        <button onclick="syncColoRotation()" class="admin-save-btn">Save & Sync</button>
+    </div>
+
+    </div>
+
+    <div class="colo-card" style="background:#fff3e6; border-color:#fd7e14; border-width: 2px;">
+        <div class="colo-card-title" style="color:#fd7e14;">Next Constellation / Formation</div>
+        <div style="font-size: 16px; font-weight: bold; color: #333;" id="c-next-buff">Loading...</div>
+    </div>
+
+    <h3 style="color: #666; font-size: 14px; text-transform: uppercase; margin-top: 20px;">Full Rotation Sequence</h3>
+    <ul class="colo-list" id="coloListContainer">
+    </ul>
+</div>
+
+    
+    </div>
+    <div id="speedTool" class="tool">
+        <button class="menu-btn" onclick="backTools()" style="background:#6c757d; max-width:120px; margin: 0 auto 15px 0;">← Back</button>
+        <h2>Speed Up Calculator</h2>
+        <button class="menu-btn" onclick="toggleGuide('speedGuide')" style="max-width:150px; padding:8px; font-size:12px;">Toggle Guide</button>
+        <div id="speedGuide" class="guide">Enter the quantity of each speed up item you have. The calculator will provide the total time.</div>
+        
+        <select id="speedEvent" class="tool-select">
+            <option value="1">Normal Speed (100%)</option>
+            <option value="1.2">120% Speed Event</option>
+        </select>
+        
+        <input class="tool-input" id="d1" placeholder="1 min">
+        <input class="tool-input" id="d5" placeholder="5 min">
+        <input class="tool-input" id="d10" placeholder="10 min">
+        <input class="tool-input" id="d15" placeholder="15 min">
+        <input class="tool-input" id="d30" placeholder="30 min">
+        <input class="tool-input" id="h1" placeholder="1 hour">
+        <input class="tool-input" id="h3" placeholder="3 hour">
+        <input class="tool-input" id="h8" placeholder="8 hour">
+        <input class="tool-input" id="h15" placeholder="15 hour">
+        <input class="tool-input" id="h24" placeholder="24 hour">
+        <input class="tool-input" id="d3" placeholder="3 day">
+        <input class="tool-input" id="d7" placeholder="7 day">
+        <input class="tool-input" id="d14" placeholder="14 day">
+        <input class="tool-input" id="d30s" placeholder="30 day">
+        
+        <button class="menu-btn" onclick="calculateSpeed()">Calculate Total</button>
+        <button class="menu-btn" onclick="clearInputs('speedTool')" style="background:#6c757d">Clear All</button>
+    </div>
+
+
+
+    <div id="gemTool" class="tool">
+        <button class="menu-btn" onclick="backTools()" style="background:#6c757d; max-width:120px; margin: 0 auto 15px 0;">← Back</button>
+       
+        <h2>Gem Prediction</h2>
+        <button class="menu-btn" onclick="toggleGuide('gemGuide')" style="max-width:150px; padding:8px; font-size:12px;">Toggle Guide</button>
+        <div id="gemGuide" class="guide">Enter your Estimated Gems or What you usually get from each source.</div>
+        
+        <input class="tool-input" id="colo" placeholder="Colosseum Gems (Every 3h)">
+        <input class="tool-input" id="guild" placeholder="Daily Guild Gifts">
+        <input class="tool-input" id="monster" placeholder="Daily Monster Hunt">
+        
+        <input class="tool-input" id="eventgems" placeholder="Base Weekly Events (Tap for more)" onfocus="revealAdv('advEvents')">
+        <div id="advEvents" class="adv-group">
+            <span class="adv-label">Detailed Events (Multipliers applied automatically)</span>
+            <input class="tool-input" id="kParagon" placeholder="Kingdom Paragon">
+            <input class="tool-input" id="hellEv" placeholder="Hell Events">
+            <input class="tool-input" id="gDuel" placeholder="Guild Duel">
+            <input class="tool-input" id="otherEv" placeholder="Other Events">
+        </div>
+
+        <input class="tool-input" id="treasure" placeholder="Treasure Trove Deposit (Tap for int.)" onfocus="revealAdv('advTrove')">
+        <div id="advTrove" class="adv-group">
+             <span class="adv-label">Trove Interest Rates</span>
+            <input class="tool-input" id="basic" placeholder="Basic Interest %">
+            <input class="tool-input" id="bonus" placeholder="Bonus Interest %">
+        </div>
+        
+        <button class="menu-btn" onclick="calculateGems()">Predict 30 Days</button>
+        <button class="menu-btn" onclick="clearInputs('gemTool')" style="background:#6c757d">Clear All</button>
+    </div>
+
+
+    <div id="troopTool" class="tool">
+        <button class="menu-btn" onclick="backTools()" style="background:#6c757d; max-width:120px; margin: 0 auto 15px 0;">← Back</button>
+       
+        
+<div class="sticky-stats">
+    <div class="stat-item">
+        <img id="h-army" class="game-icon" alt="Army" onerror="this.style.display='none'"> 
+        <span id="live-a">0</span>
+    </div>
+
+    <div class="stat-item">
+        <img id="h-might" class="game-icon" alt="Might" onerror="this.style.display='none'"> 
+        <span id="live-m">0</span>
+    </div>
+</div>
+
+
+        <div class="settings-grid">
+            <div class="input-group"><label>Training Speed %</label><input type="number" id="tSpeed" placeholder="0"></div>
+            <div class="input-group"><label>T1/T2 Sub % (Max 40)</label><input type="number" id="s12" placeholder="0" max="40" oninput="if(this.value>40)this.value=40;"></div>
+            <div class="input-group"><label>T3/T4 Sub % (Max 30)</label><input type="number" id="s34" placeholder="0" max="30" oninput="if(this.value>30)this.value=30;"></div>
+            
+            <div class="input-group" style="align-items: center;">
+                <label>120% Event</label>
+                <input type="checkbox" id="troopEvent" style="margin: 8px auto;">
+            </div>
+        </div>
+        <div id="tier-container"></div>
+        <button class="menu-btn" onclick="calculateTroops()" style="background:#28a745; max-width:100%;">CALCULATE RESOURCES</button>
+        <button class="menu-btn" onclick="clearInputs('troopTool')" style="background:#6c757d; max-width:100%;">Reset All</button>
+    </div>
+</div>
+
+    <div id="chaosTool" class="tool">
+        <button class="menu-btn" onclick="backTools()" style="background:#6c757d; max-width:120px; margin: 0 auto 15px 0;">← Back</button>
+        <h2 style="color: #8e44ad;">Chaos Arena Tracker</h2>
+        
+        <select id="chaosSelect" class="tool-select" onchange="runChaos()">
+            <option value="0">Select a Quest Type...</option>
+            <option value="1">1. Healing T4/T5 Quest</option>
+            <option value="2">2. Wound Enemies T4/T5 Quest</option>
+            <option value="3">3. Gathering Quest</option>
+            <option value="4">4. Destroy Enemy Troops Quest</option>
+        </select>
+
+        <div id="chaosResult"></div>
+    </div>
+
+    <div id="gearTool" class="tool">
+        <button class="menu-btn" onclick="backTools()" style="background:#2c3558; max-width:120px; margin: 0 auto 15px 0; border: 1px solid rgba(255,255,255,0.1);">← Back</button>
+        
+        <div class="wrap">
+          <div class="top-bar">
+            <div class="tabs">
+              <button class="tab active" onclick="switchSet(0)">Set 1</button>
+              <button class="tab" onclick="switchSet(1)">Set 2</button>
+              <button class="tab" onclick="switchSet(2)">Set 3</button>
+            </div>
+            <button class="reset-all-btn" onclick="resetEntireSet()">Reset Entire Set</button>
+          </div>
+
+          <div class="stats-container" id="statsDisplay"></div>
+          <div class="grid" id="slotsGrid"></div>
+        </div>
+    </div>
+</div>
+
+<div id="resultTab" class="resultTab">
+    <div class="resultBox">
+        <span class="closeBtn" onclick="closeResult()">X</span>
+        <div id="resultContent"></div>
+    </div>
+</div>
+
+<div class="g-modal-wrap" id="mainModal">
+  <div class="g-modal-box">
+    <div class="g-modal-header">
+      <h3 id="modalTitle" style="margin:0; font-size:16px;">Select</h3>
+      <div style="display:flex; gap:8px;">
+        <button class="btn" style="width:auto; padding:6px 12px; margin:0; font-size:12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);" onclick="toggleGearSort()">↕ Sort: Lvl</button>
+        <button class="btn btn-clear" style="width:auto; padding:6px 15px; margin:0;" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+    <div class="g-modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+    // ==========================================
+    // GLOBAL TOAST NOTIFICATION UTILITY
+    // ==========================================
+    function showToast(msg) {
+        let toast = document.getElementById('toast');
+        if(!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast';
+            toast.className = 'toast-notif';
+            document.body.appendChild(toast);
+        }
+        toast.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // ==========================================
+    // 1. GLOBAL NAVIGATION & UTILS
+    // ==========================================
+    function openTool(id){
+        document.getElementById("toolsMenu").style.display = "none";
+        document.getElementById("mainTitle").style.display = "none";
+        document.getElementById(id).style.display = "block";
+        if(id === 'gearTool') render();
+        if(id === 'coloTool') updateColoTimer();
+    }
+    
+    function backTools(){
+        document.getElementById("toolsMenu").style.display = "block";
+        document.getElementById("mainTitle").style.display = "block";
+        document.querySelectorAll(".tool").forEach(t => t.style.display = "none");
+    }
+
+    function toggleGuide(id){
+        let g = document.getElementById(id);
+        g.style.display = (g.style.display === "block") ? "none" : "block";
+    }
+    
+    function revealAdv(id){
+        document.getElementById(id).style.display = "block";
+    }
+
+    function showResult(content){
+        document.getElementById("resultContent").innerHTML = content;
+        document.getElementById("resultTab").style.display = "flex";
+    }
+    
+    function closeResult(){ 
+        document.getElementById("resultTab").style.display = "none"; 
+    }
+
+    function parseInput(id){
+        let el = document.getElementById(id);
+        if(!el) return 0;
+        let v = el.value.replace(/,/g,'');
+        return Number(v)||0;
+    }
+    
+    function formatInput(input){
+        let v = input.value.replace(/[^0-9]/g,'');
+        if(v === ""){ input.value = ""; return; }
+        input.value = Number(v).toLocaleString();
+    }
+    
+    document.querySelectorAll(".tool-input, .troop-box input").forEach(i => {
+        i.addEventListener("input", () => { if(i.type !== 'number' && i.type !== 'checkbox') formatInput(i); });
+    });
+    
+    function clearInputs(toolId){
+        document.querySelectorAll("#" + toolId + " input").forEach(i => { 
+            if(i.type === 'checkbox') i.checked = false;
+            else i.value = ""; 
+        });
+        if(toolId === 'troopTool') updateLiveStats();
+        if(toolId === 'gemTool'){
+            document.getElementById('advEvents').style.display = 'none';
+            document.getElementById('advTrove').style.display = 'none';
+        }
+    }
+
+    // ==========================================
+    //// ==========================================
+//// ==========================================
+// 2. COLOSSEUM ROTATION LOGIC (WITH ADMIN SYNC)
+// ==========================================
+
+// Attempt to load a saved anchor point from device memory, otherwise use fallback
+let savedAnchor = localStorage.getItem("coloAnchorTime");
+let dynamicCycleStart = savedAnchor ? parseInt(savedAnchor) : 1770375000000; 
+
+const COLO_PHASE_LENGTH = (5 * 24 + 10) * 3600 * 1000; // 5 days, 10 hours in ms (130 hours)
+const COLO_CYCLE_LENGTH = COLO_PHASE_LENGTH * 7; 
+
+const ROTATION_PHASES = [
+    { troop: "100 INFANTRY", buff: "Infantry Wedge" },           // Index 0
+    { troop: "50/50 INFANTRY RANGE", buff: "Infantry Phalanx" }, // Index 1
+    { troop: "100 RANGE", buff: "Range Wedge" },                 // Index 2
+    { troop: "50/50 RANGE CAVALRY", buff: "Range Phalanx" },     // Index 3
+    { troop: "100 CAVALRY", buff: "Cavalry Wedge" },             // Index 4
+    { troop: "50/50 INFANTRY CAVALRY", buff: "Cavalry Phalanx" },// Index 5
+    { troop: "50/50 INFANTRY RANGE", buff: "Range Phalanx" }     // Index 6
+];
+
+function updateColoTimer() {
+    const tool = document.getElementById("coloTool");
+    if(!tool || tool.style.display !== "block") return;
+    
+    let now = Date.now();
+    // Use the dynamic start time instead of the hardcoded constant
+    let diff = now - dynamicCycleStart;
+    let elapsed = diff % COLO_CYCLE_LENGTH;
+    if(elapsed < 0) elapsed += COLO_CYCLE_LENGTH; 
+    
+    let currentPhaseIndex = Math.floor(elapsed / COLO_PHASE_LENGTH);
+    let timeInCurrentPhase = elapsed % COLO_PHASE_LENGTH;
+    let timeLeftInPhase = COLO_PHASE_LENGTH - timeInCurrentPhase;
+    
+    let d = Math.floor(timeLeftInPhase / (24*3600*1000));
+    let h = Math.floor((timeLeftInPhase % (24*3600*1000)) / (3600*1000));
+    let m = Math.floor((timeLeftInPhase % (3600*1000)) / (60*1000));
+    let s = Math.floor((timeLeftInPhase % (60*1000)) / 1000);
+    
+    document.getElementById("c-timer-next").innerText = `${d}d ${h}h ${m}m ${s}s`;
+
+    let currentPhase = ROTATION_PHASES[currentPhaseIndex];
+    let nextIndex = (currentPhaseIndex + 1) % 7;
+    let nextPhase = ROTATION_PHASES[nextIndex];
+    
+    document.getElementById("c-current-buff").innerText = currentPhase.buff;
+    document.getElementById("c-current-troop").innerText = currentPhase.troop;
+    document.getElementById("c-next-buff").innerText = `${nextPhase.buff} (${nextPhase.troop})`;
+    
+    renderColoList(currentPhaseIndex);
+}
+
+function renderColoList(activeIndex) {
+    const listContainer = document.getElementById("coloListContainer");
+    if (!listContainer) return;
+
+    if (listContainer.innerHTML === "") {
+        let html = "";
+        ROTATION_PHASES.forEach((phase, idx) => {
+            html += `<li id="colo-li-${idx}">
+                        <div class="buff-name">${phase.buff}</div>
+                        <span class="troop-type">${phase.troop}</span>
+                     </li>`;
+        });
+        listContainer.innerHTML = html;
+    }
+    
+    document.querySelectorAll(".colo-list li").forEach(li => li.classList.remove("active"));
+    let activeLi = document.getElementById(`colo-li-${activeIndex}`);
+    if(activeLi) activeLi.classList.add("active");
+}
+
+// ==========================================
+// 3. ADMIN SYNC FUNCTIONS
+// ==========================================
+
+function toggleAdminPanel() {
+    const panel = document.getElementById("coloAdminPanel");
+    panel.style.display = panel.style.display === "none" ? "block" : "none";
+}
+
+function syncColoRotation() {
+    const selectedPhaseIndex = parseInt(document.getElementById("adminPhaseSelect").value);
+    const days = parseInt(document.getElementById("adminDays").value) || 0;
+    const hours = parseInt(document.getElementById("adminHours").value) || 0;
+    const mins = parseInt(document.getElementById("adminMins").value) || 0;
+
+    // Convert inputted time to milliseconds
+    const timeLeftInPhaseMs = (days * 24 * 3600 * 1000) + (hours * 3600 * 1000) + (mins * 60 * 1000);
+    
+    // Safety check: Don't allow inputs larger than the phase max (130 hours)
+    if(timeLeftInPhaseMs > COLO_PHASE_LENGTH) {
+        alert("Error: Time remaining cannot exceed 5 days and 10 hours.");
+        return;
+    }
+
+    // Step 1: Find out how much time has passed in the CURRENT phase
+    const elapsedInCurrentPhase = COLO_PHASE_LENGTH - timeLeftInPhaseMs;
+
+    // Step 2: Add up the time of all PREVIOUS phases in the cycle
+    const totalElapsedSinceCycleStart = (selectedPhaseIndex * COLO_PHASE_LENGTH) + elapsedInCurrentPhase;
+
+    // Step 3: Subtract that total time from RIGHT NOW to find the true Cycle Start
+    const now = Date.now();
+    dynamicCycleStart = now - totalElapsedSinceCycleStart;
+
+    // Save to local device storage so it survives page reloads
+    localStorage.setItem("coloAnchorTime", dynamicCycleStart.toString());
+
+    alert("Rotation Sync Successful!");
+    toggleAdminPanel(); // Auto-close the panel
+    
+    // Force UI to update immediately with the new math
+    updateColoTimer();
+}
+
+  
+    // ==========================================
+    // 3. SPEED UP & GEM CALCULATORS
+    // ==========================================
+    function calculateSpeed(){
+        let multiplier = document.getElementById("speedEvent").value;
+        let totalMinutes = parseInput("d1")*1 + parseInput("d5")*5 + parseInput("d10")*10 + parseInput("d15")*15 + parseInput("d30")*30 +
+                           parseInput("h1")*60 + parseInput("h3")*180 + parseInput("h8")*480 + parseInput("h15")*900 + parseInput("h24")*1440 +
+                           parseInput("d3")*4320 + parseInput("d7")*10080 + parseInput("d14")*20160 + parseInput("d30s")*43200;
+        totalMinutes *= multiplier;
+        let days = Math.floor(totalMinutes/1440), hours = Math.floor((totalMinutes%1440)/60), mins = Math.floor(totalMinutes%60);
+        showResult("<h3>Total Speed</h3><div class='precise-time'>" + days + "d " + hours + "h " + mins + "m</div>");
+    }
+
+    function calculateGems(){
+        let colo=parseInput("colo"), guild=parseInput("guild"), monster=parseInput("monster");
+        
+        let evBase = parseInput("eventgems") * 4;
+        let p = parseInput("kParagon") * 3;
+        let h = parseInput("hellEv") * 10;
+        let g = parseInput("gDuel") * 2;
+        let o = parseInput("otherEv");
+        let rEvent = evBase + p + h + g + o;
+        
+        let tr=parseInput("treasure"), ba=parseInput("basic"), bo=parseInput("bonus");
+        
+        let rColo=Math.floor(colo*8*30), rGuild=Math.floor(guild*30), rMonster=Math.floor(monster*15), rTreasure=Math.floor(tr*(100+ba+bo)/100);
+        let total = rColo + rGuild + rMonster + rEvent + rTreasure;
+        showResult("<h3>30-Day Forecast</h3><div class='resultGrid'><div>Colosseum</div><span>"+rColo.toLocaleString()+"</span><div>Guild</div><span>"+rGuild.toLocaleString()+"</span><div>Monster</div><span>"+rMonster.toLocaleString()+"</span><div>Event</div><span>"+rEvent.toLocaleString()+"</span><div>Treasure</div><span>"+rTreasure.toLocaleString()+"</span></div><div class='totalRow'><div>TOTAL GEMS</div><span>"+total.toLocaleString()+"</span></div>");
+    }
+
+    // ==========================================
+    // 4. TROOP CALCULATOR
+    // ==========================================
+    const ICONS = {
+        army: "Picsart_26-03-19_23-38-15-683.png", might: "Picsart_26-03-17_22-24-27-109.png",
+        food: "Picsart_26-03-17_22-31-19-118.png", stone: "Picsart_26-03-17_22-31-37-917.png",
+        wood: "Picsart_26-03-17_22-31-57-627.png", ore: "Picsart_26-03-17_22-32-16-895.png", gold: "Picsart_26-03-17_22-32-37-505.png"
+    };
+    const tiers = [1,2,3,4], types = ["Infantry", "Range", "Cavalry", "Siege"];
+    const mPwr = {1:2, 2:8, 3:24, 4:36}, tBase = {1:15, 2:30, 3:60, 4:120};
+    
+    const tRes = { 1: {f:50, base:50, g:0}, 2: {f:100, base:100, g:5}, 3: {f:150, base:150, g:10}, 4: {f:1000, base:1000, g:500} };
+
+    const GITHUB_BASE = "https://raw.githubusercontent.com/KaelxZenya2007/Prototype1/main/";
+
+    const TROOP_ICONS = {
+        1: { "Infantry": GITHUB_BASE + "Grunt.jpg", "Range": GITHUB_BASE + "Archer.jpg", "Cavalry": GITHUB_BASE + "Cataphract.jpg", "Siege": GITHUB_BASE + "Balista.jpg" },
+        2: { "Infantry": GITHUB_BASE + "Gladiator.jpg", "Range": GITHUB_BASE + "SharpShooter.jpg", "Cavalry": GITHUB_BASE + "Reptalian.jpg", "Siege": GITHUB_BASE + "Catapult.jpg" },
+        3: { "Infantry": GITHUB_BASE + "Royal%20Guard.jpg", "Range": GITHUB_BASE + "Stealth%20Sniper.jpg", "Cavalry": GITHUB_BASE + "Royal%20Cavalry.jpg", "Siege": GITHUB_BASE + "Destroyer.jpg" },
+        4: { "Infantry": GITHUB_BASE + "Heroic%20Figther.jpg", "Range": GITHUB_BASE + "Heroic%20Canooneer.jpg", "Cavalry": GITHUB_BASE + "Ancient%20Drake%20Rider.jpg", "Siege": GITHUB_BASE + "Destroyer.jpg" }
+    };
+
+    function formatAbbr(n) {
+        if (n >= 1e9) return (n/1e9).toFixed(1) + 'b';
+        if (n >= 1e6) return (n/1e6).toFixed(1) + 'm';
+        return Math.floor(n).toLocaleString();
+    }
+
+    function updateLiveStats() {
+        let a = 0, m = 0;
+        document.querySelectorAll('.troop-box input').forEach(i => {
+            let v = parseInt(i.value.replace(/,/g,'')) || 0;
+            a += v; m += v * mPwr[i.dataset.t];
+        });
+        document.getElementById('live-a').innerText = formatAbbr(a);
+        document.getElementById('live-m').innerText = formatAbbr(m);
+    }
+
+    function calculateTroops() {
+        const spd = parseFloat(document.getElementById('tSpeed').value) || 0;
+        const s12 = (parseFloat(document.getElementById('s12').value) || 0)/100;
+        const s34 = (parseFloat(document.getElementById('s34').value) || 0)/100;
+        const mult = (1 + (spd/100)) * (document.getElementById('troopEvent').checked ? 1.2 : 1);
+        let r = { a:0, m:0, f:0, w:0, s:0, o:0, g:0, sec:0 };
+
+        tiers.forEach(t => {
+            let sub = t <= 2 ? s12 : s34;
+            let multSub = 1 - sub;
+            types.forEach(ty => {
+                let q = parseInt(document.getElementById(`t${t}${ty}`).value.replace(/,/g,'')) || 0;
+                if(q <= 0) return;
+                r.a += q; r.m += q * mPwr[t]; r.sec += (q * tBase[t]) / mult;
+
+                let food = tRes[t].f, gold = tRes[t].g, base = tRes[t].base;
+                let w = 0, s = 0, o = 0;
+
+                if (ty === "Range") { s = base; w = base; }
+                else if (ty === "Infantry") { w = base; o = base; }
+                else if (ty === "Cavalry") { s = base; o = base; }
+                else if (ty === "Siege") { w = base; s = base; o = base; } 
+
+                r.f += (food * multSub) * q; r.w += (w * multSub) * q; r.s += (s * multSub) * q; r.o += (o * multSub) * q; r.g += (gold * multSub) * q;
+            });
+        });
+
+        let sT = Math.ceil(r.sec);
+        let d = Math.floor(sT/86400), h = Math.floor((sT%86400)/3600), m = Math.floor((sT%3600)/60), s = sT%60;
+        const line = (key, label, val) => `<div><img src="${ICONS[key]}" class="game-icon" onerror="this.style.display='none'"> ${label}</div><span>${formatAbbr(val)}</span>`;
+        
+        let content = `<h3>Precise Speeds Up Needed</h3><div class='precise-time'>${d}d ${h}h ${m}m ${s}s</div><div class='resultGrid'>` +
+            line('army', 'Army', r.a) + line('might', 'Might', r.m) + line('food', 'Food', r.f) + 
+            line('stone', 'Stone', r.s) + line('wood', 'Wood', r.w) + line('ore', 'Ore', r.o) + line('gold', 'Gold', r.g) +
+            `</div><div class='totalRow'><div>EST. DAYS</div><span>${sT > 0 ? d+1 : 0} Days</span></div>`;
+        
+        showResult(content);
+    }
+
+    const tierContainer = document.getElementById('tier-container');
+    tiers.forEach(t => {
+        let row = document.createElement('div'); row.className = 'tier-row';
+        row.innerHTML = `<div class="tier-header">TIER ${t}</div><div class="tier-grid"></div>`;
+        types.forEach(ty => {
+            let box = document.createElement('div'); box.className = 'troop-box';
+            box.innerHTML = `
+                <img src="${TROOP_ICONS[t][ty]}" class="troop-img" alt="T${t} ${ty}" onerror="this.style.display='none'">
+                <input type="text" id="t${t}${ty}" data-t="${t}" placeholder="0">
+            `;
+            box.querySelector('input').addEventListener('input', (e) => {
+                let v = e.target.value.replace(/\D/g,'');
+                e.target.value = v ? Number(v).toLocaleString() : '';
+                updateLiveStats();
+            });
+            row.querySelector('.tier-grid').appendChild(box);
+        });
+        tierContainer.appendChild(row);
+    });
+    
+    // ==========================================
+    // INITIALIZATION: Load Live Review Icons
+    // ==========================================
+    // This tells the browser to grab the filenames from your ICONS dictionary 
+    // and push them into the live header when the tool loads.
+    document.getElementById('h-army').src = ICONS.army;
+    document.getElementById('h-might').src = ICONS.might;
+
+    // ==========================================
+    // 5. CHAOS ARENA TRACKER LOGIC
+    // ==========================================
+    function runChaos() {
+        let choice = parseInt(document.getElementById("chaosSelect").value);
+        let res = document.getElementById("chaosResult");
+        
+        if (choice === 0) { res.style.display = "none"; return; }
+        
+        res.style.display = "block";
+        let html = ""; let total = 0; let val = 0;
+
+        if (choice === 1 || choice === 2) {
+            val = 25000;
+            let actionType = choice === 1 ? 'heals' : 'wounded';
+            let titleType = choice === 1 ? 'Healing' : 'Wound Enemy';
+            
+            html += `<h3>${titleType} T4/T5 Quest</h3><ul>`;
+            for(let i = 1; i <= 50; i++) {
+                html += `<li><span>Quest ${i}</span> <span><strong>${(val/1000)}k</strong> ${actionType}</span></li>`;
+                total += val; val += 5000;
+            }
+            html += `</ul>`;
+            
+            let displayTotal = total >= 1000000 ? (total/1000000).toFixed(3) + 'm' : (total/1000) + 'k';
+            html += `<div class="chaos-summary"><strong>Total Needed: ${displayTotal} troops</strong><strong>Total Reward Stone: 2500</strong></div>`;
+                     
+        } else if (choice === 3) {
+            html += `<h3>Gathering Quest</h3><ul>`;
+            let totalReward = 0;
+            for(let i = 1; i <= 20; i++) {
+                html += `<li><span>Quest ${i}</span> <span>Gather lvl 3 nodes <strong>0/${i}</strong></span></li>`;
+                totalReward += 100;
+            }
+            html += `</ul><div class="chaos-summary"><strong>Total Reward Stone: ${totalReward}</strong></div>`;
+                     
+        } else if (choice === 4) {
+            val = 250000; 
+            html += `<h3>Destroy Enemy Troops (T2 and below)</h3><ul>`;
+            for(let i = 1; i <= 50; i++) {
+                let displayVal = val >= 1000000 ? (val/1000000).toFixed(3) + 'm' : (val/1000) + 'k';
+                html += `<li><span>Quest ${i}</span> <span><strong>${displayVal}</strong> might destroyed</span></li>`;
+                total += val; val += 50000;
+            }
+            html += `</ul>`;
+            
+            let displayTotal = total >= 1000000 ? (total/1000000).toFixed(3) + 'm' : (total/1000) + 'k';
+            html += `<div class="chaos-summary"><strong>Total Might Destroyed: ${displayTotal}</strong><strong>Total Reward Stone: 2500</strong></div>`;
+        }
+        res.innerHTML = html;
+    }
+
+    // ==========================================
+    // 6. GEAR SIMULATOR 
+    // ==========================================
+    const GEAR_ICONS = {
+      "Ambrosial Cup": GITHUB_BASE + "Ambrosia%20Cup.png", "Coil Armband": GITHUB_BASE + "Coil%20Armband.jpg", "Ancient Hat": GITHUB_BASE + "Ancient%20Hat.png", "Beast Helm": GITHUB_BASE + "Beast%20Helm.png", "Blight Ring": GITHUB_BASE + "Blight%20Ring.png", "Beastly Breastplate": GITHUB_BASE + "Beastly%20BreastPlate.png", "Beastly Waist Guard": GITHUB_BASE + "Beastly%20Wasteguard.png", "Blizzard Pants": GITHUB_BASE + "Blizzard%20Pants.png", "Book of the Dead": GITHUB_BASE + "Book%20of%20the%20Dead.png", "Bubble Helm": GITHUB_BASE + "BubbleHelm.png", "Call of the Deep": GITHUB_BASE + "Call%20of%20the%20Deep.png", "Champion Armet": GITHUB_BASE + "Champion%20Armet.png", "Champion Blade": GITHUB_BASE + "Champion%20Blade.png", "Champion Blessing": GITHUB_BASE + "Champion%20Blessing.png", "Champion Boots": GITHUB_BASE + "Champion%20Boots.png", "Champion Cuirass": GITHUB_BASE + "Champion%20Cuirass.png", "Champion Blade (Cav)": GITHUB_BASE + "Champion%20Edge.png", "Champion Faith": GITHUB_BASE + "Champion%20Faith.png", "Champion GreatSword": GITHUB_BASE + "Champion%20GreatSword.png", "Champion Greaves": GITHUB_BASE + "Champion%20Greaves.png", "Champion Helm": GITHUB_BASE + "Champion%20Helm.png", "Champion Katar": GITHUB_BASE + "Champion%20Katar.png", "Champion Lamp": GITHUB_BASE + "Champion%20Lamp.png", "Champion Light": GITHUB_BASE + "Champion%20Light.png", "Champion Mail": GITHUB_BASE + "Champion%20Mail.png", "Champion Plate": GITHUB_BASE + "Champion%20Plate.png", "Champion Stride": GITHUB_BASE + "Champion%20Stride.png", "Champion Valor": GITHUB_BASE + "Champion%20Valor.png", "Champion Visor": GITHUB_BASE + "Champion%20Visor.png", "Dark Aegis": GITHUB_BASE + "Dark%20Aegis.png", "Deadly Mantle": GITHUB_BASE + "Deadly%20Mantle.png", "Decadent Sword": GITHUB_BASE + "Decadent%20Sword.png", "Devourer Helm": GITHUB_BASE + "Devourer%20Helm.png", "Dragon Fist": GITHUB_BASE + "Dragon%27s%20Fist.png", "Dragon's Iris": GITHUB_BASE + "Dragon%27s%20Iris.png", "Dragon Talon": GITHUB_BASE + "Dragon%27s%20Talon.png", "Eerie Lantern": GITHUB_BASE + "Eerie%20Lantern.png", "Eon Axe": GITHUB_BASE + "Eon%20Axe.png", "Eternal Codex": GITHUB_BASE + "Eternal%20Codex.png", "Fear Drum": GITHUB_BASE + "Fear%20Drum.png", "Firewall Plate": GITHUB_BASE + "Firewall%20Plate.png", "Frostwing Armor": GITHUB_BASE + "Frostwing%20Armor.png", "Frostwing's Breath": GITHUB_BASE + "Frostwing%27s%20Breath.png", "Frostwing Helm": GITHUB_BASE + "Frostwing%20Helm.png", "Frostwing Sword": GITHUB_BASE + "Frostwing%20Sword.png", "Gargantua Belt": GITHUB_BASE + "Gargantua%20Belt.png", "Ghostly Cane": GITHUB_BASE + "Ghastly%20Cane.png", "Hardened Carapace": GITHUB_BASE + "Hardened%20Caraspace.png", "Hedonic Cuirass": GITHUB_BASE + "Hedonic%20Cuirass.png", "Horn Cudgel": GITHUB_BASE + "Horn%20Cudgel.png", "Kraken's Anchor": GITHUB_BASE + "Kraken%27s%20Anchor.png", "Legs of the Deceiver": GITHUB_BASE + "Legs%20of%20The%20Deciever.png", "Lunar Boomerang": GITHUB_BASE + "Lunar%20Boomerang.png", "Malicious Saw": GITHUB_BASE + "Malicious%20Saw.png", "Nectar Orb": GITHUB_BASE + "Nectar%20Orb.png", "Orca Mask": GITHUB_BASE + "Orca%20Mask.png", "Polar Ring": GITHUB_BASE + "Polar%20Ring.png", "Predator Pauldrons": GITHUB_BASE + "Predator%20Pauldrons.png", "Rowdy Resolve": GITHUB_BASE + "Rowdy%20Resolve.png", "Serpent Helm": GITHUB_BASE + "Serpant%20Helm.png", "Shadow Helm": GITHUB_BASE + "Shadow%20Helm.png", "Skull Crasher": GITHUB_BASE + "SkullCrusher.png", "Spirit Axe": GITHUB_BASE + "Spirit%20Axe.png", "Stealthy Steps": GITHUB_BASE + "Stealthy%20Steps.png", "Steps of Reckoning": GITHUB_BASE + "Steps%20of%20Reckoning.png", "Storm Tasset": GITHUB_BASE + "Storm%20Assets.png", "Terror Shield": GITHUB_BASE + "Terror%20Shield.png", "Terror Slash": GITHUB_BASE + "Terror%20Slash%20%281%29.png", "Terror Vial": GITHUB_BASE + "Terror%20Vial.png", "Untamed Boots": GITHUB_BASE + "Untamed%20Boots.png", "Venom Blade": GITHUB_BASE + "Venom%20Blade.png", "Viral SwitchBlade": GITHUB_BASE + "Viral%20Switchblade.png", "Winter Mitts": GITHUB_BASE + "Winter%20Mitts.png", "Winter Parka": GITHUB_BASE + "Winter%20Parka.png", "Wyrm Rod": GITHUB_BASE + "Wyrm%20Rod.png", "Wyrm Seal": GITHUB_BASE + "Wyrm%20Seal.png", "Wyrmbone Coronet": GITHUB_BASE + "Wyrmbone%20Coronet.png"
+    };
+
+    function getImg(name) {
+        if (GEAR_ICONS[name]) return GEAR_ICONS[name];
+        return `https://placehold.co/100/1c223a/8e9bb0?text=${encodeURIComponent(name.split(' ')[0])}`;
+    }
+
+    const GEAR_DATA = {
+      Legs: [
+        {name:"Champion Boots", lvl: 60, stats:{"Range ATK": 56, "Army ATK": 14, "Army Max HP": 30.8, "Travel Speed": 70}}, {name:"Champion Greaves", lvl: 60, stats:{"Cavalry ATK": 56, "Army ATK": 14, "Army Max HP": 30.8, "Travel Speed": 70}}, {name:"Champion Stride", lvl: 60, stats:{"Infantry ATK": 56, "Army ATK": 14, "Army Max HP": 30.8, "Travel Speed": 70}}, {name:"Blizzard Pants", lvl: 60, stats:{"Range ATK": 42, "Cavalry ATK": 42, "Army DEF": 14, "Army Max HP": 16.8}}, {name:"Storm Tasset", lvl: 60, stats:{"Infantry ATK": 42, "Cavalry ATK": 42, "Army DEF": 28, "Army Max HP": 14}}, {name:"Dragon Talon", lvl: 60, stats:{"Infantry ATK": 28, "Range ATK": 42, "Army Max HP": 21}}, {name:"Gargantua Belt", lvl: 60, stats:{"Cavalry ATK": 52.5, "Cavalry Max HP": 38.5, "Army DEF": 21, "Stone Production Rate": 70}}, {name:"Untamed Boots", lvl: 55, stats:{"Cavalry ATK": 28, "Cavalry DEF": 21, "Army Max HP": 21, "Travel Speed": 42}}, {name:"Legs of the Deceiver", lvl: 55, stats:{"Range ATK": 7, "Range DEF": 21, "Army ATK": 16.8}}, {name:"Beastly Waist Guard", lvl: 50, stats:{"Cavalry ATK": 22.4, "Cavalry Max HP": 16.8, "Army DEF": 16.8}}, {name:"Steps of Reckoning", lvl: 50, stats:{"Infantry ATK": 22.4, "Infantry DEF": 16.8, "Infantry Max HP": 11.2}}, {name:"Stealthy Steps", lvl: 50, stats:{"Range ATK": 22.4, "Range DEF": 28, "Army Max HP": 11.2}}
+      ],
+      Armor: [
+        {name:"Champion Plate", lvl: 60, stats:{"Range ATK": 56, "Army DEF": 59.5, "Army Max HP": 35, "Reduce Upkeep": 72.8}}, {name:"Terror Shield", lvl: 60, stats:{"Infantry ATK": 49, "Infantry Max HP": 35, "Army Max HP": 29, "Research Speed": 11.2}}, {name:"Firewall Plate", lvl: 60, stats:{"Infantry ATK": 28, "Cavalry ATK": 42, "Siege Engine ATK": 42, "Army Max HP": 21}}, {name:"Champion Mail", lvl: 60, stats:{"Infantry ATK": 42, "Army ATK": 14, "Army DEF": 49, "Army Max HP": 21, "Reduce Upkeep": 72.8}}, {name:"Champion Cuirass", lvl: 60, stats:{"Cavalry ATK": 42, "Army ATK": 14, "Army DEF": 49, "Army Max HP": 21, "Reduce Upkeep": 72.8}}, {name:"Beastly Breastplate", lvl: 60, stats:{"Range ATK": 49, "Range Max HP": 21, "Army DEF": 28}}, {name:"Hardened Carapace", lvl: 55, stats:{"Range ATK": 35, "Cavalry ATK": 35, "Army DEF": 14}}, {name:"Hedonic Cuirass", lvl: 55, stats:{"Infantry ATK": 35, "Range ATK": 35, "Infantry Max HP": 42}}, {name:"Frostwing Armor", lvl: 50, stats:{"Infantry ATK": 11.2, "Range ATK": 11.2, "Siege Engine ATK": 17.5}}, {name:"Winter Parka", lvl: 50, stats:{"Infantry ATK": 17.5, "Cavalry DEF": 35, "Army Max HP": 21}}, {name:"Deadly Mantle", lvl: 50, stats:{"Range ATK": 28, "Trap ATK": 28, "Army DEF": 21}}, {name:"Predator Pauldrons", lvl: 50, stats:{"Cavalry ATK": 14, "Cavalry Max HP": 28, "Army DEF": 21, "Travel Speed": 35}}
+      ],
+      Helmet: [
+        {name:"Champion Helm", lvl: 60, stats:{"Cavalry ATK": 49, "Army ATK": 14, "Army Max HP": 49, "Gold Production Rate": 105}}, {name:"Wyrmbone Coronet", lvl: 60, stats:{"Range ATK": 45.5, "Range DEF": 28, "Army Max HP": 17.5, "Research Speed": 14}}, {name:"Beast Helm", lvl: 60, stats:{"Infantry ATK": 42, "Cavalry ATK": 35, "Army Max HP": 21, "Travel Speed": 49}}, {name:"Bubble Helm", lvl: 60, stats:{"Range ATK": 42, "Cavalry ATK": 42, "Army Max HP": 28}}, {name:"Champion Visor", lvl: 60, stats:{"Infantry ATK": 35, "Range ATK": 35, "Army ATK": 14, "Army Max HP": 28, "Gold Production Rate": 105}}, {name:"Champion Armet", lvl: 60, stats:{"Range ATK": 35, "Cavalry ATK": 35, "Army ATK": 14, "Army Max HP": 28, "Gold Production Rate": 105}}, {name:"Serpent Helm", lvl: 60, stats:{"Infantry ATK": 42, "Range ATK": 42, "Infantry Max HP": 21, "Army DEF": 35}}, {name:"Ancient Hat", lvl: 55, stats:{"Range ATK": 39.2, "Range DEF": 35, "Army DEF": 21}}, {name:"Frostwing Helm", lvl: 50, stats:{"Range ATK": 12.6, "Siege Engine ATK": 10.5, "Army Max HP": 16.1}}, {name:"Shadow Helm", lvl: 50, stats:{"Infantry ATK": 14, "Trap ATK": 42, "Trap DEF": 42, "Wall DEF Boost": 21}}, {name:"Devourer Helm", lvl: 50, stats:{"Infantry ATK": 18.2, "Cavalry ATK": 18.2, "Cavalry DEF": 14, "Infantry Max HP": 7}}, {name:"Orca Mask", lvl: 50, stats:{"Range ATK": 18.2, "Cavalry ATK": 18.2, "Range DEF": 9.8, "Cavalry Max HP": 11.2}}
+      ],
+      "Main-Hand": [
+        {name:"Champion Blade", lvl: 60, stats:{"Infantry ATK": 28, "Range ATK": 28, "Army ATK": 21, "Army DEF": 23.8, "Research Speed": 21}}, {name:"Champion GreatSword", lvl: 60, stats:{"Range ATK": 28, "Cavalry ATK": 28, "Army ATK": 21, "Army DEF": 23.8, "Research Speed": 21}}, {name:"Champion Blade (Cav)", lvl: 60, stats:{"Cavalry ATK": 49, "Army ATK": 21, "Army DEF": 23.8, "Research Speed": 21}}, {name:"Frostwing Sword", lvl: 60, stats:{"Infantry ATK": 28, "Cavalry ATK": 28, "Range ATK": 17.5}}, {name:"Skull Crasher", lvl: 60, stats:{"Range ATK": 21, "Infantry DEF": 35, "Army ATK": 28}}, {name:"Ghostly Cane", lvl: 60, stats:{"Infantry ATK": 45.5, "Infantry Max HP": 14, "Army DEF": 14}}, {name:"Eon Axe", lvl: 60, stats:{"Cavalry ATK": 52.5, "Cavalry DEF": 14, "Cavalry Max HP": 14}}, {name:"Terror Slash", lvl: 55, stats:{"Infantry ATK": 38.5, "Infantry DEF": 14, "Army Capacity": 28, "Construction Speed": 14}}, {name:"Horn Cudgel", lvl: 55, stats:{"Cavalry ATK": 42, "Cavalry DEF": 21, "Trap DEF": 49}}, {name:"Decadent Sword", lvl: 55, stats:{"Infantry ATK": 35, "Range ATK": 35, "Range DEF": 14, "Infantry Max HP": 14}}, {name:"Nectar Orb", lvl: 55, stats:{"Cavalry ATK": 35, "Range ATK": 35, "Cavalry DEF": 14, "Range Max HP": 14}}, {name:"Kraken's Anchor", lvl: 55, stats:{"Infantry ATK": 35, "Cavalry ATK": 35, "Infantry DEF": 18.2, "Cavalry Max HP": 18.2}}, {name:"Wyrm Rod", lvl: 50, stats:{"Range ATK": 35, "Range Max HP": 24.5, "Timber Production Rate": 70}}, {name:"Malicious Saw", lvl: 50, stats:{"Infantry ATK": 35, "Siege Engine ATK": 35, "Infantry DEF": 21, "Siege Engine DEF": 35}}
+      ],
+      "Off-Hand": [
+        {name:"Champion Katar", lvl: 60, stats:{"Range ATK": 49, "Cavalry ATK": 42, "Army DEF": 28, "Training Speed": 14}}, {name:"Champion Light", lvl: 60, stats:{"Infantry ATK": 49, "Cavalry ATK": 42, "Army DEF": 28, "Training Speed": 14}}, {name:"Champion Lamp", lvl: 60, stats:{"Infantry ATK": 49, "Range ATK": 42, "Army DEF": 28, "Training Speed": 14}}, {name:"Winter Mitts", lvl: 60, stats:{"Range ATK": 14, "Infantry DEF": 45.5, "Army DEF": 35, "Army Max HP": 35}}, {name:"Eternal Codex", lvl: 60, stats:{"Cavalry ATK": 28, "Range ATK": 49, "Cavalry Max HP": 28}}, {name:"Lunar Boomerang", lvl: 60, stats:{"Cavalry ATK": 42, "Cavalry DEF": 21, "Cavalry Max HP": 21}}, {name:"Eerie Lantern", lvl: 60, stats:{"Infantry ATK": 42, "Infantry DEF": 14, "Infantry Max HP": 14}}, {name:"Spirit Axe", lvl: 60, stats:{"Infantry ATK": 35, "Cavalry ATK": 35, "Cavalry Max HP": 14, "Army DEF": 14}}, {name:"Venom Blade", lvl: 60, stats:{"Infantry ATK": 35, "Range ATK": 35, "Range DEF": 14, "Army Max HP": 14}}, {name:"Dark Aegis", lvl: 50, stats:{"Infantry ATK": 14, "Army ATK": 14}}, {name:"Dragon Fist", lvl: 50, stats:{"Cavalry ATK": 30.8, "Army Max HP": 28}}, {name:"Viral SwitchBlade", lvl: 50, stats:{"Infantry ATK": 21, "Range ATK": 21, "Siege Engine ATK": 35, "Siege Engine DEF": 28}}, {name:"Call of the Deep", lvl: 50, stats:{"Infantry ATK": 21, "Cavalry ATK": 21, "Infantry Max HP": 14, "Cavalry Max HP": 14}}
+      ],
+      Accessory: [
+        {name:"Champion Faith", lvl: 60, stats:{"Infantry ATK": 21, "Cavalry ATK": 21, "Army ATK": 14, "Army Max HP": 35}}, {name:"Ambrosial Cup", lvl: 60, stats:{"Infantry ATK": 35, "Range ATK": 35, "Infantry Max HP": 21, "Range Max HP": 21}}, {name:"Champion Valor", lvl: 60, stats:{"Cavalry ATK": 21, "Range ATK": 21, "Army ATK": 14, "Army Max HP": 35}}, {name:"Champion Blessing", lvl: 60, stats:{"Infantry ATK": 21, "Range ATK": 21, "Army ATK": 14, "Army Max HP": 35}}, {name:"Rowdy Resolve", lvl: 60, stats:{"Cavalry ATK": 35, "Cavalry DEF": 10.5, "Cavalry Max HP": 14}}, {name:"Book of the Dead", lvl: 60, stats:{"Infantry ATK": 35, "Cavalry ATK": 35, "Cavalry DEF": 28, "Infantry Max HP": 21}}, {name:"Polar Ring", lvl: 60, stats:{"Cavalry ATK": 35, "Range ATK": 35, "Cavalry Max HP": 21, "Range Max HP": 21}}, {name:"Frostwing's Breath", lvl: 55, stats:{"Infantry ATK": 11.2, "Cavalry ATK": 11.2, "Gold Production Rate": 70}}, {name:"Burning Scroll", lvl: 55, stats:{"Army ATK": 12.6, "Army Max HP": 12.6, "Timber Production Rate": 49}}, {name:"Dragon's Iris", lvl: 55, stats:{"Cavalry ATK": 14, "Range ATK": 14, "Army Max HP": 14}}, {name:"Terror Vial", lvl: 50, stats:{"Infantry ATK": 22.4, "Infantry Max HP": 7, "Army DEF": 11.2, "Ore Production Rate": 49}}, {name:"Fear Drum", lvl: 50, stats:{"Cavalry ATK": 22.4, "Siege Engine ATK": 14, "Cavalry Max HP": 7.7, "Gold Production Rate": 49}}, {name:"Blight Ring", lvl: 60, stats:{"Range ATK": 19.6, "Army DEF": 21, "Army Max HP": 21, "Wall DEF Boost": 35}}, {name:"Wyrm Seal", lvl: 55, stats:{"Range ATK": 22.4, "Siege Engine ATK": 21, "Army Max HP": 11.2, "Stone Production Rate": 49}}, {name:"Coil Armband", lvl: 50, stats:{"Infantry ATK": 18.2, "Range ATK": 18.2, "Infantry DEF": 14, "Range Max HP": 11.2}}
+      ]
+    };
+
+    const JEWEL_DATA = [
+      { name: "Champion Jewel", img: GITHUB_BASE + "Champion%20Jewel.jpg", stats: { "Travel Speed": 20, "Army Max HP": 15 } }, 
+      { name: "Infantry ATK", img: GITHUB_BASE + "Infantry%20ATK%20Jewel.jpg", stats: { "Infantry ATK": 20 } }, 
+      { name: "Range ATK", img: GITHUB_BASE + "Range%20ATK%20Jewel.jpg", stats: { "Range ATK": 20 } }, 
+      { name: "Cavalry ATK", img: GITHUB_BASE + "Cavalry%20ATK%20Jewel.jpg", stats: { "Cavalry ATK": 20 } }, 
+      { name: "Terror", img: GITHUB_BASE + "Terror%20Jewel.jpg", stats: { "Infantry ATK": 10, "Infantry DEF": 10 } }, 
+      { name: "Wyrm", img: GITHUB_BASE + "Wyrm%20Jewel.jpg", stats: { "Range ATK": 10, "Range DEF": 10 } }, 
+      { name: "Gargantua", img: GITHUB_BASE + "Gargantua%20Jewel.jpg", stats: { "Cavalry ATK": 10, "Cavalry DEF": 10 } }, 
+      { name: "Trojan", img: GITHUB_BASE + "Trojan%20Jewel.jpg", stats: { "Infantry Max HP": 15, "Travel Speed": 5 } }, 
+      { name: "Grim", img: GITHUB_BASE + "Grim%20Jewel.jpg", stats: { "Range Max HP": 15, "Travel Speed": 5 } }, 
+      { name: "Saber", img: GITHUB_BASE + "Saber%20Jewel.jpg", stats: { "Cavalry Max HP": 15, "Travel Speed": 5 } }, 
+      { name: "Infantry DEF", img: GITHUB_BASE + "Infantry%20DEF.jpg", stats: { "Infantry DEF": 20 } }, 
+      { name: "Range DEF", img: GITHUB_BASE + "Range%20DEF.jpg", stats: { "Range DEF": 20 } }, 
+      { name: "Cavalry DEF", img: GITHUB_BASE + "Cavalry%20DEF.jpg", stats: { "Cavalry DEF": 20 } }, 
+      { name: "Army Assault", stats: { "Army ATK": 10 } }, 
+      { name: "IC Assault", stats: { "Infantry ATK": 10, "Cavalry ATK": 5 } }, 
+      { name: "RI Assault", stats: { "Range ATK": 10, "Infantry ATK": 5 } }, 
+      { name: "CI Assault", stats: { "Cavalry ATK": 10, "Range ATK": 5 } }, 
+      { name: "Royal Infantry", stats: { "Infantry ATK": 10, "Infantry Max HP": 10 } }, 
+      { name: "Royal Range", stats: { "Range ATK": 10, "Range Max HP": 10 } }, 
+      { name: "Royal Cavalry", stats: { "Cavalry ATK": 10, "Cavalry Max HP": 10 } }, 
+      { name: "Falcon", stats: { "Infantry ATK": 15, "Range ATK": 15 } }, 
+      { name: "Dragon Infantry", img: GITHUB_BASE + "Dragon%20Infantry%20ATK.jpg", stats: { "Infantry ATK": 15 } }, 
+      { name: "Dragon Range", img: GITHUB_BASE + "Dragon%20Range%20ATK.jpg", stats: { "Range ATK": 15 } }, 
+      { name: "Dragon Cavalry", img: GITHUB_BASE + "Dragon%20Cavalry%20ATK.jpg", stats: { "Cavalry ATK": 15 } }
+    ];
+
+    const SIGIL_DATA = [
+      { name: "Wolfpack Sigil", img: GITHUB_BASE + "Wolfpack_Sigil.jpg", stats: { "Pack Attack": 40 } },
+      { name: "Ursa Dusk Sigil", img: GITHUB_BASE + "Ursa_Dusk_Sigil.jpg", stats: { "Range ATK (Wonder)": 10, "Range DEF (Wonder)": 10 } },
+      { name: "Ursa Fury Sigil", img: GITHUB_BASE + "Ursa_Fury_Sigil.jpg", stats: { "Cavalry ATK (Wonder)": 10, "Cavalry DEF (Wonder)": 10 } },
+      { name: "Ursa Skull Sigil", img: GITHUB_BASE + "Ursa_Skull_Sigil.jpg", stats: { "Infantry ATK (Wonder)": 10, "Range DEF (Wonder)": 10 } },
+      { name: "Tigris Skull Sigil", img: GITHUB_BASE + "Tigris_Skull_Sigil.jpg", stats: { "Infantry ATK (Wonder)": 10, "Wonder Travel Speed": 10 } },
+      { name: "Tigris Dusk Sigil", img: GITHUB_BASE + "Tigris_Dusk_Sigil.jpg", stats: { "Range ATK (Wonder)": 10, "Wonder Travel Speed": 10 } },
+      { name: "Tigris Fury Sigil", img: GITHUB_BASE + "Tigris_Fury_Sigil.jpg", stats: { "Cavalry ATK (Wonder)": 10, "Wonder Travel Speed": 10 } }
+    ];
+
+    const SLOT_CONFIG = ["Legs", "Armor", "Helmet", "Main-Hand", "Off-Hand", "Accessory1", "Accessory2", "Accessory3"];
+
+    let activeSetIdx = 0;
+    let sets = [Array(8).fill(null), Array(8).fill(null), Array(8).fill(null)];
+    let gearSortDesc = true; 
+    let currentOpenSlot = null;
+
+    function getTemperC(tier, isChamp) {
+        if (tier === 0) return 0;
+        let c = 0;
+        if (isChamp) {
+            if (tier <= 3) c = tier;
+            else if (tier <= 6) c = 3 + (tier - 3) * 2;
+            else if (tier <= 9) c = 9 + (tier - 6) * 3;
+            else if (tier <= 12) c = 18 + (tier - 9) * 4;
+            else c = 30; 
+        } else {
+            if (tier <= 3) c = tier;
+            else if (tier <= 6) c = 3 + (tier - 3) * 2;
+            else if (tier <= 9) c = 9 + (tier - 6) * 3;
+            else c = 18 + (tier - 9) * 4; 
+        }
+        return c;
+    }
+
+    function getTemperedValue(baseVal, name, tier, lvl) {
+        if (tier === 0 || lvl < 50) return baseVal;
+        let isChamp = name.toLowerCase().includes("champion");
+        let c = getTemperC(tier, isChamp);
+        let divisor = isChamp ? 50 : 70;
+        return baseVal + ((baseVal / divisor) * c);
+    }
+
+    function setTemper(slotIdx, val) {
+        if (sets[activeSetIdx][slotIdx]) {
+            sets[activeSetIdx][slotIdx].temperTier = parseInt(val);
+            render();
+        }
+    }
+
+    function switchSet(idx) {
+      activeSetIdx = idx;
+      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+      render();
+    }
+
+    function resetEntireSet() {
+      if(confirm("Are you sure you want to clear ALL gear in this set?")) {
+        sets[activeSetIdx] = Array(8).fill(null);
+        render();
+      }
+    }
+
+    function clearSingleSlot(idx) {
+      sets[activeSetIdx][idx] = null;
+      render();
+    }
+    
+    function toggleGearSort() {
+      gearSortDesc = !gearSortDesc;
+      if(currentOpenSlot !== null) {
+          openGearSelection(currentOpenSlot);
+      }
+    }
+
+    function openGearSelection(slotIdx) {
+      currentOpenSlot = slotIdx;
+      const type = SLOT_CONFIG[slotIdx].replace(/\d/g, ''); 
+      const list = GEAR_DATA[type] || [];
+      
+      const body = document.getElementById('modalBody');
+      document.getElementById('modalTitle').textContent = `Select ${type}`;
+      
+      let sortedList = list.map((gear, origIdx) => ({...gear, origIdx}))
+                           .sort((a,b) => gearSortDesc ? b.lvl - a.lvl : a.lvl - b.lvl);
+      
+      body.innerHTML = sortedList.map(item => {
+        let statsHtml = Object.entries(item.stats).map(([k,v]) => `<span style="color:#b6bddf;">${k}:</span> <strong style="color:#fff;">${v}%</strong>`).join('<br>');
+        return `
+        <div class="card" onclick="selectGear(${slotIdx}, '${type}', ${item.origIdx})">
+          <img src="${item.img || getImg(item.name)}" onerror="this.src='https://placehold.co/100/1c223a/8e9bb0?text=Img'">
+          <div style="width: 100%;">
+            <div style="font-weight: 800; color: #4da6ff; font-size: 15px; margin-bottom: 2px;">${item.name}</div>
+            <div style="color: #8e9bb0; font-size: 11px; margin-bottom: 6px; font-weight: bold; text-transform: uppercase;">Lvl ${item.lvl || 60}</div>
+            <div style="font-size: 12px; line-height: 1.5;">${statsHtml}</div>
+          </div>
+        </div>
+      `}).join('');
+      
+      document.getElementById('mainModal').classList.add('open');
+    }
+
+    function selectGear(slotIdx, type, dataIdx) {
+      const gear = JSON.parse(JSON.stringify(GEAR_DATA[type][dataIdx]));
+      gear.jewels = [null, null, null]; 
+      gear.sigil = null; 
+      gear.temperTier = 0; 
+      sets[activeSetIdx][slotIdx] = gear;
+      closeModal();
+      render();
+    }
+
+    function getEquippedJewelNames(slotIdx, excludeJewelIdx = null) {
+      const gear = sets[activeSetIdx][slotIdx];
+      if (!gear || !Array.isArray(gear.jewels)) return [];
+      return gear.jewels.filter((j, idx) => j && idx !== excludeJewelIdx).map(j => j.name);
+    }
+
+    function openSocketMenu(slotIdx) {
+      const gear = sets[activeSetIdx][slotIdx];
+      if (!gear) return;
+
+      const body = document.getElementById('modalBody');
+      document.getElementById('modalTitle').textContent = "Manage Sockets";
+      
+      let html = `<div class="preview-area" style="display:flex; align-items:center; gap:15px;">
+                    <img src="${gear.img || getImg(gear.name)}" style="width:50px; height:50px; border-radius:6px; border:1px solid rgba(77, 166, 255, 0.3);" onerror="this.src='https://placehold.co/100/1c223a/8e9bb0?text=Img'">
+                    <div><strong style="font-size:16px; color:#4da6ff;">${gear.name}</strong><br><span style="font-size:12px; color:var(--muted)">Select a socket below to equip.</span></div>
+                  </div>`;
+                  
+      html += `<div style="color: #4da6ff; font-weight: bold; font-size: 12px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">Jewel Sockets (Max 3)</div>`;
+      html += `<div class="jewel-grid">`;
+      gear.jewels.forEach((j, i) => {
+        let iconHtml = (j && j.img) 
+            ? `<img src="${j.img}" style="width:24px; height:24px; border-radius:4px; margin-bottom:5px; border: 1px solid #4da6ff; box-shadow: 0 0 5px rgba(77,166,255,0.3); object-fit: cover;">`
+            : `<div style="font-size:20px; margin-bottom:5px; color:${j ? '#4da6ff' : '#444'}; text-shadow:${j ? '0 0 5px rgba(77,166,255,0.5)' : 'none'};">♦</div>`;
+
+        html += `<div class="socket" style="background:${j ? '#222a46' : '#1c223a'}; border-color:${j ? '#4da6ff' : 'rgba(255,255,255,0.05)'}; box-shadow:${j ? '0 0 10px rgba(77,166,255,0.1)' : 'none'};" onclick="chooseJewelForSlot(${slotIdx}, ${i})">
+                    ${iconHtml}
+                    <span style="color:${j ? '#fff' : '#8e9bb0'}; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${j ? j.name : 'Empty Socket'}</span>
+                 </div>`;
+      });
+      html += `</div>`;
+
+      html += `<div style="color: #b08dff; font-weight: bold; font-size: 12px; margin: 20px 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px;">Sigil Socket (Max 1)</div>`;
+      let sig = gear.sigil;
+      let sigIconHtml = (sig && sig.img) 
+          ? `<img src="${sig.img}" style="width:28px; height:28px; border-radius:4px; margin-bottom:5px; border: 1px solid #b08dff; box-shadow: 0 0 5px rgba(176,141,255,0.3); object-fit: cover;" onerror="this.style.display='none'">`
+          : `<div style="font-size:24px; margin-bottom:5px; color:${sig ? '#b08dff' : '#444'}; text-shadow:${sig ? '0 0 5px rgba(176,141,255,0.5)' : 'none'};">✧</div>`;
+      
+      html += `<div class="sigil-box">
+                  <div class="socket" style="width: 100%; max-width: 200px; padding: 15px 10px; background:${sig ? '#2a1e46' : '#1c223a'}; border-color:${sig ? '#b08dff' : 'rgba(255,255,255,0.1)'}; border-width: 2px; box-shadow:${sig ? '0 0 10px rgba(176,141,255,0.2)' : 'none'};" onclick="chooseSigilForSlot(${slotIdx})">
+                      ${sigIconHtml}
+                      <span style="color:${sig ? '#fff' : '#8e9bb0'}; font-size: 13px; font-weight: 800; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${sig ? sig.name : 'Equip Sigil'}</span>
+                  </div>
+               </div>`;
+
+      html += `<div style="margin-top: 25px;"><button class="btn btn-clear" style="padding: 10px; border-radius: 8px;" onclick="clearAllSockets(${slotIdx})">Remove All Jewels & Sigils</button></div>`;
+      
+      body.innerHTML = html;
+      document.getElementById('mainModal').classList.add('open');
+    }
+
+    function clearAllSockets(slotIdx) {
+      if(sets[activeSetIdx][slotIdx]) {
+        sets[activeSetIdx][slotIdx].jewels = [null, null, null];
+        sets[activeSetIdx][slotIdx].sigil = null;
+        render();
+        openSocketMenu(slotIdx);
+      }
+    }
+
+    function chooseJewelForSlot(slotIdx, jewelIdx) {
+      const gear = sets[activeSetIdx][slotIdx];
+      if (!gear) return;
+
+      const usedNames = new Set(getEquippedJewelNames(slotIdx, jewelIdx));
+      const currentJewel = gear.jewels[jewelIdx];
+
+      const body = document.getElementById('modalBody');
+      document.getElementById('modalTitle').textContent = "Choose Jewel";
+
+      let currentJewelIcon = currentJewel && currentJewel.img 
+        ? `<img src="${currentJewel.img}" style="width:20px; height:20px; vertical-align:middle; border-radius:3px; margin-right:5px; border:1px solid rgba(255,255,255,0.2);">` 
+        : '';
+
+      body.innerHTML = `
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <button class="btn" style="background: #2c3558; border: 1px solid rgba(255,255,255,0.1);" onclick="openSocketMenu(${slotIdx})">← Back to Sockets</button>
+            <button class="btn btn-clear" onclick="applyJewel(${slotIdx}, ${jewelIdx}, -1)">Unequip Jewel</button>
+        </div>
+        <div class="preview-area" style="margin-bottom: 15px; padding: 15px; border-left: 5px solid #ffcc00; background: #1a1500; border-radius: 8px;">
+          <h3 style="color:#ffcc00; margin: 0 0 8px 0; font-size: 16px; letter-spacing: 1px;">SELECTING JEWEL FOR SOCKET ${jewelIdx + 1}</h3>
+          Current: ${currentJewelIcon} <strong style="color:#fff; font-size: 14px; vertical-align:middle;">${currentJewel ? currentJewel.name : "Empty"}</strong>
+        </div>
+      `;
+
+      body.innerHTML += JEWEL_DATA.map((j, i) => {
+        const alreadyUsed = usedNames.has(j.name);
+        const isCurrent = currentJewel && currentJewel.name === j.name;
+
+        let statsStr = Object.entries(j.stats).map(([k,v]) => `<span style="color:#8e9bb0;">${k}</span> <strong style="color:#fff;">+${v}%</strong>`).join('<br>');
+        let imgTag = j.img 
+            ? `<img src="${j.img}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1);" onerror="this.style.display='none'">` 
+            : `<div style="width: 40px; height: 40px; border-radius: 6px; background: #121726; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #4da6ff; border: 1px solid rgba(255,255,255,0.1);">♦</div>`;
+
+        return `
+        <div class="card" onclick="${alreadyUsed && !isCurrent ? '' : `applyJewel(${slotIdx}, ${jewelIdx}, ${i})`}" style="
+             opacity:${alreadyUsed && !isCurrent ? '0.3' : '1'}; cursor:${alreadyUsed && !isCurrent ? 'not-allowed' : 'pointer'};
+             border-color:${isCurrent ? '#4da6ff' : 'rgba(255,255,255,0.05)'}; background:${isCurrent ? '#222a46' : '#1c223a'}; display: flex; align-items: center; gap: 15px; padding: 12px;">
+          ${imgTag}
+          <div style="width: 100%;">
+             <strong style="color:${isCurrent ? '#4da6ff' : '#fff'}; font-size: 14px;">${j.name} Jewel</strong>
+             ${alreadyUsed && !isCurrent ? '<span style="color:#ff4d4d; font-size:10px; margin-left:5px; font-weight:bold;">[EQUIPPED]</span>' : ''}
+             ${isCurrent ? '<span style="color:#4da6ff; font-size:10px; margin-left:5px; font-weight:bold;">[SELECTED]</span>' : ''}
+             <div style="font-size: 12px; margin-top: 6px; line-height: 1.4;">${statsStr}</div>
+          </div>
+        </div>
+      `}).join('');
+    }
+
+    function applyJewel(slotIdx, jewelIdx, dataIdx) {
+      const gear = sets[activeSetIdx][slotIdx];
+      if (!gear) return;
+
+      if (dataIdx === -1) {
+        gear.jewels[jewelIdx] = null;
+        render(); openSocketMenu(slotIdx); return;
+      }
+
+      const selected = JEWEL_DATA[dataIdx];
+      const usedNames = new Set(getEquippedJewelNames(slotIdx, jewelIdx));
+
+      if (usedNames.has(selected.name)) {
+        alert(`"${selected.name}" is already equipped in another socket on this gear. You cannot stack identical jewels.`);
+        return;
+      }
+
+      gear.jewels[jewelIdx] = JSON.parse(JSON.stringify(selected));
+      showToast("Jewel Equipped!");
+      render();
+
+      let nextEmpty = -1;
+      for(let i=0; i<3; i++) {
+          if(!gear.jewels[i]) { nextEmpty = i; break; }
+      }
+
+      if (nextEmpty !== -1) {
+          chooseJewelForSlot(slotIdx, nextEmpty);
+      } else {
+          openSocketMenu(slotIdx);
+      }
+    }
+
+    function chooseSigilForSlot(slotIdx) {
+      const gear = sets[activeSetIdx][slotIdx];
+      if (!gear) return;
+
+      const currentSigil = gear.sigil;
+      const body = document.getElementById('modalBody');
+      document.getElementById('modalTitle').textContent = "Choose Sigil";
+
+      let currentSigilIcon = currentSigil && currentSigil.img 
+        ? `<img src="${currentSigil.img}" style="width:20px; height:20px; vertical-align:middle; border-radius:3px; margin-right:5px; border:1px solid rgba(255,255,255,0.2);">` 
+        : '';
+
+      body.innerHTML = `
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <button class="btn" style="background: #2c3558; border: 1px solid rgba(255,255,255,0.1);" onclick="openSocketMenu(${slotIdx})">← Back to Sockets</button>
+            <button class="btn btn-clear" onclick="applySigil(${slotIdx}, -1)">Unequip Sigil</button>
+        </div>
+        <div class="preview-area" style="margin-bottom: 15px; padding: 15px; border-left: 5px solid #b08dff; background: #1a1526; border-radius: 8px;">
+          <h3 style="color:#b08dff; margin: 0 0 8px 0; font-size: 16px; letter-spacing: 1px;">SELECTING SIGIL</h3>
+          Current: ${currentSigilIcon} <strong style="color:#fff; font-size: 14px; vertical-align:middle;">${currentSigil ? currentSigil.name : "Empty"}</strong>
+        </div>
+      `;
+
+      body.innerHTML += SIGIL_DATA.map((s, i) => {
+        const isCurrent = currentSigil && currentSigil.name === s.name;
+
+        let statsStr = Object.entries(s.stats).map(([k,v]) => `<span style="color:#8e9bb0;">${k}</span> <strong style="color:#fff;">+${v}%</strong>`).join('<br>');
+        let imgTag = s.img 
+            ? `<img src="${s.img}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1);" onerror="this.style.display='none'">` 
+            : `<div style="width: 40px; height: 40px; border-radius: 6px; background: #121726; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #b08dff; border: 1px solid rgba(255,255,255,0.1);">✧</div>`;
+
+        return `
+        <div class="card" onclick="applySigil(${slotIdx}, ${i})" style="
+             border-color:${isCurrent ? '#b08dff' : 'rgba(255,255,255,0.05)'}; background:${isCurrent ? '#2a1e46' : '#1c223a'}; display: flex; align-items: center; gap: 15px; padding: 12px;">
+          ${imgTag}
+          <div style="width: 100%;">
+             <strong style="color:${isCurrent ? '#b08dff' : '#fff'}; font-size: 14px;">${s.name}</strong>
+             ${isCurrent ? '<span style="color:#b08dff; font-size:10px; margin-left:5px; font-weight:bold;">[SELECTED]</span>' : ''}
+             <div style="font-size: 12px; margin-top: 6px; line-height: 1.4;">${statsStr}</div>
+          </div>
+        </div>
+      `}).join('');
+    }
+
+    function applySigil(slotIdx, dataIdx) {
+      const gear = sets[activeSetIdx][slotIdx];
+      if (!gear) return;
+
+      if (dataIdx === -1) {
+        gear.sigil = null;
+      } else {
+        gear.sigil = JSON.parse(JSON.stringify(SIGIL_DATA[dataIdx]));
+        showToast("Sigil Equipped!");
+      }
+      
+      render();
+      openSocketMenu(slotIdx);
+    }
+
+    function closeModal() { document.getElementById('mainModal').classList.remove('open'); currentOpenSlot = null; }
+    
+    function isEconomyStat(stat) { return /Speed|Production|Upkeep|Capacity/i.test(stat); }
+    
+    const STAT_ORDER = ["Infantry ATK", "Range ATK", "Cavalry ATK", "Infantry Max HP", "Range Max HP", "Cavalry Max HP", "Infantry DEF", "Range DEF", "Cavalry DEF", "Army ATK", "Army Max HP", "Army DEF"];
+    
+    function sortStatsFunction(a, b) {
+        let idxA = STAT_ORDER.indexOf(a[0]); let idxB = STAT_ORDER.indexOf(b[0]);
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+        if (idxA !== -1) return -1; if (idxB !== -1) return 1;
+        return a[0].localeCompare(b[0]);
+    }
+
+    function render() {
+      const strTotals = {}; 
+      const ecoTotals = {};
+      const sigTotals = {}; 
+      
+      sets[activeSetIdx].forEach(item => {
+        if(!item) return;
+        
+        Object.entries(item.stats).forEach(([k,v]) => {
+            let finalVal = getTemperedValue(v, item.name, item.temperTier || 0, item.lvl);
+            if(isEconomyStat(k)) ecoTotals[k] = (ecoTotals[k]||0) + finalVal;
+            else strTotals[k] = (strTotals[k]||0) + finalVal;
+        });
+        
+        item.jewels.forEach(j => { 
+            if(j && j.stats) {
+                Object.entries(j.stats).forEach(([statName, statValue]) => {
+                    if(isEconomyStat(statName)) ecoTotals[statName] = (ecoTotals[statName]||0) + statValue;
+                    else strTotals[statName] = (strTotals[statName]||0) + statValue;
+                });
+            }
+        });
+        
+        if(item.sigil && item.sigil.stats) {
+            Object.entries(item.sigil.stats).forEach(([statName, statValue]) => {
+                sigTotals[statName] = (sigTotals[statName]||0) + statValue;
+            });
+        }
+      });
+
+      const statsBox = document.getElementById('statsDisplay');
+      const sortedStr = Object.entries(strTotals).sort(sortStatsFunction);
+      const sortedEco = Object.entries(ecoTotals).sort(sortStatsFunction);
+      const sortedSig = Object.entries(sigTotals).sort(sortStatsFunction);
+      
+      const strHtml = sortedStr.length ? sortedStr.map(([k,v]) => `<div class="stat-row"><span>${k}</span><strong>${v.toFixed(2).replace(/\.00$/, '')}%</strong></div>`).join('') : '<div style="color:var(--muted); text-align:center; font-size:12px; margin-top:10px; font-style: italic;">No Combat Stats Active</div>';
+      const ecoHtml = sortedEco.length ? sortedEco.map(([k,v]) => `<div class="stat-row"><span>${k}</span><strong>${v.toFixed(2).replace(/\.00$/, '')}%</strong></div>`).join('') : '<div style="color:var(--muted); text-align:center; font-size:12px; margin-top:10px; font-style: italic;">No Economy Stats Active</div>';
+      const sigHtml = sortedSig.length ? sortedSig.map(([k,v]) => `<div class="stat-row"><span>${k}</span><strong>${v.toFixed(2).replace(/\.00$/, '')}%</strong></div>`).join('') : '<div style="color:var(--muted); text-align:center; font-size:12px; margin-top:10px; font-style: italic;">No Sigil Stats Active</div>';
+      
+      statsBox.innerHTML = `
+        <div class="stat-col"><div class="stat-header" style="color: #ff6666;">⚔️ Combat</div>${strHtml}</div>
+        <div class="stat-col-divider"></div>
+        <div class="stat-col"><div class="stat-header" style="color: #66ff99;">🛡️ Economy</div>${ecoHtml}</div>
+        <div class="stat-col-divider"></div>
+        <div class="stat-col"><div class="stat-header" style="color: #b08dff;">✧ Sigils</div>${sigHtml}</div>
+      `;
+
+      const grid = document.getElementById('slotsGrid');
+      grid.innerHTML = SLOT_CONFIG.map((label, i) => {
+        const item = sets[activeSetIdx][i];
+        
+        let temperOptions = '';
+        if (item && item.lvl >= 50) {
+            for(let t = 0; t <= 15; t++) {
+                temperOptions += `<option value="${t}" ${item.temperTier === t ? 'selected' : ''}>Temper: ${t}</option>`;
+            }
+        }
+
+        return `
+          <div class="slot">
+            <div class="slot-label">${label}</div>
+            ${item ? `
+              <div class="img-box" onclick="openGearSelection(${i})" style="cursor:pointer;" title="Swap gear">
+                <img src="${item.img || getImg(item.name)}" onerror="this.src='https://placehold.co/100/1c223a/8e9bb0?text=Img'">
+              </div>
+              <div class="actions-group">
+                ${item.lvl >= 50 ? `<select class="temper-select" onchange="setTemper(${i}, this.value)">${temperOptions}</select>` : ''}
+                <button class="btn" onclick="openSocketMenu(${i})" style="${(item.jewels.some(j=>j) || item.sigil) ? 'border: 1px solid #4da6ff; box-shadow: 0 0 5px rgba(77,166,255,0.3);' : ''}">Sockets</button>
+                <button class="btn btn-clear" onclick="clearSingleSlot(${i})">Clear</button>
+              </div>
+            ` : `
+              <div class="img-box empty-box" onclick="openGearSelection(${i})" title="Equip item"><div class="btn-plus">+</div></div>
+              <div class="actions-group"></div>
+            `}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Start Colosseum Live Timer Interval
+    setInterval(updateColoTimer, 1000);
+
+    render();
+    
+</script>
+</body>
+</html>
+
+Send Feedback Here:
+superinstinct14@gmail.com
+
