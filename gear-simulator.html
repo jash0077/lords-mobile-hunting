@@ -9,164 +9,244 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
     <style>
         .simulator-container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 20px auto;
             padding: 15px;
+        }
+        .top-nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .btn-back {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-primary);
+            color: var(--text-primary);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
         .set-tabs {
             display: flex;
             gap: 8px;
-            margin-bottom: 20px;
-            justify-content: center;
         }
         .set-tab {
             background: var(--bg-surface);
             border: 1px solid var(--border-primary);
             color: var(--text-primary);
-            padding: 8px 20px;
+            padding: 6px 16px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
+            font-size: 0.9rem;
             transition: all 0.2s ease;
         }
         .set-tab.active {
             background: var(--neon-blue);
             color: #fff;
             border-color: var(--neon-blue);
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
         }
-        .sim-grid {
+        .btn-reset-set {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #ef4444;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+        .btn-reset-set:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Stats Summary Top Panel matching screenshot */
+        .stats-summary-panel {
+            background: #0d0f1d;
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
         }
-        @media (max-width: 850px) {
-            .sim-grid {
+        @media (max-width: 900px) {
+            .stats-summary-panel {
                 grid-template-columns: 1fr;
             }
         }
-        .gear-slots-container {
+        .stat-category-box {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 6px;
         }
-        .gear-slot-row {
+        .stat-category-title {
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 6px;
+        }
+        .stat-row {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: 10px;
-            padding: 12px 18px;
-            transition: all 0.2s ease;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            padding: 2px 0;
         }
-        .gear-slot-row:hover {
-            border-color: var(--neon-purple);
+        .stat-row span:last-child {
+            color: var(--text-primary);
+            font-weight: 600;
         }
-        .slot-info {
-            display: flex;
-            align-items: center;
+
+        /* Gear Cards Grid matching screenshot */
+        .gear-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
         }
-        .slot-icon-box {
-            width: 55px;
-            height: 55px;
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-primary);
-            border-radius: 8px;
+        @media (max-width: 1024px) {
+            .gear-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 600px) {
+            .gear-cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .gear-card {
+            background: #0d0f1d;
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .gear-card-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .gear-card-img-box {
+            width: 110px;
+            height: 110px;
+            background: #15182e;
+            border: 2px solid var(--neon-gold);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            position: relative;
             overflow: hidden;
-            flex-shrink: 0;
+            position: relative;
+            margin-bottom: 12px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease;
         }
-        .slot-icon-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .slot-icon-box .plus-sign {
-            font-size: 20px;
-            color: var(--text-muted);
-        }
-        .slot-label-name {
-            font-weight: 600;
-            font-size: 1rem;
-        }
-        .slot-equipped-desc {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        .slot-actions {
-            display: flex;
-            gap: 10px;
-        }
-        .btn-slot-action {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            color: var(--text-primary);
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.2s ease;
-        }
-        .btn-slot-action:hover {
+        .gear-card-img-box:hover {
+            transform: scale(1.03);
             border-color: var(--neon-blue);
         }
-        .stats-sidebar {
+        .gear-card-img-box img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+        }
+        .gear-card-img-box .plus-icon {
+            font-size: 28px;
+            color: var(--text-muted);
+        }
+
+        .gear-card-controls {
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 8px;
         }
-        .stats-panel {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: 10px;
-            padding: 15px;
-        }
-        .stats-panel h3 {
-            font-size: 1rem;
-            margin-bottom: 10px;
-            border-bottom: 1px solid var(--border-subtle);
-            padding-bottom: 6px;
-            color: var(--neon-gold);
-        }
-        .stat-item {
+        .temper-select-wrap {
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            font-size: 0.85rem;
-            padding: 4px 0;
+            background: #14172d;
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 0.8rem;
             color: var(--text-secondary);
         }
-        .stat-value {
+        .temper-select {
+            background: transparent;
+            border: none;
             color: var(--text-primary);
             font-weight: 600;
-        }
-        .btn-reset-set {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #ef4444;
-            padding: 10px;
-            border-radius: 8px;
+            font-size: 0.8rem;
             cursor: pointer;
+            outline: none;
+        }
+        .temper-select option {
+            background: #14172d;
+            color: var(--text-primary);
+        }
+        .btn-card-action {
+            width: 100%;
+            background: #14172d;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            padding: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
             font-weight: 600;
             text-align: center;
             transition: all 0.2s ease;
         }
-        .btn-reset-set:hover {
-            background: rgba(239, 68, 68, 0.2);
+        .btn-card-action:hover {
+            border-color: var(--neon-blue);
+            background: #1b1f3d;
         }
-        /* Modal styling matching PDF */
+        .btn-card-clear {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.78srem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .btn-card-clear:hover {
+            background: rgba(239, 68, 68, 0.25);
+        }
+
+        /* Modal styling */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -184,12 +264,12 @@
             border: 1px solid var(--border-primary);
             border-radius: 12px;
             width: 90%;
-            max-width: 500px;
+            max-width: 520px;
             max-height: 85vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
         .modal-header {
             display: flex;
@@ -245,11 +325,11 @@
             background: #1b1e36;
         }
         .gear-item-icon-wrap {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             background: #0a0b14;
-            border: 2px solid var(--border-primary);
-            border-radius: 6px;
+            border: 2px solid var(--neon-gold);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -257,9 +337,9 @@
             flex-shrink: 0;
         }
         .gear-item-icon {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
         }
     </style>
 </head>
@@ -282,48 +362,41 @@
 </header>
 
 <div class="simulator-container">
-    <div style="text-align: center; margin-bottom: 20px;">
-        <h1 style="font-size: 1.8rem; margin-bottom: 5px;">Gear Simulator</h1>
-        <p style="color: var(--text-secondary); font-size: 0.95rem;">Select equipment for each slot across Set 1, 2, and 3 to simulate stats.</p>
+    <!-- Top Nav Bar matching screenshot -->
+    <div class="top-nav-bar">
+        <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Back</a>
+        <div class="set-tabs">
+            <button class="set-tab active" onclick="switchSet('set1')">Set 1</button>
+            <button class="set-tab" onclick="switchSet('set2')">Set 2</button>
+            <button class="set-tab" onclick="switchSet('set3')">Set 3</button>
+        </div>
+        <button class="btn-reset-set" onclick="resetCurrentSet()">Reset Entire Set</button>
     </div>
 
-    <!-- Set Tabs -->
-    <div class="set-tabs">
-        <button class="set-tab active" onclick="switchSet('set1')">Set 1</button>
-        <button class="set-tab" onclick="switchSet('set2')">Set 2</button>
-        <button class="set-tab" onclick="switchSet('set3')">Set 3</button>
-    </div>
-
-    <div class="sim-grid">
-        <!-- Left: Slots -->
-        <div class="gear-slots-container" id="gearSlotsContainer"></div>
-
-        <!-- Right: Stats Sidebar -->
-        <div class="stats-sidebar">
-            <button class="btn-reset-set" onclick="resetCurrentSet()">🔄 Reset Entire Set</button>
-
-            <div class="stats-panel">
-                <h3>⚔️ Combat</h3>
-                <div id="combatStatsList">
-                    <div class="stat-item"><span class="stat-label">No Combat Stats Active</span></div>
-                </div>
+    <!-- Stats Summary Top Panel matching screenshot -->
+    <div class="stats-summary-panel">
+        <div class="stat-category-box">
+            <div class="stat-category-title" style="color: #ef4444;"><i class="fas fa-sword"></i> COMBAT</div>
+            <div id="combatStatsList">
+                <div class="stat-row"><span>No Combat Stats Active</span><span></span></div>
             </div>
-
-            <div class="stats-panel">
-                <h3>🛡️ Economy</h3>
-                <div id="economyStatsList">
-                    <div class="stat-item"><span class="stat-label">No Economy Stats Active</span></div>
-                </div>
+        </div>
+        <div class="stat-category-box">
+            <div class="stat-category-title" style="color: #3b82f6;"><i class="fas fa-shield-alt"></i> ECONOMY</div>
+            <div id="economyStatsList">
+                <div class="stat-row"><span>No Economy Stats Active</span><span></span></div>
             </div>
-
-            <div class="stats-panel">
-                <h3>✧ Sigils</h3>
-                <div id="sigilStatsList">
-                    <div class="stat-item"><span class="stat-label">No Sigil Stats Active</span></div>
-                </div>
+        </div>
+        <div class="stat-category-box">
+            <div class="stat-category-title" style="color: #a855f7;"><i class="fas fa-gem"></i> SIGILS</div>
+            <div id="sigilStatsList">
+                <div class="stat-row"><span>No Sigil Stats Active</span><span></span></div>
             </div>
         </div>
     </div>
+
+    <!-- Gear Cards Grid -->
+    <div class="gear-cards-grid" id="gearCardsGrid"></div>
 </div>
 
 <!-- Modal -->
@@ -345,21 +418,30 @@
     let currentSet = 'set1';
     let currentActiveSlot = null;
 
-    let gearSets = JSON.parse(localStorage.getItem('hem_gear_sets')) || {
-        set1: { legs: null, armor: null, helmet: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null },
-        set2: { legs: null, armor: null, helmet: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null },
-        set3: { legs: null, armor: null, helmet: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null }
+    let gearSets = JSON.parse(localStorage.getItem('hem_gear_sets_v2')) || {
+        set1: { 
+            legs: { id: null, temper: 0 }, armor: { id: null, temper: 0 }, helmet: { id: null, temper: 0 }, main_hand: { id: null, temper: 0 }, 
+            off_hand: { id: null, temper: 0 }, accessory1: { id: null, temper: 0 }, accessory2: { id: null, temper: 0 }, accessory3: { id: null, temper: 0 } 
+        },
+        set2: { 
+            legs: { id: null, temper: 0 }, armor: { id: null, temper: 0 }, helmet: { id: null, temper: 0 }, main_hand: { id: null, temper: 0 }, 
+            off_hand: { id: null, temper: 0 }, accessory1: { id: null, temper: 0 }, accessory2: { id: null, temper: 0 }, accessory3: { id: null, temper: 0 } 
+        },
+        set3: { 
+            legs: { id: null, temper: 0 }, armor: { id: null, temper: 0 }, helmet: { id: null, temper: 0 }, main_hand: { id: null, temper: 0 }, 
+            off_hand: { id: null, temper: 0 }, accessory1: { id: null, temper: 0 }, accessory2: { id: null, temper: 0 }, accessory3: { id: null, temper: 0 } 
+        }
     };
 
     const slotDefinitions = [
-        { key: 'legs', name: 'Legs', category: 'legs' },
-        { key: 'armor', name: 'Armor', category: 'armor' },
-        { key: 'helmet', name: 'Helmet', category: 'helmet' },
-        { key: 'main_hand', name: 'Main-Hand', category: 'main_hand' },
-        { key: 'off_hand', name: 'Off-Hand', category: 'off_hand' },
-        { key: 'accessory1', name: 'Accessory 1', category: 'accessory' },
-        { key: 'accessory2', name: 'Accessory 2', category: 'accessory' },
-        { key: 'accessory3', name: 'Accessory 3', category: 'accessory' }
+        { key: 'legs', name: 'LEGS', category: 'legs' },
+        { key: 'armor', name: 'ARMOR', category: 'armor' },
+        { key: 'helmet', name: 'HELMET', category: 'helmet' },
+        { key: 'main_hand', name: 'MAIN-HAND', category: 'main_hand' },
+        { key: 'off_hand', name: 'OFF-HAND', category: 'off_hand' },
+        { key: 'accessory1', name: 'ACCESSORY1', category: 'accessory' },
+        { key: 'accessory2', name: 'ACCESSORY2', category: 'accessory' },
+        { key: 'accessory3', name: 'ACCESSORY3', category: 'accessory' }
     ];
 
     function formatStatName(key) {
@@ -378,31 +460,32 @@
     }
 
     function renderSimulator() {
-        const container = document.getElementById('gearSlotsContainer');
-        container.innerHTML = '';
+        const grid = document.getElementById('gearCardsGrid');
+        grid.innerHTML = '';
 
         slotDefinitions.forEach(slot => {
-            const equippedId = gearSets[currentSet][slot.key];
-            const item = findItemById(equippedId, slot.category);
+            const slotData = gearSets[currentSet][slot.key] || { id: null, temper: 0 };
+            const item = findItemById(slotData.id, slot.category);
 
-            const row = document.createElement('div');
-            row.className = 'gear-slot-row';
-            row.innerHTML = `
-                <div class="slot-info">
-                    <div class="slot-icon-box" onclick="openModal('${slot.key}', '${slot.category}', '${slot.name}')">
-                        ${item ? `<img src="${item.image}" alt="${item.name}">` : `<i class="fas fa-plus plus-sign"></i>`}
-                    </div>
-                    <div>
-                        <div class="slot-label-name">${slot.name}</div>
-                        <div class="slot-equipped-desc">${item ? `${item.name} (${item.rarity} Lvl ${item.level})` : 'Click + to equip'}</div>
-                    </div>
+            const card = document.createElement('div');
+            card.className = 'gear-card';
+            card.innerHTML = `
+                <div class="gear-card-title">${slot.name}</div>
+                <div class="gear-card-img-box" onclick="openModal('${slot.key}', '${slot.category}', '${slot.name}')">
+                    ${item ? `<img src="${item.image}" alt="${item.name}" title="${item.name}">` : `<i class="fas fa-plus plus-icon"></i>`}
                 </div>
-                <div class="slot-actions">
-                    <button class="btn-slot-action" onclick="openModal('${slot.key}', '${slot.category}', '${slot.name}')">Select</button>
-                    ${item ? `<button class="btn-slot-action" style="color:#ef4444;" onclick="unequipSlot('${slot.key}')">X</button>` : ''}
+                <div class="gear-card-controls">
+                    <div class="temper-select-wrap">
+                        <span>Temper:</span>
+                        <select class="temper-select" onchange="updateTemper('${slot.key}', this.value)">
+                            ${[...Array(13)].map((_, i) => `<option value="${i}" ${slotData.temper === i ? 'selected' : ''}>+${i}</option>`).join('')}
+                        </select>
+                    </div>
+                    <button class="btn-card-action" onclick="openModal('${slot.key}', '${slot.category}', '${slot.name}')">Sockets</button>
+                    ${item ? `<button class="btn-card-clear" onclick="clearSlot('${slot.key}')">Clear</button>` : `<button class="btn-card-action" onclick="openModal('${slot.key}', '${slot.category}', '${slot.name}')">Select</button>`}
                 </div>
             `;
-            container.appendChild(row);
+            grid.appendChild(card);
         });
 
         calculateStats();
@@ -421,17 +504,25 @@
     }
 
     function resetCurrentSet() {
-        gearSets[currentSet] = { legs: null, armor: null, helmet: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null };
+        gearSets[currentSet] = { 
+            legs: { id: null, temper: 0 }, armor: { id: null, temper: 0 }, helmet: { id: null, temper: 0 }, main_hand: { id: null, temper: 0 }, 
+            off_hand: { id: null, temper: 0 }, accessory1: { id: null, temper: 0 }, accessory2: { id: null, temper: 0 }, accessory3: { id: null, temper: 0 } 
+        };
         saveAndRender();
     }
 
-    function unequipSlot(slotKey) {
-        gearSets[currentSet][slotKey] = null;
+    function clearSlot(slotKey) {
+        gearSets[currentSet][slotKey] = { id: null, temper: 0 };
+        saveAndRender();
+    }
+
+    function updateTemper(slotKey, val) {
+        gearSets[currentSet][slotKey].temper = parseInt(val) || 0;
         saveAndRender();
     }
 
     function saveAndRender() {
-        localStorage.setItem('hem_gear_sets', JSON.stringify(gearSets));
+        localStorage.setItem('hem_gear_sets_v2', JSON.stringify(gearSets));
         renderSimulator();
     }
 
@@ -468,7 +559,7 @@
             if (item.stats) {
                 const allStats = { ...(item.stats.combat || {}), ...(item.stats.economy || {}), ...(item.stats.sigils || {}) };
                 for (const [k, v] of Object.entries(allStats)) {
-                    statsHtml += `<div style="color:var(--text-secondary); font-size:0.8rem; line-height:1.3;">${formatStatName(k)}: +${v}%</div>`;
+                    statsHtml += `<div style="color:var(--text-secondary); font-size:0.78rem;">${formatStatName(k)}: +${v}%</div>`;
                 }
             }
 
@@ -478,8 +569,8 @@
                 </div>
                 <div style="flex:1;">
                     <div style="font-weight:700; font-size:0.95rem; color:var(--neon-blue);">${item.name}</div>
-                    <div style="font-size:0.8rem; color:var(--neon-gold); margin-bottom:4px;">LVL ${item.level}</div>
-                    <div>${statsHtml || '<span style="color:var(--text-secondary); font-size:0.8rem;">No stats</span>'}</div>
+                    <div style="font-size:0.8rem; color:var(--neon-gold); margin-bottom:4px;">${item.rarity} • LVL ${item.level}</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:2px;">${statsHtml || '<span style="color:var(--text-secondary); font-size:0.8rem;">No stats</span>'}</div>
                 </div>
             `;
             listContainer.appendChild(row);
@@ -493,7 +584,7 @@
 
     function selectGear(id) {
         if (!currentActiveSlot) return;
-        gearSets[currentSet][currentActiveSlot.slotKey] = id;
+        gearSets[currentSet][currentActiveSlot.slotKey].id = id;
         closeModal();
         saveAndRender();
     }
@@ -505,17 +596,28 @@
         const sigil = {};
 
         slotDefinitions.forEach(slot => {
-            const item = findItemById(set[slot.key], slot.category);
+            const slotData = set[slot.key];
+            if (!slotData || !slotData.id) return;
+            const item = findItemById(slotData.id, slot.category);
             if (!item || !item.stats) return;
 
+            // Temper multiplier (each temper level adds ~5% or as standard)
+            const temperMult = 1 + (slotData.temper * 0.05);
+
             if (item.stats.combat) {
-                for (const [k, v] of Object.entries(item.stats.combat)) combat[k] = (combat[k] || 0) + v;
+                for (const [k, v] of Object.entries(item.stats.combat)) {
+                    combat[k] = (combat[k] || 0) + (v * temperMult);
+                }
             }
             if (item.stats.economy) {
-                for (const [k, v] of Object.entries(item.stats.economy)) economy[k] = (economy[k] || 0) + v;
+                for (const [k, v] of Object.entries(item.stats.economy)) {
+                    economy[k] = (economy[k] || 0) + (v * temperMult);
+                }
             }
             if (item.stats.sigils) {
-                for (const [k, v] of Object.entries(item.stats.sigils)) sigil[k] = (sigil[k] || 0) + v;
+                for (const [k, v] of Object.entries(item.stats.sigils)) {
+                    sigil[k] = (sigil[k] || 0) + (v * temperMult);
+                }
             }
         });
 
@@ -527,12 +629,12 @@
     function renderStatsBox(elementId, statsObj) {
         const el = document.getElementById(elementId);
         if (Object.keys(statsObj).length === 0) {
-            el.innerHTML = `<div class="stat-item"><span class="stat-label">No Active Stats</span></div>`;
+            el.innerHTML = `<div class="stat-row"><span>No Active Stats</span><span></span></div>`;
             return;
         }
         el.innerHTML = '';
         for (const [k, v] of Object.entries(statsObj)) {
-            el.innerHTML += `<div class="stat-item"><span class="stat-label">${formatStatName(k)}</span><span class="stat-value">+${v}%</span></div>`;
+            el.innerHTML += `<div class="stat-row"><span>${formatStatName(k)}</span><span>${v.toFixed(2).replace(/\.00$/, '')}%</span></div>`;
         }
     }
 
