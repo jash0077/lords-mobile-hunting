@@ -492,7 +492,15 @@ let isAdminUnlocked = loadJSON('meridian:adminUnlocked', false);
 function persistAdminUnlocked(){ saveJSON('meridian:adminUnlocked', isAdminUnlocked); }
 function isAdmin(){ return !!isAdminUnlocked; }
 
-function cityById(id){ return CITIES.find(c => c.id === id) || customCities.find(c => c.id === id); }
+function cityById(id){ 
+  if (!id) return CITIES[0];
+  let found = CITIES.find(c => c.id === id || c.zone === id) || customCities.find(c => c.id === id || c.zone === id);
+  if (!found) {
+    // Fallback: create a temporary city object for any valid IANA zone or string
+    found = { id: id, name: id.split('/').pop().replace(/_/g, ' '), sub: id, zone: id, flag: '🌐', lat: null, lon: null };
+  }
+  return found;
+}
 function persistFavorites(){ saveJSON('meridian:favorites', favorites); }
 function persistUse24h(){ saveJSON('meridian:use24h', use24h); }
 function persistTheme(){ saveJSON('meridian:theme', theme); }
