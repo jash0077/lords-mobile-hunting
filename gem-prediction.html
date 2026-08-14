@@ -2,145 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#060612">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gem Prediction - Lords Mobile Hub</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .container {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 20px;
-        }
-        .gem-card {
-            background: #0d0f1d;
-            border: 1px solid var(--border-primary);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .gem-title {
-            text-align: center;
-            font-size: 1.8rem;
-            color: var(--neon-gold);
-            margin-bottom: 20px;
-            font-weight: 800;
-        }
-        .guide-toggle-btn {
-            background: #14172d;
-            border: 1px solid var(--border-primary);
-            color: var(--text-primary);
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-bottom: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .guide-box {
-            background: #15182e;
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            display: none;
-        }
-        .guide-box.show { display: block; }
-        .input-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .input-group label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-        .input-group input {
-            background: #15182e;
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            padding: 12px 16px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            outline: none;
-        }
-        .btn-row {
-            display: flex;
-            gap: 15px;
-        }
-        .btn-predict {
-            flex: 2;
-            background: #3b82f6;
-            color: #fff;
-            border: none;
-            padding: 14px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 1.05rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .btn-predict:hover { background: #2563eb; }
-        .btn-reset {
-            flex: 1;
-            background: #ef4444;
-            color: #fff;
-            border: none;
-            padding: 14px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 1.05rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .btn-reset:hover { background: #dc2626; }
-        .result-box {
-            margin-top: 25px;
-            background: #14172d;
-            border: 1px solid var(--neon-gold);
-            border-radius: 10px;
-            padding: 20px;
-            display: none;
-        }
-        .result-box h4 {
-            color: var(--neon-gold);
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-            border-bottom: 1px solid var(--border-subtle);
-            padding-bottom: 8px;
-        }
-        .res-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.95rem;
-            padding: 8px 0;
-            color: var(--text-secondary);
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-        }
-        .res-row span:last-child {
-            color: var(--text-primary);
-            font-weight: 700;
-        }
+        * { box-sizing: border-box; }
+        html, body { overflow-x: hidden; width: 100%; }
+        body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: var(--bg-primary, #f4f4f4); text-align: center; margin: 0; padding: 10px; color: var(--text-primary, #333); }
+        
+        .container { max-width: 900px; margin: auto; background: var(--bg-surface, white); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { margin-top: 5px; font-size: 24px; color: var(--text-primary, #222); }
+        h2 { margin-top: 5px; color: var(--text-secondary, #444); }
+        
+        .menu-btn { display: block; width: 100%; max-width: 280px; margin: 10px auto; padding: 12px; border: none; border-radius: 8px; background: #007bff; color: white; cursor: pointer; font-weight: bold; font-size: 15px; transition: background 0.2s, transform 0.1s; }
+        .menu-btn:hover { background: #0056b3; transform: translateY(-1px); }
+        
+        .tool-input { display: block; width: 100%; max-width: 280px; margin: 10px auto; padding: 12px; border: 1px solid var(--border-subtle, #ccc); border-radius: 6px; text-align: center; font-size: 14px; background: var(--bg-surface, #fff); color: var(--text-primary, #333); transition: border-color 0.2s; }
+        .tool-input:focus { outline: none; border-color: #007bff; }
+        
+        .guide { display: none; background: var(--bg-secondary, #eef); padding: 15px; border-radius: 6px; margin: 15px auto; font-size: 14px; max-width: 280px; border: 1px solid var(--border-primary, #ccd); text-align: left; color: var(--text-primary, #333); }
+        .guide.show { display: block; }
+
+        .adv-group { display: none; background: var(--bg-secondary, #fdfdfd); padding: 10px; border-radius: 6px; margin: -5px auto 15px auto; max-width: 280px; border: 1px dashed var(--border-primary, #bbb); }
+        .adv-label { display: block; font-size: 11px; color: var(--text-secondary, #888); font-weight: bold; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .adv-group .tool-input { margin: 6px auto; padding: 10px; }
+
+        /* Result Overlay */
+        .resultTab { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
+        .resultBox { background: var(--bg-surface, white); padding: 25px; border-radius: 12px; width: 100%; max-width: 360px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.4); color: var(--text-primary, #333); text-align: left; }
+        .closeBtn { position: absolute; right: 15px; top: 10px; font-weight: bold; cursor: pointer; color: red; font-size: 20px; }
+        .closeBtn:hover { transform: scale(1.1); }
+        .resultGrid { display: grid; grid-template-columns: 1fr auto; row-gap: 8px; margin-top: 15px; font-size: 15px; }
+        .resultGrid div { text-align: left; display: flex; align-items: center; gap: 8px; font-weight: 500; }
+        .totalRow { margin-top: 15px; padding-top: 10px; border-top: 2px solid var(--border-subtle, #ccc); font-weight: 800; display: grid; grid-template-columns: 1fr auto; color: #007bff; font-size: 18px; }
     </style>
 </head>
 <body>
 
-<header>
+<header style="margin-bottom: 15px;">
     <div class="logo">Lords Mobile Hub</div>
     <div class="header-actions">
         <button class="theme-toggle" id="themeToggleBtn" onclick="cycleTheme()"><i class="fas fa-adjust"></i> Theme</button>
@@ -157,99 +57,104 @@
 </header>
 
 <div class="container">
-    <div style="margin-bottom: 15px;">
-        <a href="index.html" class="btn-back" style="background:var(--bg-surface); border:1px solid var(--border-primary); color:var(--text-primary); padding:6px 14px; border-radius:6px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:0.85rem;"><i class="fas fa-arrow-left"></i> Back</a>
+    <div style="text-align: left; margin-bottom: 10px;">
+        <a href="index.html" class="menu-btn" style="background:#6c757d; max-width:120px; margin:0; padding:8px 12px; font-size:13px; text-decoration:none; display:inline-block; text-align:center;">← Back</a>
     </div>
 
-    <div class="gem-card">
-        <div class="gem-title">Gem Prediction Calculator</div>
+    <h2>Gem Prediction</h2>
+    <button class="menu-btn" onclick="toggleGuide('gemGuide')" style="max-width:150px; padding:8px; font-size:12px;">Toggle Guide</button>
+    <div id="gemGuide" class="guide">Enter your Estimated Gems or What you usually get from each source.</div>
+    
+    <input class="tool-input" id="colo" placeholder="Colosseum Gems (Every 3h)">
+    <input class="tool-input" id="guild" placeholder="Daily Guild Gifts">
+    <input class="tool-input" id="monster" placeholder="Daily Monster Hunt">
+    <input class="tool-input" id="eventgems" placeholder="Base Weekly Events (Tap for more)" onfocus="revealAdv('advEvents')">
+    
+    <div id="advEvents" class="adv-group">
+        <span class="adv-label">Detailed Events (Multipliers applied automatically)</span>
+        <input class="tool-input" id="kParagon" placeholder="Kingdom Paragon">
+        <input class="tool-input" id="hellEv" placeholder="Hell Events">
+        <input class="tool-input" id="gDuel" placeholder="Guild Duel">
+        <input class="tool-input" id="otherEv" placeholder="Other Events">
+    </div>
 
-        <button class="guide-toggle-btn" onclick="toggleGuide()"><i class="fas fa-info-circle"></i> Toggle Guide</button>
-        <div class="guide-box" id="guideBox">
-            <p>Enter your estimated daily gem income or what you usually receive from each source. The calculator will project your total accumulated gems over a 30-day period including Treasure Trove interest rates and weekly events.</p>
-        </div>
+    <input class="tool-input" id="treasure" placeholder="Treasure Trove Deposit (Tap for int.)" onfocus="revealAdv('advTrove')">
+    
+    <div id="advTrove" class="adv-group">
+         <span class="adv-label">Trove Interest Rates</span>
+        <input class="tool-input" id="basic" placeholder="Basic Interest %">
+        <input class="tool-input" id="bonus" placeholder="Bonus Interest %">
+    </div>
 
-        <div class="input-stack">
-            <div class="input-group">
-                <label for="colo">Colosseum Gems (Every 3h)</label>
-                <input type="number" id="colo" placeholder="e.g. 100">
-            </div>
-            <div class="input-group">
-                <label for="guild">Daily Guild Gifts</label>
-                <input type="number" id="guild" placeholder="e.g. 500">
-            </div>
-            <div class="input-group">
-                <label for="monster">Daily Monster Hunt</label>
-                <input type="number" id="monster" placeholder="e.g. 300">
-            </div>
-            <div class="input-group">
-                <label for="eventgems">Base Weekly Events (Multipliers applied automatically)</label>
-                <input type="number" id="eventgems" placeholder="e.g. 2000">
-            </div>
-            <div class="input-group">
-                <label for="treasure">Treasure Trove Deposit (Gems)</label>
-                <input type="number" id="treasure" placeholder="e.g. 25000">
-            </div>
-        </div>
+    <button class="menu-btn" onclick="calculateGems()">Predict 30 Days</button>
+    <button class="menu-btn" onclick="clearInputs('gemTool')" style="background:#6c757d">Clear All</button>
+</div>
 
-        <div class="btn-row">
-            <button class="btn-predict" onclick="predictGems()">Predict 30 Days</button>
-            <button class="btn-reset" onclick="resetGems()">Clear All</button>
-        </div>
-
-        <div class="result-box" id="resultBox">
-            <h4>30-Day Gem Projection Breakdown</h4>
-            <div class="res-row"><span>Colosseum Income (30 Days):</span> <span id="resColo">0 gems</span></div>
-            <div class="res-row"><span>Daily Guild Gifts (30 Days):</span> <span id="resGuild">0 gems</span></div>
-            <div class="res-row"><span>Monster Hunting (30 Days):</span> <span id="resMonster">0 gems</span></div>
-            <div class="res-row"><span>Weekly Events (30 Days):</span> <span id="resEvents">0 gems</span></div>
-            <div class="res-row"><span>Treasure Trove Interest (30 Days):</span> <span id="resTrove">0 gems</span></div>
-            <div class="res-row" style="margin-top:10px; border-top:1px solid var(--neon-gold); padding-top:10px; font-size:1.1rem; color:var(--neon-gold);"><span>Total Projected Gems (30 Days):</span> <span id="resTotal">0 gems</span></div>
-        </div>
+<!-- Result Overlay Modal -->
+<div id="resultTab" class="resultTab">
+    <div class="resultBox">
+        <span class="closeBtn" onclick="closeResult()">×</span>
+        <div id="resultContent"></div>
     </div>
 </div>
 
 <script>
-    function toggleGuide() {
-        const box = document.getElementById('guideBox');
-        box.classList.toggle('show');
+    function toggleGuide(id){
+        let g = document.getElementById(id);
+        g.style.display = (g.style.display === "block") ? "none" : "block";
     }
 
-    function predictGems() {
-        const coloDaily = (parseFloat(document.getElementById('colo').value) || 0) * 8; // 8 times per day (every 3h)
-        const guildDaily = parseFloat(document.getElementById('guild').value) || 0;
-        const monsterDaily = parseFloat(document.getElementById('monster').value) || 0;
-        const eventWeekly = parseFloat(document.getElementById('eventgems').value) || 0;
-        const troveDeposit = parseFloat(document.getElementById('treasure').value) || 0;
-
-        const days = 30;
-        const coloTotal = coloDaily * days;
-        const guildTotal = guildDaily * days;
-        const monsterTotal = monsterDaily * days;
-        const eventsTotal = (eventWeekly / 7) * days * 1.25; // 25% event multiplier bonus
-
-        // Treasure trove standard 30-day deposit return (~1.3x ROI over 30 days for max trove)
-        const troveTotal = troveDeposit * 0.3; 
-
-        const grandTotal = coloTotal + guildTotal + monsterTotal + eventsTotal + troveTotal;
-
-        document.getElementById('resColo').innerText = Math.round(coloTotal).toLocaleString() + ' gems';
-        document.getElementById('resGuild').innerText = Math.round(guildTotal).toLocaleString() + ' gems';
-        document.getElementById('resMonster').innerText = Math.round(monsterTotal).toLocaleString() + ' gems';
-        document.getElementById('resEvents').innerText = Math.round(eventsTotal).toLocaleString() + ' gems';
-        document.getElementById('resTrove').innerText = Math.round(troveTotal).toLocaleString() + ' gems';
-        document.getElementById('resTotal').innerText = Math.round(grandTotal).toLocaleString() + ' gems';
-
-        document.getElementById('resultBox').style.display = 'block';
+    function revealAdv(id){
+        document.getElementById(id).style.display = "block";
     }
 
-    function resetGems() {
-        document.getElementById('colo').value = '';
-        document.getElementById('guild').value = '';
-        document.getElementById('monster').value = '';
-        document.getElementById('eventgems').value = '';
-        document.getElementById('treasure').value = '';
-        document.getElementById('resultBox').style.display = 'none';
+    function showResult(content){
+        document.getElementById("resultContent").innerHTML = content;
+        document.getElementById("resultTab").style.display = "flex";
+    }
+
+    function closeResult(){ 
+        document.getElementById("resultTab").style.display = "none"; 
+    }
+
+    function parseInput(id){
+        let el = document.getElementById(id);
+        if(!el) return 0;
+        let v = el.value.replace(/,/g,'');
+        return Number(v)||0;
+    }
+
+    function formatInput(input){
+        let v = input.value.replace(/[^0-9]/g,'');
+        if(v === ""){ input.value = ""; return; }
+        input.value = Number(v).toLocaleString();
+    }
+
+    document.querySelectorAll(".tool-input").forEach(i => {
+        i.addEventListener("input", () => { if(i.type !== 'number' && i.type !== 'checkbox') formatInput(i); });
+    });
+
+    function clearInputs(toolId){
+        document.querySelectorAll("input").forEach(i => { 
+            if(i.type === 'checkbox') i.checked = false;
+            else i.value = ""; 
+        });
+        document.getElementById('advEvents').style.display = 'none';
+        document.getElementById('advTrove').style.display = 'none';
+    }
+
+    function calculateGems(){
+        let colo = parseInput("colo"), guild = parseInput("guild"), monster = parseInput("monster");
+        let evBase = parseInput("eventgems") * 4;
+        let p = parseInput("kParagon") * 3;
+        let h = parseInput("hellEv") * 10;
+        let g = parseInput("gDuel") * 2;
+        let o = parseInput("otherEv");
+        let rEvent = evBase + p + h + g + o;
+        let tr = parseInput("treasure"), ba = parseInput("basic"), bo = parseInput("bonus");
+        let rColo = Math.floor(colo * 8 * 30), rGuild = Math.floor(guild * 30), rMonster = Math.floor(monster * 15), rTreasure = Math.floor(tr * (100 + ba + bo) / 100);
+        let total = rColo + rGuild + rMonster + rEvent + rTreasure;
+        showResult("<h3>30-Day Forecast</h3><div class='resultGrid'><div>Colosseum</div><span>"+rColo.toLocaleString()+"</span><div>Guild</div><span>"+rGuild.toLocaleString()+"</span><div>Monster</div><span>"+rMonster.toLocaleString()+"</span><div>Event</div><span>"+rEvent.toLocaleString()+"</span><div>Treasure</div><span>"+rTreasure.toLocaleString()+"</span></div><div class='totalRow'><div>TOTAL GEMS</div><span>"+total.toLocaleString()+"</span></div>");
     }
 
     function cycleTheme() {
