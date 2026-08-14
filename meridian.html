@@ -411,6 +411,41 @@ if (!events || !Array.isArray(events)){
 }
 let activeEventId = loadJSON('meridian:activeEventId', events.length ? events[0].id : null);
 
+// Auto-sync from user's Google Sheet CSV export
+async function loadGoogleSheetEvents() {
+  try {
+    const url = 'https://docs.google.com/spreadsheets/d/1F2vAGD0Yz7_rlUilfs7wYxStnEuipL7OOhsqpttbAiQ/export?format=csv';
+    const res = await fetch(url);
+    if (!res.ok) return;
+    const text = await res.text();
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    if (lines.length <= 1) return;
+    const fetchedEvents = [];
+    for (let i = 1; i < lines.length; i++) {
+      const parts = lines[i].split(',').map(p => p.replace(/^"|"$/g, ''));
+      if (parts.length >= 5) {
+        fetchedEvents.push({
+          id: parts[0] || genId(),
+          title: parts[1] || 'Event',
+          dateStr: parts[2] || '2026-08-20',
+          timeStr: parts[3] || '12:00',
+          zoneId: parts[4] || 'kolkata'
+        });
+      }
+    }
+    if (fetchedEvents.length > 0) {
+      events = fetchedEvents;
+      if (!events.some(e => e.id === activeEventId)) {
+        activeEventId = events[0].id;
+      }
+      if (typeof renderAll === 'function') renderAll();
+    }
+  } catch(e) {
+    console.log('Google Sheet sync fallback to local storage');
+  }
+}
+loadGoogleSheetEvents();
+
 // Admin gating: anyone opening this page (including via a shared link) can view
 // events and search/add any city or timezone to their own world-clock view.
 // Only someone who knows this device's admin PIN can add/edit/remove events.
