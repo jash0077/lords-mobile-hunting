@@ -411,25 +411,56 @@ if (!events || !Array.isArray(events)){
 }
 let activeEventId = loadJSON('meridian:activeEventId', events.length ? events[0].id : null);
 
-// Auto-sync from user's Google Sheet CSV export
+// Auto-sync from user's Google Sheet CSV export with robust header & quote parsing
 async function loadGoogleSheetEvents() {
   try {
-    const url = 'https://docs.google.com/spreadsheets/d/1F2vAGD0Yz7_rlUilfs7wYxStnEuipL7OOhsqpttbAiQ/export?format=csv';
+    const url = 'https://docs.google.com/spreadsheets/d/1F2vAGD0Yz7_rlUilfs7wYxStnEuipL7OOhsqpttbAiQ/export?format=csv&t=' + Date.now();
     const res = await fetch(url);
     if (!res.ok) return;
     const text = await res.text();
-    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-    if (lines.length <= 1) return;
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    if (lines.length === 0) return;
+
+    function parseCSVLine(line) {
+      const result = [];
+      let cur = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') {
+          inQuotes = !inQuotes;
+        } else if (c === ',' && !inQuotes) {
+          result.push(cur.trim().replace(/^"|"$/g, ''));
+          cur = '';
+        } else {
+          cur += c;
+        }
+      }
+      result.push(cur.trim().replace(/^"|"$/g, ''));
+      return result;
+    }
+
+    const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase());
+    const titleIdx = headers.findIndex(h => h.includes('title') || h.includes('event'));
+    const dateIdx = headers.findIndex(h => h.includes('date'));
+    const timeIdx = headers.findIndex(h => h.includes('time'));
+    const zoneIdx = headers.findIndex(h => h.includes('zone') || h.includes('timezone') || h.includes('city'));
+
     const fetchedEvents = [];
     for (let i = 1; i < lines.length; i++) {
-      const parts = lines[i].split(',').map(p => p.replace(/^"|"$/g, ''));
-      if (parts.length >= 5) {
+      const parts = parseCSVLine(lines[i]);
+      if (parts.length >= 2) {
+        const title = (titleIdx !== -1 && parts[titleIdx]) ? parts[titleIdx] : (parts[1] || parts[0] || 'Event');
+        const dateStr = (dateIdx !== -1 && parts[dateIdx]) ? parts[dateIdx] : (parts[2] || '2026-08-20');
+        const timeStr = (timeIdx !== -1 && parts[timeIdx]) ? parts[timeIdx] : (parts[3] || '12:00');
+        const zoneId = (zoneIdx !== -1 && parts[zoneIdx]) ? parts[zoneIdx] : (parts[4] || 'kolkata');
+
         fetchedEvents.push({
           id: parts[0] || genId(),
-          title: parts[1] || 'Event',
-          dateStr: parts[2] || '2026-08-20',
-          timeStr: parts[3] || '12:00',
-          zoneId: parts[4] || 'kolkata'
+          title,
+          dateStr,
+          timeStr,
+          zoneId
         });
       }
     }
@@ -438,10 +469,12 @@ async function loadGoogleSheetEvents() {
       if (!events.some(e => e.id === activeEventId)) {
         activeEventId = events[0].id;
       }
+      saveJSON('meridian:events', events);
+      saveJSON('meridian:activeEventId', activeEventId);
       if (typeof renderAll === 'function') renderAll();
     }
   } catch(e) {
-    console.log('Google Sheet sync fallback to local storage');
+    console.log('Google Sheet sync fallback to local storage:', e);
   }
 }
 loadGoogleSheetEvents();
