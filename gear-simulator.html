@@ -75,7 +75,7 @@
             width: 55px;
             height: 55px;
             background: var(--bg-secondary);
-            border: 2px dashed var(--border-primary);
+            border: 2px solid var(--border-primary);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -83,11 +83,12 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            flex-shrink: 0;
         }
         .slot-icon-box img {
-            max-width: 85%;
-            max-height: 85%;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .slot-icon-box .plus-sign {
             font-size: 20px;
@@ -170,7 +171,7 @@
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             display: none;
             align-items: center;
             justify-content: center;
@@ -186,7 +187,7 @@
             border-radius: 12px;
             width: 100%;
             max-width: 550px;
-            max-height: 80vh;
+            max-height: 85vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -229,7 +230,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 8px 12px;
+            padding: 10px 12px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
@@ -240,10 +241,22 @@
             border-color: var(--neon-blue);
             background: var(--bg-elevated);
         }
+        .gear-item-icon-wrap {
+            width: 50px;
+            height: 50px;
+            background: #111;
+            border: 2px solid var(--border-primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
         .gear-item-icon {
-            width: 45px;
-            height: 45px;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
     </style>
 </head>
@@ -271,7 +284,7 @@
         <p style="color: var(--text-secondary); font-size: 0.95rem;">Select equipment for each slot across Set 1, 2, and 3 to simulate stats.</p>
     </div>
 
-    <!-- Set Tabs exactly matching reference -->
+    <!-- Set Tabs -->
     <div class="set-tabs">
         <button class="set-tab active" onclick="switchSet('set1')">Set 1</button>
         <button class="set-tab" onclick="switchSet('set2')">Set 2</button>
@@ -279,10 +292,8 @@
     </div>
 
     <div class="sim-grid">
-        <!-- Left: Slots matching reference order (Legs, Armor, Helmet, Main-Hand, Off-Hand, Accessory 1, 2, 3) -->
-        <div class="gear-slots-container" id="gearSlotsContainer">
-            <!-- Rendered dynamically -->
-        </div>
+        <!-- Left: Slots -->
+        <div class="gear-slots-container" id="gearSlotsContainer"></div>
 
         <!-- Right: Stats Sidebar -->
         <div class="stats-sidebar">
@@ -361,7 +372,7 @@
             row.innerHTML = `
                 <div class="slot-info">
                     <div class="slot-icon-box" onclick="openModal('${slot.key}', '${slot.category}', '${slot.name}')">
-                        ${item ? `<img src="${item.image}" alt="${item.name}" onerror="this.onerror=null;this.src='assets/gear/${slot.category}.svg';">` : `<i class="fas fa-plus plus-sign"></i>`}
+                        ${item ? `<img src="${item.image}" alt="${item.name}">` : `<i class="fas fa-plus plus-sign"></i>`}
                     </div>
                     <div>
                         <div class="slot-label-name">${slot.name}</div>
@@ -436,13 +447,17 @@
             row.onclick = () => selectGear(item.id);
 
             let statsStr = '';
-            if (item.stats.combat) statsStr += Object.entries(item.stats.combat).map(([k,v])=>`${k}: +${v}%`).join(', ');
+            if (item.stats.combat) {
+                statsStr += Object.entries(item.stats.combat).map(([k,v])=>`${k.replace(/_/g,' ').toUpperCase()}: +${v}%`).join(', ');
+            }
 
             row.innerHTML = `
-                <img src="${item.image}" class="gear-item-icon" alt="${item.name}" onerror="this.onerror=null;this.src='assets/gear/${category}.svg';">
+                <div class="gear-item-icon-wrap">
+                    <img src="${item.image}" class="gear-item-icon" alt="${item.name}">
+                </div>
                 <div style="flex:1;">
-                    <div style="font-weight:600;">${item.name} <span style="font-size:0.8rem; color:var(--neon-gold);">(${item.rarity})</span></div>
-                    <div style="font-size:0.8rem; color:var(--text-secondary);">${statsStr || 'No combat stats'}</div>
+                    <div style="font-weight:600; font-size:0.95rem; color:var(--text-primary);">${item.name} <span style="font-size:0.8rem; color:var(--neon-gold);">(${item.rarity} Lvl ${item.level})</span></div>
+                    <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;">${statsStr || 'No combat stats'}</div>
                 </div>
             `;
             listContainer.appendChild(row);
@@ -489,7 +504,7 @@
 
     function renderStatsBox(elementId, statsObj) {
         const el = document.getElementById(elementId);
-        if (Object.keys(statsObj).length === 0) {
+        if (Object.keys(statsObj).length ===0) {
             el.innerHTML = `<div class="stat-item"><span class="stat-label">No Active Stats</span></div>`;
             return;
         }
