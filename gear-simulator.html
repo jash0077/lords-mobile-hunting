@@ -126,67 +126,65 @@
         }
         .stats-panel {
             background: var(--bg-surface);
-            border: 1px solid var(--border-primary);
+            border: 1px solid var(--border-subtle);
             border-radius: 10px;
             padding: 15px;
         }
         .stats-panel h3 {
             font-size: 1rem;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin-bottom: 10px;
             border-bottom: 1px solid var(--border-subtle);
-            padding-bottom: 8px;
+            padding-bottom: 6px;
+            color: var(--neon-gold);
         }
         .stat-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 6px;
-            font-size: 0.9rem;
-        }
-        .stat-label {
+            font-size: 0.85rem;
+            padding: 4px 0;
             color: var(--text-secondary);
         }
         .stat-value {
-            color: var(--neon-green);
+            color: var(--text-primary);
             font-weight: 600;
         }
         .btn-reset-set {
-            width: 100%;
             background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
             border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
             padding: 10px;
             border-radius: 8px;
-            font-weight: 600;
             cursor: pointer;
+            font-weight: 600;
+            text-align: center;
             transition: all 0.2s ease;
-            margin-bottom: 15px;
         }
         .btn-reset-set:hover {
             background: rgba(239, 68, 68, 0.2);
         }
-        /* Modal */
+        /* Modal styling matching PDF */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
-            display: none;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            padding: 15px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
         }
         .modal-overlay.active {
-            display: flex;
+            opacity: 1;
+            pointer-events: auto;
         }
         .modal-content {
-            background: var(--bg-surface);
+            background: #0f1020;
             border: 1px solid var(--border-primary);
             border-radius: 12px;
-            width: 100%;
-            max-width: 550px;
+            width: 90%;
+            max-width: 500px;
             max-height: 85vh;
             display: flex;
             flex-direction: column;
@@ -194,17 +192,22 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .modal-header {
-            padding: 12px 18px;
-            border-bottom: 1px solid var(--border-subtle);
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .modal-header h3 {
+            font-size: 1.1rem;
+            color: var(--text-primary);
         }
         .modal-close {
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             cursor: pointer;
         }
         .modal-body {
@@ -224,14 +227,14 @@
         .gear-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
         .gear-item-row {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
-            padding: 10px 12px;
-            background: var(--bg-secondary);
+            padding: 12px;
+            background: #151728;
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
             cursor: pointer;
@@ -239,12 +242,12 @@
         }
         .gear-item-row:hover {
             border-color: var(--neon-blue);
-            background: var(--bg-elevated);
+            background: #1b1e36;
         }
         .gear-item-icon-wrap {
             width: 50px;
             height: 50px;
-            background: #111;
+            background: #0a0b14;
             border: 2px solid var(--border-primary);
             border-radius: 6px;
             display: flex;
@@ -359,6 +362,21 @@
         { key: 'accessory3', name: 'Accessory 3', category: 'accessory' }
     ];
 
+    function formatStatName(key) {
+        const map = {
+            rng_atk: 'Range ATK', rng_def: 'Range DEF', rng_hp: 'Range Max HP',
+            inf_atk: 'Infantry ATK', inf_def: 'Infantry DEF', inf_hp: 'Infantry Max HP',
+            cav_atk: 'Cavalry ATK', cav_def: 'Cavalry DEF', cav_hp: 'Cavalry Max HP',
+            army_atk: 'Army ATK', army_def: 'Army DEF', army_hp: 'Army Max HP',
+            siege_atk: 'Siege Engine ATK', siege_def: 'Siege Engine DEF', siege_hp: 'Siege Engine Max HP',
+            travel_speed: 'Travel Speed', research_speed: 'Research Speed', construction_speed: 'Construction Speed',
+            training_speed: 'Training Speed', gold_prod: 'Gold Production Rate', stone_prod: 'Stone Production Rate',
+            timber_prod: 'Timber Production Rate', ore_prod: 'Ore Production Rate', reduce_upkeep: 'Reduce Upkeep',
+            army_capacity: 'Army Capacity', wall_def_boost: 'Wall DEF Boost', trap_atk: 'Trap ATK', trap_def: 'Trap DEF'
+        };
+        return map[key] || key.replace(/_/g, ' ').toUpperCase();
+    }
+
     function renderSimulator() {
         const container = document.getElementById('gearSlotsContainer');
         container.innerHTML = '';
@@ -446,9 +464,12 @@
             row.className = 'gear-item-row';
             row.onclick = () => selectGear(item.id);
 
-            let statsStr = '';
-            if (item.stats.combat) {
-                statsStr += Object.entries(item.stats.combat).map(([k,v])=>`${k.replace(/_/g,' ').toUpperCase()}: +${v}%`).join(', ');
+            let statsHtml = '';
+            if (item.stats) {
+                const allStats = { ...(item.stats.combat || {}), ...(item.stats.economy || {}), ...(item.stats.sigils || {}) };
+                for (const [k, v] of Object.entries(allStats)) {
+                    statsHtml += `<div style="color:var(--text-secondary); font-size:0.8rem; line-height:1.3;">${formatStatName(k)}: +${v}%</div>`;
+                }
             }
 
             row.innerHTML = `
@@ -456,8 +477,9 @@
                     <img src="${item.image}" class="gear-item-icon" alt="${item.name}">
                 </div>
                 <div style="flex:1;">
-                    <div style="font-weight:600; font-size:0.95rem; color:var(--text-primary);">${item.name} <span style="font-size:0.8rem; color:var(--neon-gold);">(${item.rarity} Lvl ${item.level})</span></div>
-                    <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;">${statsStr || 'No combat stats'}</div>
+                    <div style="font-weight:700; font-size:0.95rem; color:var(--neon-blue);">${item.name}</div>
+                    <div style="font-size:0.8rem; color:var(--neon-gold); margin-bottom:4px;">LVL ${item.level}</div>
+                    <div>${statsHtml || '<span style="color:var(--text-secondary); font-size:0.8rem;">No stats</span>'}</div>
                 </div>
             `;
             listContainer.appendChild(row);
@@ -504,13 +526,13 @@
 
     function renderStatsBox(elementId, statsObj) {
         const el = document.getElementById(elementId);
-        if (Object.keys(statsObj).length ===0) {
+        if (Object.keys(statsObj).length === 0) {
             el.innerHTML = `<div class="stat-item"><span class="stat-label">No Active Stats</span></div>`;
             return;
         }
         el.innerHTML = '';
         for (const [k, v] of Object.entries(statsObj)) {
-            el.innerHTML += `<div class="stat-item"><span class="stat-label">${k.replace(/_/g, ' ').toUpperCase()}</span><span class="stat-value">+${v}%</span></div>`;
+            el.innerHTML += `<div class="stat-item"><span class="stat-label">${formatStatName(k)}</span><span class="stat-value">+${v}%</span></div>`;
         }
     }
 
@@ -518,30 +540,14 @@
         const current = document.documentElement.getAttribute('data-theme') || 'dark';
         let next = (current === 'dark' || current === '') ? 'tactical' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem('hem_current_theme', next);
-        updateThemeButton(next);
+        localStorage.setItem('hem_theme', next);
     }
 
-    function updateThemeButton(theme) {
-        const btn = document.getElementById('themeToggleBtn');
-        if (!btn) return;
-        if (theme === 'tactical') {
-            btn.innerHTML = '<i class="fas fa-crown" style="color:#FBBF24;"></i> Royal Tactical';
-        } else {
-            btn.innerHTML = '<i class="fas fa-robot" style="color:#A855F7;"></i> Cyberpunk';
-        }
-    }
-
-    function toggleMenu() {
-        document.getElementById('navLinks').classList.toggle('active');
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-        const savedTheme = localStorage.getItem('hem_current_theme') || 'dark';
+    window.onload = () => {
+        const savedTheme = localStorage.getItem('hem_theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
-        updateThemeButton(savedTheme);
         renderSimulator();
-    });
+    };
 </script>
 </body>
 </html>
