@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#060612">
+    <title>Chaos Arena Tracker - Lords Mobile Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .chaos-card {
+            background: #0d0f1d;
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .chaos-title {
+            text-align: center;
+            font-size: 1.8rem;
+            color: var(--neon-purple);
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+        .select-wrap {
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .select-wrap label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .chaos-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #15182e;
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+        }
+        .chaos-results {
+            background: #14172d;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .chaos-results h3 {
+            color: var(--neon-gold);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 8px;
+        }
+        .quest-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .quest-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1a1e36;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-subtle);
+        }
+        .chaos-summary {
+            margin-top: 20px;
+            background: #1a1e36;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--neon-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        .chaos-summary span:last-child {
+            color: var(--neon-gold);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">Lords Mobile Hub</div>
+    <div class="header-actions">
+        <button class="theme-toggle" id="themeToggleBtn" onclick="cycleTheme()"><i class="fas fa-adjust"></i> Theme</button>
+        <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </div>
+    <nav class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="calculator.html">Speedup Calculator</a>
+        <a href="gear-simulator.html">Gear Simulator</a>
+        <a href="chaos-arena.html" style="color: var(--neon-blue);">Chaos Arena</a>
+        <a href="hunting.html">Monster Hunting</a>
+        <a href="training.html">Training Calculator</a>
+        <a href="meridian.html">Meridian</a>
+    </nav>
+</header>
+
+<div class="container">
+    <div style="margin-bottom: 15px;">
+        <a href="index.html" class="btn-back" style="background:var(--bg-surface); border:1px solid var(--border-primary); color:var(--text-primary); padding:6px 14px; border-radius:6px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:0.85rem;"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+
+    <div class="chaos-card">
+        <div class="chaos-title">Chaos Arena Tracker</div>
+        
+        <div class="select-wrap">
+            <label for="chaosSelect">Select a Quest Type:</label>
+            <select id="chaosSelect" class="chaos-select" onchange="loadChaosQuest()">
+                <option value="0">Select a Quest Type...</option>
+                <option value="1">1. Healing T4/T5 Quest</option>
+                <option value="2">2. Wound Enemies T4/T5 Quest</option>
+                <option value="3">3. Gathering Quest</option>
+                <option value="4">4. Destroy Enemy Troops Quest</option>
+            </select>
+        </div>
+
+        <div id="chaosContent"></div>
+    </div>
+</div>
+
+<script>
+    const questData = {
+        1: {
+            title: "Healing T4/T5 Quest",
+            unit: "heals",
+            step: 5000,
+            base: 25000,
+            count: 50,
+            multiplier: 1,
+            totalNeeded: "7.375m troops",
+            totalStone: "2500"
+        },
+        2: {
+            title: "Wound Enemy T4/T5 Quest",
+            unit: "wounded",
+            step: 5000,
+            base: 25000,
+            count: 50,
+            multiplier: 1,
+            totalNeeded: "7.375m troops",
+            totalStone: "2500"
+        },
+        3: {
+            title: "Gathering Quest",
+            unit: "nodes",
+            step: 1,
+            base: 1,
+            count: 20,
+            customText: i => `Gather lvl 3 nodes 0/${i}`,
+            totalStone: "2000"
+        },
+        4: {
+            title: "Destroy Enemy Troops (T2 and below)",
+            unit: "might destroyed",
+            step: 50000,
+            base: 250000,
+            count: 50,
+            isMight: true,
+            totalNeeded: "73.750m might",
+            totalStone: "2500"
+        }
+    };
+
+    function formatNumber(num) {
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(3) + 'm';
+        }
+        if (num >= 1000) {
+            return (num / 1000).toFixed(0) + 'k';
+        }
+        return num;
+    }
+
+    function loadChaosQuest() {
+        const val = document.getElementById('chaosSelect').value;
+        const container = document.getElementById('chaosContent');
+        if (val === '0' || !questData[val]) {
+            container.innerHTML = '';
+            return;
+        }
+
+        const q = questData[val];
+        let html = `
+            <div class="chaos-results">
+                <h3>${q.title}</h3>
+                <div class="quest-list">
+        `;
+
+        for (let i = 1; i <= q.count; i++) {
+            let desc = '';
+            if (q.customText) {
+                desc = q.customText(i);
+            } else {
+                const valNum = q.base + (i - 1) * q.step;
+                desc = `<strong>${formatNumber(valNum)}</strong> ${q.unit}`;
+            }
+            html += `
+                <div class="quest-row">
+                    <span>Quest ${i}</span>
+                    <span>${desc}</span>
+                </div>
+            `;
+        }
+
+        html += `</div>`;
+        if (q.totalNeeded) {
+            html += `
+                <div class="chaos-summary">
+                    <span>Total Needed:</span>
+                    <span>${q.totalNeeded}</span>
+                </div>
+            `;
+        }
+        html += `
+                <div class="chaos-summary" style="margin-top: 10px;">
+                    <span>Total Reward Stone:</span>
+                    <span>${q.totalStone}</span>
+                </div>
+            </div>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    function cycleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        let next = (current === 'dark' || current === '') ? 'tactical' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('hem_theme', next);
+    }
+
+    window.onload = () => {
+        const savedTheme = localStorage.getItem('hem_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    };
+</script>
+</body>
+</html>
