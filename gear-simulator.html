@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#060612">
+    <title>Gear Simulator - Lords Mobile Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .simulator-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .set-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+        .set-tab {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-primary);
+            color: var(--text-primary);
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .set-tab.active {
+            background: var(--neon-blue);
+            color: #fff;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+        .sim-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+        }
+        @media (max-width: 900px) {
+            .sim-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+        .gear-slot-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .gear-slot-card:hover {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 15px var(--glow-purple);
+        }
+        .slot-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .slot-box {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 12px;
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        .slot-box:hover {
+            border-color: var(--neon-cyan);
+            background: var(--bg-elevated);
+        }
+        .slot-box img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+        .slot-box .plus-icon {
+            font-size: 24px;
+            color: var(--text-muted);
+        }
+        .equipped-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .remove-gear-btn {
+            background: transparent;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        .stats-panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .stats-panel h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 8px;
+        }
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        .stat-label {
+            color: var(--text-secondary);
+        }
+        .stat-value {
+            color: var(--neon-green);
+            font-weight: 600;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .btn-action {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-reset {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .btn-reset:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-primary);
+            border-radius: 14px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 {
+            font-size: 1.2rem;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .gear-search-input {
+            width: 100%;
+            padding: 10px 15px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        .gear-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .gear-item-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .gear-item-row:hover {
+            border-color: var(--neon-blue);
+            background: var(--bg-elevated);
+        }
+        .gear-item-icon {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+        .gear-item-info {
+            flex: 1;
+        }
+        .gear-item-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+        .gear-item-stats {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">Lords Mobile Hub</div>
+    <div class="header-actions">
+        <button class="theme-toggle" id="themeToggleBtn" onclick="cycleTheme()"><i class="fas fa-adjust"></i> Theme</button>
+        <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </div>
+    <nav class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="calculator.html">Speedup Calculator</a>
+        <a href="hunting.html">Monster Hunting</a>
+        <a href="training.html">Training Calculator</a>
+        <a href="composition.html">Troop Composition</a>
+        <a href="leaderboard.html">⚔️ War</a>
+        <a href="comparison.html">Comparison</a>
+        <a href="migration.html">Migration Guide</a>
+        <a href="research.html">Research & Construction</a>
+        <a href="festival.html">Guild Festival</a>
+        <a href="meridian.html">Meridian</a>
+        <a href="trap-guide.html">Trap Guide</a>
+    </nav>
+</header>
+
+<div class="simulator-container">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="font-size: 2rem; margin-bottom: 5px;">Advanced Gear Simulator</h1>
+        <p style="color: var(--text-secondary);">Equip items across sets and simulate total combat, economy, and sigil bonuses.</p>
+    </div>
+
+    <!-- Set Tabs -->
+    <div class="set-tabs">
+        <button class="set-tab active" onclick="switchSet('set1')">Set 1</button>
+        <button class="set-tab" onclick="switchSet('set2')">Set 2</button>
+        <button class="set-tab" onclick="switchSet('set3')">Set 3</button>
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn-action btn-reset" onclick="resetCurrentSet()">🔄 Reset Entire Set</button>
+    </div>
+
+    <div class="sim-layout">
+        <!-- Slots Grid -->
+        <div class="slots-grid" id="slotsGrid">
+            <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Stats Panels -->
+        <div>
+            <div class="stats-panel">
+                <h3>⚔️ Combat Stats</h3>
+                <div id="combatStatsList">
+                    <div class="stat-item"><span class="stat-label">No Combat Stats Active</span></div>
+                </div>
+            </div>
+
+            <div class="stats-panel">
+                <h3>🛡️ Economy Stats</h3>
+                <div id="economyStatsList">
+                    <div class="stat-item"><span class="stat-label">No Economy Stats Active</span></div>
+                </div>
+            </div>
+
+            <div class="stats-panel">
+                <h3>✧ Sigil Stats</h3>
+                <div id="sigilStatsList">
+                    <div class="stat-item"><span class="stat-label">No Sigil Stats Active</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gear Selection Modal -->
+<div class="modal-overlay" id="gearModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Select Gear</h3>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <input type="text" class="gear-search-input" id="gearSearchInput" placeholder="Search gear by name..." oninput="filterGearList()">
+            <div class="gear-list" id="gearListContainer">
+                <!-- Dynamically populated gear list -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="gear-data.js"></script>
+<script>
+    let currentSet = 'set1';
+    let currentActiveSlot = null;
+
+    // Load sets from localStorage or initialize
+    let gearSets = JSON.parse(localStorage.getItem('hem_gear_sets')) || {
+        set1: { helmet: null, armor: null, legs: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null },
+        set2: { helmet: null, armor: null, legs: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null },
+        set3: { helmet: null, armor: null, legs: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null }
+    };
+
+    const slotDefinitions = [
+        { key: 'legs', name: 'Legs', category: 'legs' },
+        { key: 'armor', name: 'Armor', category: 'armor' },
+        { key: 'helmet', name: 'Helmet', category: 'helmet' },
+        { key: 'main_hand', name: 'Main-Hand', category: 'main_hand' },
+        { key: 'off_hand', name: 'Off-Hand', category: 'off_hand' },
+        { key: 'accessory1', name: 'Accessory 1', category: 'accessory' },
+        { key: 'accessory2', name: 'Accessory 2', category: 'accessory' },
+        { key: 'accessory3', name: 'Accessory 3', category: 'accessory' }
+    ];
+
+    function renderSimulator() {
+        const grid = document.getElementById('slotsGrid');
+        grid.innerHTML = '';
+
+        slotDefinitions.forEach(slot => {
+            const equippedId = gearSets[currentSet][slot.key];
+            const equippedItem = findItemById(equippedId, slot.category);
+
+            const card = document.createElement('div');
+            card.className = 'gear-slot-card';
+            card.innerHTML = `
+                <div class="slot-title">${slot.name}</div>
+                <div class="slot-box" onclick="openModal('${slot.key}', '${slot.category}', '${slot.name}')">
+                    ${equippedItem ? `<img src="${equippedItem.image}" alt="${equippedItem.name}">` : `<i class="fas fa-plus plus-icon"></i>`}
+                </div>
+                <div class="equipped-name">${equippedItem ? equippedItem.name : 'Empty'}</div>
+                ${equippedItem ? `<button class="remove-gear-btn" onclick="unequipSlot('${slot.key}')">Remove</button>` : ''}
+            `;
+            grid.appendChild(card);
+        });
+
+        calculateStats();
+    }
+
+    function findItemById(id, category) {
+        if (!id || !gearData[category]) return null;
+        return gearData[category].find(item => item.id === id) || null;
+    }
+
+    function switchSet(setName) {
+        currentSet = setName;
+        document.querySelectorAll('.set-tab').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        renderSimulator();
+    }
+
+    function resetCurrentSet() {
+        gearSets[currentSet] = { helmet: null, armor: null, legs: null, main_hand: null, off_hand: null, accessory1: null, accessory2: null, accessory3: null };
+        saveAndRender();
+    }
+
+    function unequipSlot(slotKey) {
+        gearSets[currentSet][slotKey] = null;
+        saveAndRender();
+    }
+
+    function saveAndRender() {
+        localStorage.setItem('hem_gear_sets', JSON.stringify(gearSets));
+        renderSimulator();
+    }
+
+    function openModal(slotKey, category, slotName) {
+        currentActiveSlot = { slotKey, category };
+        document.getElementById('modalTitle').innerText = `Select ${slotName}`;
+        document.getElementById('gearSearchInput').value = '';
+        renderGearList(category);
+        document.getElementById('gearModal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('gearModal').classList.remove('active');
+    }
+
+    function renderGearList(category, filterText = '') {
+        const container = document.getElementById('gearListContainer');
+        container.innerHTML = '';
+
+        const items = gearData[category] || [];
+        const filtered = items.filter(item => item.name.toLowerCase().includes(filterText.toLowerCase()));
+
+        if (filtered.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-secondary);">No gear found</div>`;
+            return;
+        }
+
+        filtered.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'gear-item-row';
+            row.onclick = () => selectGear(item.id);
+
+            // Format stats preview
+            let statsText = '';
+            if (item.stats.combat) {
+                statsText += Object.entries(item.stats.combat).map(([k, v]) => `${k}: +${v}%`).join(', ');
+            }
+            if (item.stats.economy) {
+                statsText += (statsText ? ' | ' : '') + Object.entries(item.stats.economy).map(([k, v]) => `${k}: +${v}%`).join(', ');
+            }
+
+            row.innerHTML = `
+                <img src="${item.image}" class="gear-item-icon" alt="${item.name}">
+                <div class="gear-item-info">
+                    <div class="gear-item-title">${item.name} <span style="font-size:0.8rem; color:var(--neon-gold);">(${item.rarity} Lvl ${item.level})</span></div>
+                    <div class="gear-item-stats">${statsText || 'No stats'}</div>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    function filterGearList() {
+        const query = document.getElementById('gearSearchInput').value;
+        if (currentActiveSlot) {
+            renderGearList(currentActiveSlot.category, query);
+        }
+    }
+
+    function selectGear(itemId) {
+        if (!currentActiveSlot) return;
+        gearSets[currentSet][currentActiveSlot.slotKey] = itemId;
+        closeModal();
+        saveAndRender();
+    }
+
+    function calculateStats() {
+        const set = gearSets[currentSet];
+        const combatTotals = {};
+        const economyTotals = {};
+        const sigilTotals = {};
+
+        slotDefinitions.forEach(slot => {
+            const itemId = set[slot.key];
+            const item = findItemById(itemId, slot.category);
+            if (!item || !item.stats) return;
+
+            if (item.stats.combat) {
+                for (const [stat, val] of Object.entries(item.stats.combat)) {
+                    combatTotals[stat] = (combatTotals[stat] || 0) + val;
+                }
+            }
+            if (item.stats.economy) {
+                for (const [stat, val] of Object.entries(item.stats.economy)) {
+                    economyTotals[stat] = (economyTotals[stat] || 0) + val;
+                }
+            }
+            if (item.stats.sigils) {
+                for (const [stat, val] of Object.entries(item.stats.sigils)) {
+                    sigilTotals[stat] = (sigilTotals[stat] || 0) + val;
+                }
+            }
+        });
+
+        // Render Combat Stats
+        const combatContainer = document.getElementById('combatStatsList');
+        if (Object.keys(combatTotals).length === 0) {
+            combatContainer.innerHTML = `<div class="stat-item"><span class="stat-label">No Combat Stats Active</span></div>`;
+        } else {
+            combatContainer.innerHTML = '';
+            for (const [stat, val] of Object.entries(combatTotals)) {
+                combatContainer.innerHTML += `<div class="stat-item"><span class="stat-label">${formatStatName(stat)}</span><span class="stat-value">+${val}%</span></div>`;
+            }
+        }
+
+        // Render Economy Stats
+        const ecoContainer = document.getElementById('economyStatsList');
+        if (Object.keys(economyTotals).length === 0) {
+            ecoContainer.innerHTML = `<div class="stat-item"><span class="stat-label">No Economy Stats Active</span></div>`;
+        } else {
+            ecoContainer.innerHTML = '';
+            for (const [stat, val] of Object.entries(economyTotals)) {
+                ecoContainer.innerHTML += `<div class="stat-item"><span class="stat-label">${formatStatName(stat)}</span><span class="stat-value">+${val}%</span></div>`;
+            }
+        }
+
+        // Render Sigil Stats
+        const sigilContainer = document.getElementById('sigilStatsList');
+        if (Object.keys(sigilTotals).length === 0) {
+            sigilContainer.innerHTML = `<div class="stat-item"><span class="stat-label">No Sigil Stats Active</span></div>`;
+        } else {
+            sigilContainer.innerHTML = '';
+            for (const [stat, val] of Object.entries(sigilTotals)) {
+                sigilContainer.innerHTML += `<div class="stat-item"><span class="stat-label">${formatStatName(stat)}</span><span class="stat-value">+${val}%</span></div>`;
+            }
+        }
+    }
+
+    function formatStatName(key) {
+        return key.split('_').map(w => w.toUpperCase()).join(' ');
+    }
+
+    // Theme toggle
+    function cycleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        let next = (current === 'dark' || current === '') ? 'tactical' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('hem_current_theme', next);
+        updateThemeButton(next);
+    }
+
+    function updateThemeButton(theme) {
+        const btn = document.getElementById('themeToggleBtn');
+        if (!btn) return;
+        if (theme === 'tactical') {
+            btn.innerHTML = '<i class="fas fa-crown" style="color:#FBBF24;"></i> Royal Tactical';
+        } else {
+            btn.innerHTML = '<i class="fas fa-robot" style="color:#A855F7;"></i> Cyberpunk';
+        }
+    }
+
+    function toggleMenu() {
+        document.getElementById('navLinks').classList.toggle('active');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('hem_current_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeButton(savedTheme);
+        renderSimulator();
+    });
+</script>
+</body>
+</html>
